@@ -74,9 +74,15 @@ function Home() {
         </Typography>
         <Button
           variant="contained"
-          color="inherit"
           component={RouterLink}
           to="/books"
+          sx={{
+            bgcolor: "background.paper",
+            color: "primary.main",
+            "&:hover": {
+              bgcolor: "grey.100",
+            },
+          }}
         >
           Browse books
         </Button>

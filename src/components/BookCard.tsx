@@ -47,8 +47,13 @@ function BookCard({ book }: BookCardProps) {
           color={book.stock > 0 ? "success" : "default"}
         />
       </CardContent>
-      <CardActions>
-        <Button component={RouterLink} to={`/books/${book.id}`} size="small">
+      <CardActions sx={{ p: 2, pt: 0 }}>
+        <Button
+          component={RouterLink}
+          to={`/books/${book.id}`}
+          variant="outlined"
+          fullWidth
+        >
           View details
         </Button>
       </CardActions>

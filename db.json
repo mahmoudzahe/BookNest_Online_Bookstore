@@ -15,6 +15,14 @@
     {
       "id": "4",
       "name": "Nonfiction"
+    },
+    {
+      "id": "5",
+      "name": "Science Fiction"
+    },
+    {
+      "id": "6",
+      "name": "Mystery"
     }
   ],
   "books": [
@@ -81,7 +89,7 @@
       "rating": 5,
       "image": "https://covers.openlibrary.org/b/isbn/9780441172719-M.jpg",
       "createdAt": "2026-10-07",
-      "categoryId": "2"
+      "categoryId": "5"
     },
     {
       "id": "6",
@@ -121,6 +129,214 @@
       "image": "https://covers.openlibrary.org/b/isbn/9780061122415-M.jpg",
       "createdAt": "2026-10-09",
       "categoryId": "3"
+    },
+    {
+      "id": "9",
+      "title": "Harry Potter and the Sorcerer's Stone",
+      "author": "J. K. Rowling",
+      "description": "A young student discovers magic and begins his first year at a school for wizards.",
+      "categoryId": "2",
+      "price": 17.5,
+      "stock": 18,
+      "featured": false,
+      "rating": 4.8,
+      "image": "https://covers.openlibrary.org/b/isbn/9780590353427-M.jpg",
+      "createdAt": "2026-09-22"
+    },
+    {
+      "id": "10",
+      "title": "The Hunger Games",
+      "author": "Suzanne Collins",
+      "description": "A teenager enters a dangerous competition in a divided society.",
+      "categoryId": "3",
+      "price": 15.5,
+      "stock": 14,
+      "featured": false,
+      "rating": 4.7,
+      "image": "https://covers.openlibrary.org/b/isbn/9780439023481-M.jpg",
+      "createdAt": "2026-09-23"
+    },
+    {
+      "id": "11",
+      "title": "To Kill a Mockingbird",
+      "author": "Harper Lee",
+      "description": "A young girl learns about fairness and prejudice in her hometown.",
+      "categoryId": "1",
+      "price": 14.0,
+      "stock": 12,
+      "featured": false,
+      "rating": 4.7,
+      "image": "https://covers.openlibrary.org/b/isbn/9780061120084-M.jpg",
+      "createdAt": "2026-09-24"
+    },
+    {
+      "id": "12",
+      "title": "The Catcher in the Rye",
+      "author": "J. D. Salinger",
+      "description": "A teenager reflects on growing up and finding his place in the world.",
+      "categoryId": "1",
+      "price": 13.0,
+      "stock": 7,
+      "featured": false,
+      "rating": 4.0,
+      "image": "https://covers.openlibrary.org/b/isbn/9780316769488-M.jpg",
+      "createdAt": "2026-09-26"
+    },
+    {
+      "id": "13",
+      "title": "Sapiens",
+      "author": "Yuval Noah Harari",
+      "description": "An accessible overview of key changes in human history.",
+      "categoryId": "4",
+      "price": 24.0,
+      "stock": 10,
+      "featured": false,
+      "rating": 4.8,
+      "image": "https://covers.openlibrary.org/b/isbn/9780062316097-M.jpg",
+      "createdAt": "2026-09-27"
+    },
+    {
+      "id": "14",
+      "title": "Deep Work",
+      "author": "Cal Newport",
+      "description": "Ideas for improving focus and making time for demanding tasks.",
+      "categoryId": "4",
+      "price": 18.5,
+      "stock": 11,
+      "featured": false,
+      "rating": 4.4,
+      "image": "https://covers.openlibrary.org/b/isbn/9781455586691-M.jpg",
+      "createdAt": "2026-09-28"
+    },
+    {
+      "id": "15",
+      "title": "The Psychology of Money",
+      "author": "Morgan Housel",
+      "description": "Short lessons about the choices and habits behind money decisions.",
+      "categoryId": "4",
+      "price": 19.0,
+      "stock": 16,
+      "featured": false,
+      "rating": 4.6,
+      "image": "https://covers.openlibrary.org/b/isbn/9780857197689-M.jpg",
+      "createdAt": "2026-09-30"
+    },
+    {
+      "id": "16",
+      "title": "Educated",
+      "author": "Tara Westover",
+      "description": "A memoir about learning, family, and finding an independent path.",
+      "categoryId": "4",
+      "price": 17.0,
+      "stock": 9,
+      "featured": false,
+      "rating": 4.6,
+      "image": "https://covers.openlibrary.org/b/isbn/9780399590504-M.jpg",
+      "createdAt": "2026-10-02"
+    },
+    {
+      "id": "17",
+      "title": "The Martian",
+      "author": "Andy Weir",
+      "description": "An astronaut works through challenges after being stranded on Mars.",
+      "categoryId": "5",
+      "price": 18.0,
+      "stock": 8,
+      "featured": false,
+      "rating": 4.8,
+      "image": "https://covers.openlibrary.org/b/isbn/9780553418026-M.jpg",
+      "createdAt": "2026-10-05"
+    },
+    {
+      "id": "18",
+      "title": "Project Hail Mary",
+      "author": "Andy Weir",
+      "description": "A lone astronaut tries to solve a mystery during a distant mission.",
+      "categoryId": "5",
+      "price": 23.0,
+      "stock": 6,
+      "featured": false,
+      "rating": 4.9,
+      "image": "https://covers.openlibrary.org/b/isbn/9780593135204-M.jpg",
+      "createdAt": "2026-10-06"
+    },
+    {
+      "id": "19",
+      "title": "The Silent Patient",
+      "author": "Alex Michaelides",
+      "description": "A suspense story centered on a mysterious silence and an investigation.",
+      "categoryId": "6",
+      "price": 16.0,
+      "stock": 15,
+      "featured": false,
+      "rating": 4.3,
+      "image": "https://covers.openlibrary.org/b/isbn/9781250301697-M.jpg",
+      "createdAt": "2026-10-08"
+    },
+    {
+      "id": "20",
+      "title": "Gone Girl",
+      "author": "Gillian Flynn",
+      "description": "A mystery unfolds when a woman suddenly goes missing.",
+      "categoryId": "6",
+      "price": 15.0,
+      "stock": 10,
+      "featured": false,
+      "rating": 4.4,
+      "image": "https://covers.openlibrary.org/b/isbn/9780307588371-M.jpg",
+      "createdAt": "2026-10-10"
+    },
+    {
+      "id": "21",
+      "title": "The Midnight Library",
+      "author": "Matt Haig",
+      "description": "A novel exploring choices and the different paths a life might take.",
+      "categoryId": "3",
+      "price": 17.5,
+      "stock": 13,
+      "featured": false,
+      "rating": 4.2,
+      "image": "https://covers.openlibrary.org/b/isbn/9780525559474-M.jpg",
+      "createdAt": "2026-10-11"
+    },
+    {
+      "id": "22",
+      "title": "The Book Thief",
+      "author": "Markus Zusak",
+      "description": "A moving story about books and friendship during difficult times.",
+      "categoryId": "3",
+      "price": 16.5,
+      "stock": 12,
+      "featured": false,
+      "rating": 4.8,
+      "image": "https://covers.openlibrary.org/b/isbn/9780375842207-M.jpg",
+      "createdAt": "2026-10-12"
+    },
+    {
+      "id": "23",
+      "title": "The Little Prince",
+      "author": "Antoine de Saint-Exupéry",
+      "description": "A thoughtful tale about friendship, imagination, and understanding others.",
+      "categoryId": "1",
+      "price": 10.5,
+      "stock": 20,
+      "featured": false,
+      "rating": 4.7,
+      "image": "https://covers.openlibrary.org/b/isbn/9780156012195-M.jpg",
+      "createdAt": "2026-10-13"
+    },
+    {
+      "id": "24",
+      "title": "The Name of the Wind",
+      "author": "Patrick Rothfuss",
+      "description": "A gifted musician recounts the events that shaped his early life.",
+      "categoryId": "2",
+      "price": 21.0,
+      "stock": 7,
+      "featured": false,
+      "rating": 4.9,
+      "image": "https://covers.openlibrary.org/b/isbn/9780756404741-M.jpg",
+      "createdAt": "2026-10-14"
     }
   ],
   "reviews": [
@@ -144,6 +360,41 @@
       "userName": "Lina",
       "rating": 5,
       "comment": "Interesting world and story."
+    },
+    {
+      "id": "4",
+      "bookId": "9",
+      "userName": "Nour",
+      "rating": 5,
+      "comment": "A fun introduction to a magical world."
+    },
+    {
+      "id": "5",
+      "bookId": "18",
+      "userName": "Khaled",
+      "rating": 5,
+      "comment": "A clever space adventure with memorable characters."
+    },
+    {
+      "id": "6",
+      "bookId": "19",
+      "userName": "Maya",
+      "rating": 4,
+      "comment": "Kept me guessing until the end."
+    },
+    {
+      "id": "7",
+      "bookId": "22",
+      "userName": "Adam",
+      "rating": 5,
+      "comment": "An emotional and beautifully told story."
+    },
+    {
+      "id": "8",
+      "bookId": "24",
+      "userName": "Layla",
+      "rating": 5,
+      "comment": "Detailed world and engaging storytelling."
     }
   ]
 }
