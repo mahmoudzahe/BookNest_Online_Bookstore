@@ -1,0 +1,149 @@
+{
+  "categories": [
+    {
+      "id": "1",
+      "name": "Classics"
+    },
+    {
+      "id": "2",
+      "name": "Fantasy"
+    },
+    {
+      "id": "3",
+      "name": "Fiction"
+    },
+    {
+      "id": "4",
+      "name": "Nonfiction"
+    }
+  ],
+  "books": [
+    {
+      "id": "1",
+      "title": "Pride and Prejudice",
+      "author": "Jane Austen",
+      "description": "A classic story about family, first impressions, and relationships.",
+      "price": 12.5,
+      "stock": 14,
+      "featured": true,
+      "rating": 4.5,
+      "image": "https://covers.openlibrary.org/b/isbn/9780141439518-M.jpg",
+      "createdAt": "2026-10-01",
+      "categoryId": "1"
+    },
+    {
+      "id": "2",
+      "title": "The Hobbit",
+      "author": "J. R. R. Tolkien",
+      "description": "A quiet hobbit leaves home on an unexpected adventure.",
+      "price": 18,
+      "stock": 8,
+      "featured": true,
+      "rating": 4.5,
+      "image": "https://covers.openlibrary.org/b/isbn/9780547928227-M.jpg",
+      "createdAt": "2026-10-03",
+      "categoryId": "2"
+    },
+    {
+      "id": "3",
+      "title": "1984",
+      "author": "George Orwell",
+      "description": "A novel about surveillance, power, and personal freedom.",
+      "price": 15,
+      "stock": 0,
+      "featured": false,
+      "rating": 4.5,
+      "image": "https://covers.openlibrary.org/b/isbn/9780451524935-M.jpg",
+      "createdAt": "2026-09-25",
+      "categoryId": "3"
+    },
+    {
+      "id": "4",
+      "title": "The Great Gatsby",
+      "author": "F. Scott Fitzgerald",
+      "description": "A story about ambition, wealth, and the American dream.",
+      "price": 11,
+      "stock": 21,
+      "featured": true,
+      "rating": 4,
+      "image": "https://covers.openlibrary.org/b/isbn/9780743273565-M.jpg",
+      "createdAt": "2026-09-29",
+      "categoryId": "1"
+    },
+    {
+      "id": "5",
+      "title": "Dune",
+      "author": "Frank Herbert",
+      "description": "Science fiction set on a desert planet where powerful families compete.",
+      "price": 22,
+      "stock": 5,
+      "featured": true,
+      "rating": 5,
+      "image": "https://covers.openlibrary.org/b/isbn/9780441172719-M.jpg",
+      "createdAt": "2026-10-07",
+      "categoryId": "2"
+    },
+    {
+      "id": "6",
+      "title": "Atomic Habits",
+      "author": "James Clear",
+      "description": "Practical ideas for building good habits through small changes.",
+      "price": 20,
+      "stock": 13,
+      "featured": false,
+      "rating": 4.5,
+      "image": "https://covers.openlibrary.org/b/isbn/9780735211292-M.jpg",
+      "createdAt": "2026-10-04",
+      "categoryId": "4"
+    },
+    {
+      "id": "7",
+      "title": "Jane Eyre",
+      "author": "Charlotte Brontë",
+      "description": "A classic novel about independence, identity, and belonging.",
+      "price": 13,
+      "stock": 9,
+      "featured": false,
+      "rating": 4,
+      "image": "https://covers.openlibrary.org/b/isbn/9780141441146-M.jpg",
+      "createdAt": "2026-09-18",
+      "categoryId": "1"
+    },
+    {
+      "id": "8",
+      "title": "The Alchemist",
+      "author": "Paulo Coelho",
+      "description": "A young traveler follows a dream and discovers what matters along the way.",
+      "price": 16,
+      "stock": 12,
+      "featured": false,
+      "rating": 4,
+      "image": "https://covers.openlibrary.org/b/isbn/9780061122415-M.jpg",
+      "createdAt": "2026-10-09",
+      "categoryId": "3"
+    }
+  ],
+  "reviews": [
+    {
+      "id": "1",
+      "bookId": "1",
+      "userName": "Sara",
+      "rating": 5,
+      "comment": "Great characters and an enjoyable story."
+    },
+    {
+      "id": "2",
+      "bookId": "2",
+      "userName": "Omar",
+      "rating": 4,
+      "comment": "A fun and memorable adventure."
+    },
+    {
+      "id": "3",
+      "bookId": "5",
+      "userName": "Lina",
+      "rating": 5,
+      "comment": "Interesting world and story."
+    }
+  ]
+}
