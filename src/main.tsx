@@ -4,6 +4,7 @@ import { CssBaseline, ThemeProvider } from "@mui/material";
 import { BrowserRouter } from "react-router-dom";
 
 import App from "./App";
+import { CartProvider } from "./cart/CartContext";
 import theme from "./theme/theme";
 import "./index.css";
 
@@ -12,7 +13,9 @@ createRoot(document.getElementById("root")!).render(
     <ThemeProvider theme={theme}>
       <CssBaseline />
       <BrowserRouter>
-        <App />
+        <CartProvider>
+          <App />
+        </CartProvider>
       </BrowserRouter>
     </ThemeProvider>
   </StrictMode>

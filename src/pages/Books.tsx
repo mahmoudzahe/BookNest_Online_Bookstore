@@ -16,7 +16,7 @@ import BookGrid from "../components/BookGrid";
 import { getBooks, getCategories } from "../services/booksApi";
 import type { Book, Category } from "../types/book";
 
-const PAGE_SIZE = 4;
+const PAGE_SIZE = 8;
 
 function Books() {
   const [searchParams, setSearchParams] = useSearchParams();
