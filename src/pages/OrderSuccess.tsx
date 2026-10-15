@@ -1,4 +1,3 @@
-
 import { useEffect, useState } from "react";
 import {
   Alert,
@@ -10,11 +9,12 @@ import {
   Typography,
 } from "@mui/material";
 import { Link as RouterLink, useParams } from "react-router-dom";
-
+import { useAuth } from "../auth/AuthContext";
 import { getOrder } from "../services/checkoutApi";
 import type { Order } from "../types/order";
 
 function OrderSuccess() {
+  const { user } = useAuth();
   const { id } = useParams<{ id: string }>();
 
   const [order, setOrder] = useState<Order | null>(null);
@@ -35,7 +35,11 @@ function OrderSuccess() {
         const data = await getOrder(id!);
 
         if (active) {
-          setOrder(data);
+          if (data.userId === user?.id) {
+            setOrder(data);
+          } else {
+            setError("Order not found.");
+          }
         }
       } catch {
         if (active) {
@@ -53,7 +57,7 @@ function OrderSuccess() {
     return () => {
       active = false;
     };
-  }, [id]);
+  }, [id, user?.id]);
 
   return (
     <Container maxWidth="sm" sx={{ py: 6 }}>
@@ -70,10 +74,7 @@ function OrderSuccess() {
             borderRadius: 3,
           }}
         >
-          <Stack
-            spacing={2}
-            sx={{ alignItems: "center" }}
-          >
+          <Stack spacing={2} sx={{ alignItems: "center" }}>
             <Typography
               sx={{
                 fontSize: 60,
@@ -84,21 +85,15 @@ function OrderSuccess() {
               ✓
             </Typography>
 
-            <Typography variant="h4">
-              Order Placed Successfully!
-            </Typography>
+            <Typography variant="h4">Order Placed Successfully!</Typography>
 
             <Typography color="text.secondary">
               Your order has been created successfully.
             </Typography>
 
-            <Typography>
-              Order ID: {order.id}
-            </Typography>
+            <Typography>Order ID: {order.id}</Typography>
 
-            <Typography>
-              Status: {order.status}
-            </Typography>
+            <Typography>Status: {order.status}</Typography>
 
             <Typography variant="h6">
               Total: ${order.total.toFixed(2)}

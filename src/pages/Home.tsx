@@ -1,4 +1,3 @@
-
 import { useEffect, useState } from "react";
 import {
   Box,
@@ -55,9 +54,7 @@ function Home() {
     .sort((a, b) => b.createdAt.localeCompare(a.createdAt))
     .slice(0, 4);
 
-  const bestRated = [...books]
-    .sort((a, b) => b.rating - a.rating)
-    .slice(0, 4);
+  const bestRated = [...books].sort((a, b) => b.rating - a.rating).slice(0, 4);
 
   if (loading) {
     return (
@@ -71,9 +68,7 @@ function Home() {
           }}
         >
           <CircularProgress />
-          <Typography color="text.secondary">
-            Loading books...
-          </Typography>
+          <Typography color="text.secondary">Loading books...</Typography>
         </Stack>
       </Container>
     );
@@ -90,10 +85,7 @@ function Home() {
           justifyContent: "center",
         }}
       >
-        <Stack
-          spacing={2}
-          sx={{ alignItems: "center", textAlign: "center" }}
-        >
+        <Stack spacing={2} sx={{ alignItems: "center", textAlign: "center" }}>
           <Typography variant="h5" sx={{ fontWeight: 600 }}>
             Unable to load books
           </Typography>
@@ -102,10 +94,7 @@ function Home() {
             {error} Please try again.
           </Typography>
 
-          <Button
-            variant="contained"
-            onClick={() => window.location.reload()}
-          >
+          <Button variant="contained" onClick={() => window.location.reload()}>
             Try Again
           </Button>
         </Stack>
@@ -158,10 +147,7 @@ function Home() {
         Categories
       </Typography>
 
-      <Stack
-        direction="row"
-        sx={{ gap: 1, flexWrap: "wrap", mb: 4 }}
-      >
+      <Stack direction="row" sx={{ gap: 1, flexWrap: "wrap", mb: 4 }}>
         {categories.map((category) => (
           <Button
             key={category.id}

@@ -1,4 +1,3 @@
-
 import { useEffect, useState } from "react";
 import {
   Alert,
@@ -12,6 +11,7 @@ import {
   TextField,
   Typography,
 } from "@mui/material";
+import { useAuth } from "../auth/AuthContext";
 import { Link as RouterLink, useNavigate } from "react-router-dom";
 import { useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
@@ -21,11 +21,7 @@ import { useCart } from "../cart/CartContext";
 import { getBooks } from "../services/booksApi";
 import { createOrder, findCoupon } from "../services/checkoutApi";
 import type { Book } from "../types/book";
-import type {
-  Coupon,
-  OrderItem,
-  ShippingInformation,
-} from "../types/order";
+import type { Coupon, OrderItem, ShippingInformation } from "../types/order";
 
 const shippingSchema: yup.ObjectSchema<ShippingInformation> = yup.object({
   fullName: yup
@@ -50,6 +46,7 @@ const shippingSchema: yup.ObjectSchema<ShippingInformation> = yup.object({
 function Checkout() {
   const navigate = useNavigate();
   const { items, clearCart, syncStock } = useCart();
+  const { user } = useAuth();
 
   const [books, setBooks] = useState<Book[]>([]);
   const [loading, setLoading] = useState(true);
@@ -108,20 +105,14 @@ function Checkout() {
 
   const subtotal = cartBooks.reduce(
     (sum, item) => sum + item.book.price * item.quantity,
-    0
+    0,
   );
 
   const discount = Number(
-    (
-      subtotal *
-      ((appliedCoupon?.discountPercent ?? 0) / 100)
-    ).toFixed(2)
+    (subtotal * ((appliedCoupon?.discountPercent ?? 0) / 100)).toFixed(2),
   );
 
-  const total = Math.max(
-    0,
-    Number((subtotal - discount).toFixed(2))
-  );
+  const total = Math.max(0, Number((subtotal - discount).toFixed(2)));
 
   async function handleApplyCoupon() {
     setCouponError("");
@@ -153,9 +144,14 @@ function Checkout() {
   async function handlePlaceOrder(shipping: ShippingInformation) {
     setSubmitError("");
 
+    if (!user) {
+      setSubmitError("Please log in to place an order.");
+      return;
+    }
+
     if (couponInput.trim() && !appliedCoupon) {
       setCouponError(
-        "Please apply a valid coupon or clear the coupon field before placing your order."
+        "Please apply a valid coupon or clear the coupon field before placing your order.",
       );
       return;
     }
@@ -170,15 +166,13 @@ function Checkout() {
       const orderItems: OrderItem[] = [];
 
       for (const item of items) {
-        const book = latestBooks.find(
-          (book) => book.id === item.bookId
-        );
+        const book = latestBooks.find((book) => book.id === item.bookId);
 
         if (!book || book.stock < item.quantity) {
           syncStock(latestBooks);
           setBooks(latestBooks);
           setSubmitError(
-            "Some items are no longer available in the selected quantities. Review your cart and try again."
+            "Some items are no longer available in the selected quantities. Review your cart and try again.",
           );
           return;
         }
@@ -193,17 +187,14 @@ function Checkout() {
 
       const latestSubtotal = Number(
         orderItems
-          .reduce(
-            (sum, item) => sum + item.price * item.quantity,
-            0
-          )
-          .toFixed(2)
+          .reduce((sum, item) => sum + item.price * item.quantity, 0)
+          .toFixed(2),
       );
 
       if (latestSubtotal !== Number(subtotal.toFixed(2))) {
         setBooks(latestBooks);
         setSubmitError(
-          "Book prices have changed. Review the updated total and try again."
+          "Book prices have changed. Review the updated total and try again.",
         );
         return;
       }
@@ -215,12 +206,11 @@ function Checkout() {
       if (
         appliedCoupon &&
         (!checkedCoupon ||
-          checkedCoupon.discountPercent !==
-            appliedCoupon.discountPercent)
+          checkedCoupon.discountPercent !== appliedCoupon.discountPercent)
       ) {
         setAppliedCoupon(null);
         setSubmitError(
-          "The coupon has changed or is no longer valid. Apply it again."
+          "The coupon has changed or is no longer valid. Apply it again.",
         );
         return;
       }
@@ -229,16 +219,16 @@ function Checkout() {
         (
           latestSubtotal *
           ((checkedCoupon?.discountPercent ?? 0) / 100)
-        ).toFixed(2)
+        ).toFixed(2),
       );
 
       const finalTotal = Math.max(
         0,
-        Number((latestSubtotal - finalDiscount).toFixed(2))
+        Number((latestSubtotal - finalDiscount).toFixed(2)),
       );
 
       const order = await createOrder({
-        userId: null,
+        userId: user.id,
         items: orderItems,
         shipping,
         subtotal: latestSubtotal,
@@ -252,9 +242,7 @@ function Checkout() {
       clearCart();
       navigate(`/order-success/${order.id}`, { replace: true });
     } catch {
-      setSubmitError(
-        "Could not place your order. Please try again."
-      );
+      setSubmitError("Could not place your order. Please try again.");
     }
   }
 
@@ -281,11 +269,7 @@ function Checkout() {
           Your cart is empty.
         </Alert>
 
-        <Button
-          component={RouterLink}
-          to="/books"
-          variant="contained"
-        >
+        <Button component={RouterLink} to="/books" variant="contained">
           Browse books
         </Button>
       </Container>
@@ -395,9 +379,7 @@ function Checkout() {
 
           <Divider sx={{ my: 2 }} />
 
-          <Typography sx={{ mb: 1 }}>
-            Discount Coupon
-          </Typography>
+          <Typography sx={{ mb: 1 }}>Discount Coupon</Typography>
 
           <Stack direction="row" spacing={1}>
             <TextField
@@ -436,8 +418,8 @@ function Checkout() {
 
           {appliedCoupon && (
             <Alert severity="success" sx={{ mt: 2 }}>
-              {appliedCoupon.code} applied (
-              {appliedCoupon.discountPercent}% off).
+              {appliedCoupon.code} applied ({appliedCoupon.discountPercent}%
+              off).
             </Alert>
           )}
 
@@ -452,9 +434,7 @@ function Checkout() {
             >
               <Typography>Subtotal</Typography>
 
-              <Typography>
-                ${subtotal.toFixed(2)}
-              </Typography>
+              <Typography>${subtotal.toFixed(2)}</Typography>
             </Box>
 
             {appliedCoupon && (
@@ -480,13 +460,9 @@ function Checkout() {
                 justifyContent: "space-between",
               }}
             >
-              <Typography variant="h6">
-                Total
-              </Typography>
+              <Typography variant="h6">Total</Typography>
 
-              <Typography variant="h6">
-                ${total.toFixed(2)}
-              </Typography>
+              <Typography variant="h6">${total.toFixed(2)}</Typography>
             </Box>
           </Stack>
 

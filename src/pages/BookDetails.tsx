@@ -56,10 +56,13 @@ function BookDetails() {
     }
 
     void load();
-    return () => { active = false; };
+    return () => {
+      active = false;
+    };
   }, [id]);
 
-  const quantity = items.find((item) => item.bookId === book?.id)?.quantity ?? 0;
+  const quantity =
+    items.find((item) => item.bookId === book?.id)?.quantity ?? 0;
 
   return (
     <Container maxWidth="md" sx={{ py: 4 }}>
@@ -91,13 +94,17 @@ function BookDetails() {
               <Typography variant="h4">{book.title}</Typography>
               <Typography color="text.secondary">by {book.author}</Typography>
               <Typography>
-                Category: {categories.find((category) => category.id === book.categoryId)?.name ?? "Unknown"}
+                Category:{" "}
+                {categories.find((category) => category.id === book.categoryId)
+                  ?.name ?? "Unknown"}
               </Typography>
               <Rating value={book.rating} precision={0.5} readOnly />
               <Typography sx={{ fontWeight: 700 }}>
                 ${book.price.toFixed(2)}
               </Typography>
-              <Typography color={book.stock > 0 ? "success.main" : "error.main"}>
+              <Typography
+                color={book.stock > 0 ? "success.main" : "error.main"}
+              >
                 {book.stock > 0 ? `${book.stock} in stock` : "Out of stock"}
               </Typography>
               <Typography>{book.description}</Typography>
@@ -106,7 +113,11 @@ function BookDetails() {
                 disabled={book.stock <= 0 || quantity >= book.stock}
                 onClick={() => addBook(book)}
               >
-                {book.stock <= 0 ? "Sold out" : quantity >= book.stock ? "Max added" : "Add to cart"}
+                {book.stock <= 0
+                  ? "Sold out"
+                  : quantity >= book.stock
+                    ? "Max added"
+                    : "Add to cart"}
               </Button>
             </Stack>
           </Paper>
@@ -121,7 +132,9 @@ function BookDetails() {
 
           {reviews.map((review) => (
             <Box key={review.id} sx={{ mb: 2 }}>
-              <Typography sx={{ fontWeight: 600 }}>{review.userName}</Typography>
+              <Typography sx={{ fontWeight: 600 }}>
+                {review.userName}
+              </Typography>
               <Rating size="small" value={review.rating} readOnly />
               <Typography>{review.comment}</Typography>
               <Divider sx={{ mt: 2 }} />
