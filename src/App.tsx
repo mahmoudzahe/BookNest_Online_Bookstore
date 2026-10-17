@@ -1,78 +1,85 @@
-import {
-  AppBar,
-  Badge,
-  Box,
-  Button,
-  Container,
-  IconButton,
-  Toolbar,
-  Typography,
-} from "@mui/material";
-import ShoppingCartOutlinedIcon from "@mui/icons-material/ShoppingCartOutlined";
-import { Link as RouterLink, Route, Routes } from "react-router-dom";
-
-import { useCart } from "./cart/CartContext";
+import { Box, Container, Typography } from "@mui/material";
+import { Route, Routes } from "react-router-dom";
+import NavBar from "./components/NavBar";
+import ProtectedRoute from "./components/ProtectedRoute";
 import Home from "./pages/Home";
 import Books from "./pages/Books";
 import BookDetails from "./pages/BookDetails";
 import Cart from "./pages/Cart";
 import Checkout from "./pages/Checkout";
 import OrderSuccess from "./pages/OrderSuccess";
+import Login from "./pages/Login";
+import Register from "./pages/Register";
+import Profile from "./pages/Profile";
+import ChangePassword from "./pages/ChangePassword";
+import MyOrders from "./pages/MyOrders";
+import OrderDetails from "./pages/OrderDetails";
 
 function App() {
-  const { totalItems } = useCart();
-
   return (
     <>
-      <AppBar position="static" elevation={0}>
-        <Container maxWidth="lg">
-          <Toolbar disableGutters>
-            <Typography variant="h6" sx={{ flexGrow: 1 }}>
-              BookNest
-            </Typography>
-
-            <Button color="inherit" component={RouterLink} to="/">
-              Home
-            </Button>
-
-            <Button color="inherit" component={RouterLink} to="/books">
-              Books
-            </Button>
-
-            <IconButton
-              color="inherit"
-              component={RouterLink}
-              to="/cart"
-              aria-label={`Shopping cart with ${totalItems} items`}
-              sx={{ ml: 1 }}
-            >
-              <Badge badgeContent={totalItems} color="error">
-                <ShoppingCartOutlinedIcon />
-              </Badge>
-            </IconButton>
-          </Toolbar>
-        </Container>
-      </AppBar>
-
+      <NavBar />
       <Box component="main">
         <Routes>
           <Route path="/" element={<Home />} />
           <Route path="/books" element={<Books />} />
           <Route path="/books/:id" element={<BookDetails />} />
           <Route path="/cart" element={<Cart />} />
-          <Route path="/checkout" element={<Checkout />} />
+          <Route path="/login" element={<Login />} />
+          <Route path="/register" element={<Register />} />
+          <Route
+            path="/checkout"
+            element={
+              <ProtectedRoute>
+                <Checkout />
+              </ProtectedRoute>
+            }
+          />
           <Route
             path="/order-success/:id"
-            element={<OrderSuccess />}
+            element={
+              <ProtectedRoute>
+                <OrderSuccess />
+              </ProtectedRoute>
+            }
           />
-
+          <Route
+            path="/profile"
+            element={
+              <ProtectedRoute>
+                <Profile />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/change-password"
+            element={
+              <ProtectedRoute>
+                <ChangePassword />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/my-orders"
+            element={
+              <ProtectedRoute>
+                <MyOrders />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/my-orders/:id"
+            element={
+              <ProtectedRoute>
+                <OrderDetails />
+              </ProtectedRoute>
+            }
+          />
           <Route
             path="*"
             element={
               <Container sx={{ py: 5 }}>
-                <Typography variant="h5">
-                  Page not found
-                </Typography>
+                <Typography variant="h5">Page not found</Typography>
               </Container>
             }
           />

@@ -49,20 +49,28 @@ function Cart() {
     }
 
     void load();
-    return () => { active = false; };
+    return () => {
+      active = false;
+    };
   }, [syncStock]);
 
   const cartBooks = items.flatMap((item) => {
     const book = books.find((book) => book.id === item.bookId);
     return book ? [{ ...item, book }] : [];
   });
-  const total = cartBooks.reduce((sum, item) => sum + item.book.price * item.quantity, 0);
+  const total = cartBooks.reduce(
+    (sum, item) => sum + item.book.price * item.quantity,
+    0,
+  );
   const totalItems = cartBooks.reduce((sum, item) => sum + item.quantity, 0);
 
   return (
     <Container maxWidth="lg" sx={{ py: 4 }}>
       <Typography variant="h4" sx={{ mb: 3 }}>
-        Shopping Cart{!loading && !error && totalItems > 0 ? ` (${totalItems} ${totalItems === 1 ? "item" : "items"})` : ""}
+        Shopping Cart
+        {!loading && !error && totalItems > 0
+          ? ` (${totalItems} ${totalItems === 1 ? "item" : "items"})`
+          : ""}
       </Typography>
 
       {loading && <CircularProgress />}
@@ -94,13 +102,26 @@ function Cart() {
           <Paper variant="outlined" sx={{ p: { xs: 2, sm: 3 } }}>
             <Stack spacing={2} divider={<Divider flexItem />}>
               {cartBooks.map(({ book, quantity }) => (
-                <Stack key={book.id} direction="row" spacing={2} sx={{ alignItems: "flex-start" }}>
-                  <Box component={RouterLink} to={`/books/${book.id}`} sx={{ flexShrink: 0 }}>
+                <Stack
+                  key={book.id}
+                  direction="row"
+                  spacing={2}
+                  sx={{ alignItems: "flex-start" }}
+                >
+                  <Box
+                    component={RouterLink}
+                    to={`/books/${book.id}`}
+                    sx={{ flexShrink: 0 }}
+                  >
                     <Box
                       component="img"
                       src={book.image}
                       alt={book.title}
-                      sx={{ width: { xs: 65, sm: 85 }, height: 110, objectFit: "contain" }}
+                      sx={{
+                        width: { xs: 65, sm: 85 },
+                        height: 110,
+                        objectFit: "contain",
+                      }}
                     />
                   </Box>
 
@@ -108,53 +129,120 @@ function Cart() {
                     <Typography
                       component={RouterLink}
                       to={`/books/${book.id}`}
-                      sx={{ fontWeight: 700, color: "text.primary", textDecoration: "none", "&:hover": { textDecoration: "underline" } }}
+                      sx={{
+                        fontWeight: 700,
+                        color: "text.primary",
+                        textDecoration: "none",
+                        "&:hover": { textDecoration: "underline" },
+                      }}
                     >
                       {book.title}
                     </Typography>
-                    <Typography variant="body2" color="text.secondary">{book.author}</Typography>
-                    <Typography variant="body2" color="text.secondary" sx={{ mt: 0.5 }}>
+                    <Typography variant="body2" color="text.secondary">
+                      {book.author}
+                    </Typography>
+                    <Typography
+                      variant="body2"
+                      color="text.secondary"
+                      sx={{ mt: 0.5 }}
+                    >
                       ${book.price.toFixed(2)} each
                     </Typography>
 
-                    <Stack direction="row" spacing={0.5} sx={{ alignItems: "center", mt: 1 }}>
-                      <IconButton size="small" aria-label={`Decrease quantity of ${book.title}`} disabled={quantity <= 1} onClick={() => setQuantity(book.id, quantity - 1, book.stock)}>
+                    <Stack
+                      direction="row"
+                      spacing={0.5}
+                      sx={{ alignItems: "center", mt: 1 }}
+                    >
+                      <IconButton
+                        size="small"
+                        aria-label={`Decrease quantity of ${book.title}`}
+                        disabled={quantity <= 1}
+                        onClick={() =>
+                          setQuantity(book.id, quantity - 1, book.stock)
+                        }
+                      >
                         <RemoveIcon fontSize="small" />
                       </IconButton>
-                      <Typography sx={{ minWidth: 25, textAlign: "center" }}>{quantity}</Typography>
-                      <IconButton size="small" aria-label={`Increase quantity of ${book.title}`} disabled={quantity >= book.stock} onClick={() => setQuantity(book.id, quantity + 1, book.stock)}>
+                      <Typography sx={{ minWidth: 25, textAlign: "center" }}>
+                        {quantity}
+                      </Typography>
+                      <IconButton
+                        size="small"
+                        aria-label={`Increase quantity of ${book.title}`}
+                        disabled={quantity >= book.stock}
+                        onClick={() =>
+                          setQuantity(book.id, quantity + 1, book.stock)
+                        }
+                      >
                         <AddIcon fontSize="small" />
                       </IconButton>
                     </Stack>
                   </Box>
 
-                  <Stack spacing={1} sx={{ alignItems: "flex-end", flexShrink: 0 }}>
-                    <IconButton size="small" color="error" aria-label={`Remove ${book.title} from cart`} onClick={() => setBookToDelete(book)}>
+                  <Stack
+                    spacing={1}
+                    sx={{ alignItems: "flex-end", flexShrink: 0 }}
+                  >
+                    <IconButton
+                      size="small"
+                      color="error"
+                      aria-label={`Remove ${book.title} from cart`}
+                      onClick={() => setBookToDelete(book)}
+                    >
                       <DeleteIcon fontSize="small" />
                     </IconButton>
-                    <Typography sx={{ fontWeight: 700 }}>${(book.price * quantity).toFixed(2)}</Typography>
+                    <Typography sx={{ fontWeight: 700 }}>
+                      ${(book.price * quantity).toFixed(2)}
+                    </Typography>
                   </Stack>
                 </Stack>
               ))}
             </Stack>
           </Paper>
 
-          <Paper variant="outlined" sx={{ p: 3, bgcolor: "background.paper", borderRadius: 3 }}>
-            <Typography variant="h6" sx={{ mb: 2 }}>Order Summary</Typography>
-            <Stack direction="row" sx={{ justifyContent: "space-between", gap: 1, mb: 2 }}>
-              <Typography variant="body2" color="text.secondary">Discounts</Typography>
+          <Paper
+            variant="outlined"
+            sx={{ p: 3, bgcolor: "background.paper", borderRadius: 3 }}
+          >
+            <Typography variant="h6" sx={{ mb: 2 }}>
+              Order Summary
+            </Typography>
+            <Stack
+              direction="row"
+              sx={{ justifyContent: "space-between", gap: 1, mb: 2 }}
+            >
+              <Typography variant="body2" color="text.secondary">
+                Discounts
+              </Typography>
               <Typography variant="body2">Applied at checkout</Typography>
             </Stack>
             <Divider sx={{ mb: 2 }} />
-            <Stack direction="row" sx={{ justifyContent: "space-between", mb: 3 }}>
+            <Stack
+              direction="row"
+              sx={{ justifyContent: "space-between", mb: 3 }}
+            >
               <Typography sx={{ fontWeight: 700 }}>Subtotal</Typography>
-              <Typography sx={{ fontWeight: 700 }}>${total.toFixed(2)}</Typography>
+              <Typography sx={{ fontWeight: 700 }}>
+                ${total.toFixed(2)}
+              </Typography>
             </Stack>
             <Stack spacing={1.5}>
-              <Button component={RouterLink} to="/checkout" variant="contained" fullWidth size="large">
+              <Button
+                component={RouterLink}
+                to="/checkout"
+                variant="contained"
+                fullWidth
+                size="large"
+              >
                 Proceed to Checkout
               </Button>
-              <Button component={RouterLink} to="/books" variant="outlined" fullWidth>
+              <Button
+                component={RouterLink}
+                to="/books"
+                variant="outlined"
+                fullWidth
+              >
                 Continue Shopping
               </Button>
             </Stack>
@@ -162,19 +250,30 @@ function Cart() {
         </Box>
       )}
 
-      <Dialog open={bookToDelete !== null} onClose={() => setBookToDelete(null)} fullWidth maxWidth="xs" aria-labelledby="remove-book-title">
+      <Dialog
+        open={bookToDelete !== null}
+        onClose={() => setBookToDelete(null)}
+        fullWidth
+        maxWidth="xs"
+        aria-labelledby="remove-book-title"
+      >
         <DialogTitle id="remove-book-title">Remove book?</DialogTitle>
         <DialogContent>
           <DialogContentText>
-            Are you sure you want to remove {bookToDelete?.title} from your cart?
+            Are you sure you want to remove {bookToDelete?.title} from your
+            cart?
           </DialogContentText>
         </DialogContent>
         <DialogActions sx={{ p: 2 }}>
           <Button onClick={() => setBookToDelete(null)}>Cancel</Button>
-          <Button variant="contained" color="error" onClick={() => {
-            if (bookToDelete) removeBook(bookToDelete.id);
-            setBookToDelete(null);
-          }}>
+          <Button
+            variant="contained"
+            color="error"
+            onClick={() => {
+              if (bookToDelete) removeBook(bookToDelete.id);
+              setBookToDelete(null);
+            }}
+          >
             Remove
           </Button>
         </DialogActions>

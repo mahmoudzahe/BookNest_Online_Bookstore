@@ -1,4 +1,3 @@
-
 import { useEffect, useState } from "react";
 import {
   Box,
@@ -55,9 +54,7 @@ function Home() {
     .sort((a, b) => b.createdAt.localeCompare(a.createdAt))
     .slice(0, 4);
 
-  const bestRated = [...books]
-    .sort((a, b) => b.rating - a.rating)
-    .slice(0, 4);
+  const bestRated = books.filter((book) => book.rating > 0).sort((a, b) => b.rating - a.rating).slice(0, 4);
 
   if (loading) {
     return (
@@ -71,9 +68,7 @@ function Home() {
           }}
         >
           <CircularProgress />
-          <Typography color="text.secondary">
-            Loading books...
-          </Typography>
+          <Typography color="text.secondary">Loading books...</Typography>
         </Stack>
       </Container>
     );
@@ -90,10 +85,7 @@ function Home() {
           justifyContent: "center",
         }}
       >
-        <Stack
-          spacing={2}
-          sx={{ alignItems: "center", textAlign: "center" }}
-        >
+        <Stack spacing={2} sx={{ alignItems: "center", textAlign: "center" }}>
           <Typography variant="h5" sx={{ fontWeight: 600 }}>
             Unable to load books
           </Typography>
@@ -102,10 +94,7 @@ function Home() {
             {error} Please try again.
           </Typography>
 
-          <Button
-            variant="contained"
-            onClick={() => window.location.reload()}
-          >
+          <Button variant="contained" onClick={() => window.location.reload()}>
             Try Again
           </Button>
         </Stack>
@@ -117,7 +106,7 @@ function Home() {
     <Container maxWidth="lg" sx={{ py: 4 }}>
       <Box
         sx={{
-          bgcolor: "primary.main",
+          bgcolor: "#20566a",
           color: "white",
           p: { xs: 3, md: 5 },
           borderRadius: 2,
@@ -143,11 +132,9 @@ function Home() {
           component={RouterLink}
           to="/books"
           sx={{
-            bgcolor: "background.paper",
-            color: "primary.main",
-            "&:hover": {
-              bgcolor: "grey.100",
-            },
+            bgcolor: "#ffffff",
+            color: "#20566a",
+            "&:hover": { bgcolor: "#e8f3f5" },
           }}
         >
           Browse books
@@ -158,10 +145,7 @@ function Home() {
         Categories
       </Typography>
 
-      <Stack
-        direction="row"
-        sx={{ gap: 1, flexWrap: "wrap", mb: 4 }}
-      >
+      <Stack direction="row" sx={{ gap: 1, flexWrap: "wrap", mb: 4 }}>
         {categories.map((category) => (
           <Button
             key={category.id}
@@ -188,7 +172,11 @@ function Home() {
       <Typography variant="h5" sx={{ mt: 5, mb: 2 }}>
         Best rated books
       </Typography>
-      <BookGrid books={bestRated} />
+      {bestRated.length > 0 ? (
+        <BookGrid books={bestRated} />
+      ) : (
+        <Typography color="text.secondary">No ratings yet.</Typography>
+      )}
     </Container>
   );
 }

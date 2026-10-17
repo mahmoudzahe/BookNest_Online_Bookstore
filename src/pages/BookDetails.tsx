@@ -5,7 +5,6 @@ import {
   Button,
   CircularProgress,
   Container,
-  Divider,
   Paper,
   Rating,
   Stack,
@@ -13,6 +12,7 @@ import {
 } from "@mui/material";
 import { Link as RouterLink, useParams } from "react-router-dom";
 import { useCart } from "../cart/CartContext";
+import BookReviews from "../components/BookReviews";
 import { getBook, getCategories, getReviews } from "../services/booksApi";
 import type { Book, BookReview, Category } from "../types/book";
 
@@ -32,41 +32,37 @@ function BookDetails() {
       return;
     }
 
-    const bookId = id;
     let active = true;
-
-    async function load() {
-      try {
-        const [bookData, reviewData, categoryData] = await Promise.all([
-          getBook(bookId),
-          getReviews(bookId),
-          getCategories(),
-        ]);
-
+    Promise.all([getBook(id), getReviews(id), getCategories()])
+      .then(([bookData, reviewData, categoryData]) => {
         if (active) {
           setBook(bookData);
           setReviews(reviewData);
           setCategories(categoryData);
         }
-      } catch {
+      })
+      .catch(() => {
         if (active) setError("Book not found or the mock API is unavailable.");
-      } finally {
+      })
+      .finally(() => {
         if (active) setLoading(false);
-      }
-    }
+      });
 
-    void load();
-    return () => { active = false; };
+    return () => {
+      active = false;
+    };
   }, [id]);
 
   const quantity = items.find((item) => item.bookId === book?.id)?.quantity ?? 0;
+  const averageRating = reviews.length
+    ? reviews.reduce((sum, review) => sum + review.rating, 0) / reviews.length
+    : 0;
 
   return (
     <Container maxWidth="md" sx={{ py: 4 }}>
       <Button component={RouterLink} to="/books" sx={{ mb: 2 }}>
         ← Back to books
       </Button>
-
       {loading && <CircularProgress />}
       {error && <Alert severity="error">{error}</Alert>}
 
@@ -76,6 +72,7 @@ function BookDetails() {
             variant="outlined"
             sx={{
               p: 3,
+              borderRadius: 3,
               display: "grid",
               gridTemplateColumns: { xs: "1fr", md: "220px 1fr" },
               gap: 3,
@@ -93,10 +90,13 @@ function BookDetails() {
               <Typography>
                 Category: {categories.find((category) => category.id === book.categoryId)?.name ?? "Unknown"}
               </Typography>
-              <Rating value={book.rating} precision={0.5} readOnly />
-              <Typography sx={{ fontWeight: 700 }}>
-                ${book.price.toFixed(2)}
-              </Typography>
+              <Stack direction="row" spacing={1} sx={{ alignItems: "center" }}>
+                <Rating value={averageRating} precision={0.5} readOnly />
+                <Typography variant="body2" color="text.secondary">
+                  {averageRating.toFixed(1)} ({reviews.length} {reviews.length === 1 ? "review" : "reviews"})
+                </Typography>
+              </Stack>
+              <Typography sx={{ fontWeight: 700 }}>${book.price.toFixed(2)}</Typography>
               <Typography color={book.stock > 0 ? "success.main" : "error.main"}>
                 {book.stock > 0 ? `${book.stock} in stock` : "Out of stock"}
               </Typography>
@@ -111,22 +111,12 @@ function BookDetails() {
             </Stack>
           </Paper>
 
-          <Typography variant="h5" sx={{ mt: 4, mb: 2 }}>
-            Customer reviews
-          </Typography>
-
-          {reviews.length === 0 && (
-            <Typography color="text.secondary">No reviews yet.</Typography>
-          )}
-
-          {reviews.map((review) => (
-            <Box key={review.id} sx={{ mb: 2 }}>
-              <Typography sx={{ fontWeight: 600 }}>{review.userName}</Typography>
-              <Rating size="small" value={review.rating} readOnly />
-              <Typography>{review.comment}</Typography>
-              <Divider sx={{ mt: 2 }} />
-            </Box>
-          ))}
+          <BookReviews
+            book={book}
+            reviews={reviews}
+            averageRating={averageRating}
+            onReviewsChange={setReviews}
+          />
         </>
       )}
     </Container>

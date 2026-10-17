@@ -94,7 +94,7 @@ function BookCard({ book }: BookCardProps) {
           />
 
           <Typography variant="body2">
-            {book.rating}
+            {book.rating > 0 ? book.rating.toFixed(1) : "No Ratings"}
           </Typography>
         </Stack>
 
