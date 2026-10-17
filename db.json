@@ -47,7 +47,7 @@
       "price": 18,
       "stock": 8,
       "featured": true,
-      "rating": 4.5,
+      "rating": 3,
       "image": "https://covers.openlibrary.org/b/isbn/9780547928227-M.jpg",
       "createdAt": "2026-10-03",
       "categoryId": "2"
@@ -395,6 +395,46 @@
       "userName": "Layla",
       "rating": 5,
       "comment": "Detailed world and engaging storytelling."
+    },
+    {
+      "bookId": "2",
+      "userId": "cXvhLY8tgKg",
+      "userName": "jebreel batsh",
+      "rating": 4,
+      "comment": "good",
+      "id": "XReNfcpn1o0"
+    },
+    {
+      "bookId": "2",
+      "userId": "cXvhLY8tgKg",
+      "userName": "jebreel batsh",
+      "rating": 5,
+      "comment": "جيد",
+      "id": "c8mpxDjMNsg"
+    },
+    {
+      "bookId": "2",
+      "userId": "cXvhLY8tgKg",
+      "userName": "jebreel batsh",
+      "rating": 3,
+      "comment": "good",
+      "id": "4trZP7qXt00"
+    },
+    {
+      "bookId": "2",
+      "userId": "cXvhLY8tgKg",
+      "userName": "jebreel batsh",
+      "rating": 3,
+      "comment": "good",
+      "id": "m7fCPcoogLM"
+    },
+    {
+      "bookId": "4",
+      "userId": "cXvhLY8tgKg",
+      "userName": "jebreel batsh",
+      "rating": 4,
+      "comment": "bad",
+      "id": "1RCC2PjVw8I"
     }
   ],
   "coupons": [
@@ -407,7 +447,76 @@
   ],
   "orders": [
     {
-      "userId": "o9q3nkpXAVc",
+      "userId": "cXvhLY8tgKg",
+      "items": [
+        {
+          "bookId": "2",
+          "title": "The Hobbit",
+          "price": 18,
+          "quantity": 1
+        }
+      ],
+      "shipping": {
+        "fullName": "Mahmoud abd al qader",
+        "phone": "+1 (555) 247-6319",
+        "address": "Nablus"
+      },
+      "subtotal": 18,
+      "discount": 1.8,
+      "total": 16.2,
+      "couponCode": "SAVE10",
+      "status": "cancelled",
+      "createdAt": "2026-10-17T16:59:43.783Z",
+      "id": "REDZfO54K8o"
+    },
+    {
+      "userId": "cXvhLY8tgKg",
+      "items": [
+        {
+          "bookId": "2",
+          "title": "The Hobbit",
+          "price": 18,
+          "quantity": 1
+        }
+      ],
+      "shipping": {
+        "fullName": "Mahmoud abd al qader",
+        "phone": "+1 (555) 247-6319",
+        "address": "Nablus"
+      },
+      "subtotal": 18,
+      "discount": 0,
+      "total": 18,
+      "couponCode": null,
+      "status": "pending",
+      "createdAt": "2026-10-17T17:10:37.628Z",
+      "id": "SU9bpRCYqag"
+    },
+    {
+      "userId": "cXvhLY8tgKg",
+      "items": [
+        {
+          "bookId": "5",
+          "title": "Dune",
+          "price": 22,
+          "quantity": 1
+        }
+      ],
+      "shipping": {
+        "fullName": "Mahmoud abd al qader",
+        "phone": "+1 (555) 247-6319",
+        "address": "Nablus"
+      },
+      "subtotal": 22,
+      "discount": 0,
+      "total": 22,
+      "couponCode": null,
+      "status": "pending",
+      "createdAt": "2026-10-17T17:12:39.285Z",
+      "id": "7BgpSaPHB8w"
+    },
+    {
+      "userId": "cXvhLY8tgKg",
       "items": [
         {
           "bookId": "4",
@@ -419,51 +528,28 @@
       "shipping": {
         "fullName": "Mahmoud abd al qader",
         "phone": "+1 (555) 247-6319",
-        "address": "Nablus"
+        "address": "Tulkarem"
       },
       "subtotal": 11,
-      "discount": 1.1,
-      "total": 9.9,
-      "couponCode": "SAVE10",
-      "status": "cancelled",
-      "createdAt": "2026-10-15T17:26:16.543Z",
-      "id": "oRujuzFsyvM"
-    },
-    {
-      "userId": "o9q3nkpXAVc",
-      "items": [
-        {
-          "bookId": "2",
-          "title": "The Hobbit",
-          "price": 18,
-          "quantity": 2
-        }
-      ],
-      "shipping": {
-        "fullName": "Mahmoud abd al qader",
-        "phone": "+1 (555) 247-6319",
-        "address": "Nablus"
-      },
-      "subtotal": 36,
       "discount": 0,
-      "total": 36,
+      "total": 11,
       "couponCode": null,
-      "status": "cancelled",
-      "createdAt": "2026-10-15T18:00:55.327Z",
-      "id": "DkjiaKfL874"
+      "status": "pending",
+      "createdAt": "2026-10-17T17:29:14.268Z",
+      "id": "9bIISz7qMNw"
     }
   ],
   "users": [
     {
-      "firstName": "Testt",
-      "lastName": "User",
-      "email": "omar.khalil.test@example.com",
-      "phone": "+1 (555) 247-6319",
-      "address": "Nablus",
+      "firstName": "jebreel",
+      "lastName": "batsh",
+      "email": "jebreelbatsh795@gmail.com",
+      "phone": "",
+      "address": "",
       "role": "user",
-      "passwordHash": "6f449c2d0bac7c2a849827692de05d7d9bfcac2ef9474831ccc1d38056b57b9e",
-      "salt": "83a79cfa-9166-458b-a8ea-1c98968a02c0",
-      "id": "o9q3nkpXAVc"
+      "passwordHash": "40a9a28432c62d0f6249314941b4e84b788403ac5d3568e4c9a5e40823cf68bb",
+      "salt": "7f9727e6-c44a-4816-9966-3d313d455ee1",
+      "id": "cXvhLY8tgKg"
     }
   ],
   "$schema": "./node_modules/json-server/schema.json"

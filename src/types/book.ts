@@ -21,6 +21,7 @@ export interface BookReview {
   id: string;
   bookId: string;
   userName: string;
+  userId?: string;
   rating: number;
   comment: string;
 }

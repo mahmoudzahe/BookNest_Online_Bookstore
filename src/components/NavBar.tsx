@@ -19,13 +19,17 @@ import ShoppingCartOutlinedIcon from "@mui/icons-material/ShoppingCartOutlined";
 import { Link as RouterLink, useLocation, useNavigate } from "react-router-dom";
 import type { FormEvent, MouseEvent } from "react";
 import { useAuth } from "../auth/AuthContext";
+import { useThemeMode } from "../theme/ThemeModeContext";
 import { useCart } from "../cart/CartContext";
 import { getCategories } from "../services/booksApi";
 import type { Category } from "../types/book";
 import booknestLogo from "../assets/booknest-logo.svg";
+import DarkModeOutlinedIcon from "@mui/icons-material/DarkModeOutlined";
+import LightModeIcon from "@mui/icons-material/LightMode";
 
 function NavBar() {
   const { user, loading, logout } = useAuth();
+  const { darkMode, toggleDarkMode } = useThemeMode();
   const { totalItems } = useCart();
   const navigate = useNavigate();
   const location = useLocation();
@@ -77,9 +81,10 @@ function NavBar() {
       position="static"
       elevation={0}
       sx={{
-        bgcolor: "white",
-        color: "#172b40",
-        borderBottom: "1px solid #e1e8ed",
+        bgcolor: "background.paper",
+        color: "text.primary",
+        borderBottom: "1px solid",
+        borderColor: "divider",
       }}
     >
       <Container maxWidth="lg">
@@ -187,7 +192,7 @@ function NavBar() {
               slotProps={{ htmlInput: { "aria-label": "Search books" } }}
               sx={{
                 "& .MuiOutlinedInput-root": {
-                  bgcolor: "#f6f8fa",
+                  bgcolor: "action.hover",
                   borderRadius: 2,
                 },
               }}
@@ -206,6 +211,17 @@ function NavBar() {
             <Badge badgeContent={totalItems} color="error">
               <ShoppingCartOutlinedIcon />
             </Badge>
+          </IconButton>
+
+          <IconButton
+            onClick={toggleDarkMode}
+            color="primary"
+            aria-label={
+              darkMode ? "Switch to light mode" : "Switch to dark mode"
+            }
+            title={darkMode ? "Light mode" : "Dark mode"}
+          >
+            {darkMode ? <LightModeIcon /> : <DarkModeOutlinedIcon />}
           </IconButton>
 
           {!loading &&

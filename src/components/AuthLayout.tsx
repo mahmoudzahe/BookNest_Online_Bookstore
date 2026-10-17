@@ -17,9 +17,11 @@ function AuthLayout({ title, subtitle, children }: AuthLayoutProps) {
         display: "flex",
         alignItems: "center",
         justifyContent: "center",
-        bgcolor: "#eff5fb",
-        backgroundImage:
-          "radial-gradient(circle at 10% 85%, #c9ddec 0, transparent 38%), radial-gradient(circle at 95% 10%, #cddfea 0, transparent 42%)",
+        bgcolor: "background.default",
+        backgroundImage: (theme) =>
+          theme.palette.mode === "dark"
+            ? "radial-gradient(circle at 10% 85%, #233c47 0, transparent 38%), radial-gradient(circle at 95% 10%, #203842 0, transparent 42%)"
+            : "radial-gradient(circle at 10% 85%, #c9ddec 0, transparent 38%), radial-gradient(circle at 95% 10%, #cddfea 0, transparent 42%)",
       }}
     >
       <Container maxWidth="xs" disableGutters>
@@ -27,8 +29,8 @@ function AuthLayout({ title, subtitle, children }: AuthLayoutProps) {
           variant="outlined"
           sx={{
             borderRadius: 4,
-            bgcolor: "white",
-            borderColor: "#e5edf4",
+            bgcolor: "background.paper",
+            borderColor: "divider",
             boxShadow: "0 16px 45px rgba(24, 57, 88, 0.10)",
             p: { xs: 3, sm: 4 },
           }}
@@ -38,7 +40,7 @@ function AuthLayout({ title, subtitle, children }: AuthLayoutProps) {
             sx={{
               textAlign: "center",
               fontWeight: 700,
-              color: "#172b40",
+              color: "text.primary",
               mb: 1,
             }}
           >
