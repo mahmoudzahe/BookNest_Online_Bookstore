@@ -8,6 +8,7 @@ export interface AuthUser {
   phone: string;
   address: string;
   role: UserRole;
+  active: boolean;
 }
 
 export interface UserRecord extends AuthUser {

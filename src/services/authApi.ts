@@ -9,8 +9,17 @@ type ProfileData = Pick<
 >;
 
 function publicUser(user: UserRecord): AuthUser {
-  const { id, firstName, lastName, email, phone, address, role } = user;
-  return { id, firstName, lastName, email, phone, address, role };
+  const { id, firstName, lastName, email, phone, address, role, active } = user;
+  return {
+    id,
+    firstName,
+    lastName,
+    email,
+    phone,
+    address,
+    role,
+    active: active !== false,
+  };
 }
 
 async function hashPassword(password: string, salt: string) {
@@ -51,6 +60,11 @@ export async function loginUser(email: string, password: string) {
   ) {
     throw new Error("Invalid email or password.");
   }
+  if (found.active === false) {
+    throw new Error(
+      "Your account is suspended. Please contact the administrator.",
+    );
+  }
   return publicUser(found);
 }
 
@@ -68,6 +82,7 @@ export async function registerUser(data: RegisterData) {
     phone: "",
     address: "",
     role: "user",
+    active: true,
     passwordHash,
     salt,
   });

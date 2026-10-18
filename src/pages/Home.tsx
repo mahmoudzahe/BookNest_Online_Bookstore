@@ -1,13 +1,17 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import {
   Box,
   Button,
   CircularProgress,
   Container,
+  IconButton,
   Stack,
   Typography,
 } from "@mui/material";
+import ChevronLeftIcon from "@mui/icons-material/ChevronLeft";
+import ChevronRightIcon from "@mui/icons-material/ChevronRight";
 import { Link as RouterLink } from "react-router-dom";
+import BookCard from "../components/BookCard";
 import BookGrid from "../components/BookGrid";
 import { getBooks, getCategories } from "../services/booksApi";
 import type { Book, Category } from "../types/book";
@@ -17,6 +21,8 @@ function Home() {
   const [categories, setCategories] = useState<Category[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
+
+  const featuredRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     let active = true;
@@ -48,13 +54,23 @@ function Home() {
     };
   }, []);
 
-  const featured = books.filter((book) => book.featured).slice(0, 4);
+  const featured = books.filter((book) => book.featured);
 
   const newest = [...books]
     .sort((a, b) => b.createdAt.localeCompare(a.createdAt))
     .slice(0, 4);
 
-  const bestRated = books.filter((book) => book.rating > 0).sort((a, b) => b.rating - a.rating).slice(0, 4);
+  const bestRated = books
+    .filter((book) => book.rating > 0)
+    .sort((a, b) => b.rating - a.rating)
+    .slice(0, 4);
+
+  function scrollFeatured(direction: number) {
+    featuredRef.current?.scrollBy({
+      left: direction * featuredRef.current.clientWidth,
+      behavior: "smooth",
+    });
+  }
 
   if (loading) {
     return (
@@ -85,7 +101,13 @@ function Home() {
           justifyContent: "center",
         }}
       >
-        <Stack spacing={2} sx={{ alignItems: "center", textAlign: "center" }}>
+        <Stack
+          spacing={2}
+          sx={{
+            alignItems: "center",
+            textAlign: "center",
+          }}
+        >
           <Typography variant="h5" sx={{ fontWeight: 600 }}>
             Unable to load books
           </Typography>
@@ -159,19 +181,82 @@ function Home() {
         ))}
       </Stack>
 
-      <Typography variant="h5" sx={{ mb: 2 }}>
-        Featured books
-      </Typography>
-      <BookGrid books={featured} />
+      <Box
+        sx={{
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "space-between",
+          mb: 2,
+        }}
+      >
+        <Typography variant="h5">Featured books</Typography>
+
+        {featured.length > 4 && (
+          <Box>
+            <IconButton
+              aria-label="Previous featured books"
+              onClick={() => scrollFeatured(-1)}
+            >
+              <ChevronLeftIcon />
+            </IconButton>
+
+            <IconButton
+              aria-label="Next featured books"
+              onClick={() => scrollFeatured(1)}
+            >
+              <ChevronRightIcon />
+            </IconButton>
+          </Box>
+        )}
+      </Box>
+
+      {featured.length > 0 ? (
+        <Box
+          ref={featuredRef}
+          sx={{
+            display: "flex",
+            gap: 2,
+            overflowX: "auto",
+            scrollBehavior: "smooth",
+            scrollSnapType: "x mandatory",
+            scrollbarWidth: "none",
+            "&::-webkit-scrollbar": {
+              display: "none",
+            },
+          }}
+        >
+          {featured.map((book) => (
+            <Box
+              key={book.id}
+              sx={{
+                flex: {
+                  xs: "0 0 100%",
+                  sm: "0 0 calc((100% - 16px) / 2)",
+                  md: "0 0 calc((100% - 32px) / 3)",
+                  lg: "0 0 calc((100% - 48px) / 4)",
+                },
+                minWidth: 0,
+                scrollSnapAlign: "start",
+              }}
+            >
+              <BookCard book={book} />
+            </Box>
+          ))}
+        </Box>
+      ) : (
+        <Typography color="text.secondary">No featured books yet.</Typography>
+      )}
 
       <Typography variant="h5" sx={{ mt: 5, mb: 2 }}>
         Newest books
       </Typography>
+
       <BookGrid books={newest} />
 
       <Typography variant="h5" sx={{ mt: 5, mb: 2 }}>
         Best rated books
       </Typography>
+
       {bestRated.length > 0 ? (
         <BookGrid books={bestRated} />
       ) : (

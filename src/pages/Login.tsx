@@ -51,8 +51,10 @@ function Login() {
   async function onSubmit(data: LoginForm) {
     setError("");
     try {
-      await login(data.email, data.password);
-      navigate(redirect, { replace: true });
+      const account = await login(data.email, data.password);
+      navigate(account.role === "admin" ? "/admin" : redirect, {
+        replace: true,
+      });
     } catch (error) {
       setError(
         error instanceof Error
@@ -62,7 +64,10 @@ function Login() {
     }
   }
 
-  if (user) return <Navigate to={redirect} replace />;
+  if (user)
+    return (
+      <Navigate to={user.role === "admin" ? "/admin" : redirect} replace />
+    );
 
   return (
     <AuthLayout
