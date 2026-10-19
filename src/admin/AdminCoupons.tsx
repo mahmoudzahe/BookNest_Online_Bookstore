@@ -1,18 +1,15 @@
 import { useEffect, useState } from "react";
 import {
+  Box,
   Button,
   Chip,
   IconButton,
   Paper,
   Switch,
-  Table,
-  TableBody,
-  TableCell,
-  TableContainer,
-  TableHead,
-  TableRow,
   Tooltip,
 } from "@mui/material";
+import { DataGrid } from "@mui/x-data-grid";
+import type { GridColDef } from "@mui/x-data-grid";
 import AddIcon from "@mui/icons-material/Add";
 import EditOutlinedIcon from "@mui/icons-material/EditOutlined";
 import DeleteOutlinedIcon from "@mui/icons-material/DeleteOutlined";
@@ -60,7 +57,6 @@ export default function AdminCoupons() {
       .finally(() => {
         if (active) setLoading(false);
       });
-
     return () => {
       active = false;
     };
@@ -88,16 +84,16 @@ export default function AdminCoupons() {
   async function handleSave() {
     const code = form.code.trim().toUpperCase();
     if (!/^[A-Z0-9_-]{3,20}$/.test(code)) {
-      setError("Code must be 3–20 characters: letters, numbers, - or _.");
-      return;
+      return setError(
+        "Code must be 3–20 characters: letters, numbers, - or _.",
+      );
     }
     if (
       !Number.isFinite(form.discountPercent) ||
       form.discountPercent < 1 ||
       form.discountPercent > 100
     ) {
-      setError("Discount must be between 1 and 100%.");
-      return;
+      return setError("Discount must be between 1 and 100%.");
     }
     if (
       coupons.some(
@@ -105,10 +101,8 @@ export default function AdminCoupons() {
           coupon.id !== editing?.id && coupon.code.toUpperCase() === code,
       )
     ) {
-      setError("This coupon code already exists.");
-      return;
+      return setError("This coupon code already exists.");
     }
-
     setSaving(true);
     setError("");
     try {
@@ -134,7 +128,6 @@ export default function AdminCoupons() {
 
   async function handleDelete() {
     if (!deleting) return;
-
     setSaving(true);
     setError("");
     try {
@@ -148,6 +141,75 @@ export default function AdminCoupons() {
       setSaving(false);
     }
   }
+
+  const columns: GridColDef<Coupon>[] = [
+    { field: "code", headerName: "Code", minWidth: 135, flex: 1.3 },
+    {
+      field: "discountPercent",
+      headerName: "Discount",
+      minWidth: 100,
+      flex: 1,
+      renderCell: ({ row }) => `${row.discountPercent}%`,
+    },
+    {
+      field: "active",
+      headerName: "Status",
+      minWidth: 120,
+      flex: 1,
+      renderCell: ({ row }) => (
+        <Chip
+          size="small"
+          label={row.active ? "Active" : "Inactive"}
+          color={row.active ? "success" : "default"}
+        />
+      ),
+    },
+    {
+      field: "enabled",
+      headerName: "Enabled",
+      minWidth: 100,
+      flex: 1,
+      sortable: false,
+      renderCell: ({ row }) => (
+        <Switch
+          size="small"
+          checked={row.active}
+          onChange={() => void toggle(row)}
+          slotProps={{ input: { "aria-label": `Enable ${row.code}` } }}
+        />
+      ),
+    },
+    {
+      field: "actions",
+      headerName: "Actions",
+      width: 115,
+      sortable: false,
+      filterable: false,
+      renderCell: ({ row }) => (
+        <Box sx={{ display: "flex", height: "100%", alignItems: "center" }}>
+          <Tooltip title="Edit">
+            <IconButton
+              size="small"
+              onClick={() => showForm(row)}
+              aria-label={`Edit ${row.code}`}
+            >
+              <EditOutlinedIcon fontSize="small" />
+            </IconButton>
+          </Tooltip>
+          <Tooltip title="Delete">
+            <IconButton
+              size="small"
+              color="error"
+              onClick={() => setDeleting(row)}
+              aria-label={`Delete ${row.code}`}
+            >
+              <DeleteOutlinedIcon fontSize="small" />
+            </IconButton>
+          </Tooltip>
+        </Box>
+      ),
+    },
+  ];
 
   return (
     <>
@@ -165,76 +227,29 @@ export default function AdminCoupons() {
         }
       />
       <LoadError loading={loading} error={!open ? error : ""} />
-
       {!loading && (
-        <Paper variant="outlined" sx={{ p: 2, borderRadius: 3 }}>
-          <TableContainer>
-            <Table size="small">
-              <TableHead>
-                <TableRow>
-                  <TableCell>Code</TableCell>
-                  <TableCell>Discount</TableCell>
-                  <TableCell>Status</TableCell>
-                  <TableCell>Enabled</TableCell>
-                  <TableCell align="right">Actions</TableCell>
-                </TableRow>
-              </TableHead>
-              <TableBody>
-                {coupons.map((coupon) => (
-                  <TableRow key={coupon.id} hover>
-                    <TableCell sx={{ fontWeight: 700 }}>
-                      {coupon.code}
-                    </TableCell>
-                    <TableCell>{coupon.discountPercent}%</TableCell>
-                    <TableCell>
-                      <Chip
-                        size="small"
-                        label={coupon.active ? "Active" : "Inactive"}
-                        color={coupon.active ? "success" : "default"}
-                      />
-                    </TableCell>
-                    <TableCell>
-                      <Switch
-                        size="small"
-                        checked={coupon.active}
-                        onChange={() => void toggle(coupon)}
-                        slotProps={{
-                          input: { "aria-label": `Enable ${coupon.code}` },
-                        }}
-                      />
-                    </TableCell>
-                    <TableCell align="right">
-                      <Tooltip title="Edit">
-                        <IconButton
-                          size="small"
-                          onClick={() => showForm(coupon)}
-                        >
-                          <EditOutlinedIcon fontSize="small" />
-                        </IconButton>
-                      </Tooltip>
-                      <Tooltip title="Delete">
-                        <IconButton
-                          size="small"
-                          color="error"
-                          onClick={() => setDeleting(coupon)}
-                        >
-                          <DeleteOutlinedIcon fontSize="small" />
-                        </IconButton>
-                      </Tooltip>
-                    </TableCell>
-                  </TableRow>
-                ))}
-                {coupons.length === 0 && (
-                  <TableRow>
-                    <TableCell colSpan={5}>No coupons yet.</TableCell>
-                  </TableRow>
-                )}
-              </TableBody>
-            </Table>
-          </TableContainer>
+        <Paper variant="outlined" sx={{ borderRadius: 3, p: 2 }}>
+          <Box
+            sx={{ height: Math.min(8, Math.max(coupons.length, 2)) * 56 + 110 }}
+          >
+            <DataGrid
+              rows={coupons}
+              columns={columns}
+              rowHeight={56}
+              pageSizeOptions={[8, 16, 24]}
+              initialState={{
+                pagination: { paginationModel: { page: 0, pageSize: 8 } },
+              }}
+              disableRowSelectionOnClick
+              disableColumnMenu
+              sx={{
+                border: 0,
+                "& .MuiDataGrid-columnHeaderTitle": { fontWeight: 700 },
+              }}
+            />
+          </Box>
         </Paper>
       )}
-
       <CouponFormDialog
         open={open}
         editing={Boolean(editing)}

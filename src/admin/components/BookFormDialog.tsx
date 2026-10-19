@@ -1,5 +1,7 @@
+import { useEffect, useState } from "react";
 import {
   Alert,
+  Box,
   Button,
   Dialog,
   DialogActions,
@@ -9,7 +11,9 @@ import {
   MenuItem,
   Switch,
   TextField,
+  Typography,
 } from "@mui/material";
+import CloudUploadOutlinedIcon from "@mui/icons-material/CloudUploadOutlined";
 import type { Book, Category } from "../../types/book";
 import type { BookInput } from "../../services/adminApi";
 
@@ -36,6 +40,41 @@ export default function BookFormDialog({
   onSave,
   onClose,
 }: BookFormDialogProps) {
+  const [imageError, setImageError] = useState("");
+
+  useEffect(() => {
+    setImageError("");
+  }, [open, book]);
+
+  async function selectImage(file?: File) {
+    if (!file) return;
+    if (!["image/jpeg", "image/png", "image/webp"].includes(file.type)) {
+      setImageError("Choose a JPG, PNG, or WebP image.");
+      return;
+    }
+    if (file.size > 5 * 1024 * 1024) {
+      setImageError("Choose an image smaller than 5 MB.");
+      return;
+    }
+
+    try {
+      // Keep the mock db.json small and make the cover survive refresh.
+      const bitmap = await createImageBitmap(file);
+      const scale = Math.min(1, 600 / bitmap.width, 900 / bitmap.height);
+      const canvas = document.createElement("canvas");
+      canvas.width = Math.round(bitmap.width * scale);
+      canvas.height = Math.round(bitmap.height * scale);
+      const context = canvas.getContext("2d");
+      if (!context) throw new Error("Canvas not supported");
+      context.drawImage(bitmap, 0, 0, canvas.width, canvas.height);
+      bitmap.close();
+      onChange("image", canvas.toDataURL("image/webp", 0.8));
+      setImageError("");
+    } catch {
+      setImageError("Could not read the image. Try another file.");
+    }
+  }
+
   return (
     <Dialog
       open={open}
@@ -84,12 +123,6 @@ export default function BookFormDialog({
           ))}
         </TextField>
         <TextField
-          label="Image URL"
-          value={form.image}
-          onChange={(event) => onChange("image", event.target.value)}
-          required
-        />
-        <TextField
           label="Price ($)"
           type="number"
           value={form.price}
@@ -114,6 +147,70 @@ export default function BookFormDialog({
           required
           sx={{ gridColumn: "1 / -1" }}
         />
+
+        <Box
+          onDragOver={(event) => event.preventDefault()}
+          onDrop={(event) => {
+            event.preventDefault();
+            void selectImage(event.dataTransfer.files[0]);
+          }}
+          sx={{
+            gridColumn: "1 / -1",
+            border: "2px dashed",
+            borderColor: "divider",
+            borderRadius: 2,
+            p: 2,
+            display: "flex",
+            flexDirection: { xs: "column", sm: "row" },
+            alignItems: "center",
+            justifyContent: "center",
+            gap: 2,
+          }}
+        >
+          {form.image && (
+            <Box
+              component="img"
+              src={form.image}
+              alt="Book cover preview"
+              sx={{ width: 65, height: 88, objectFit: "contain" }}
+            />
+          )}
+          <Box sx={{ textAlign: "center" }}>
+            <Typography variant="body2" sx={{ mb: 1 }}>
+              Drag your book cover here, or choose an image
+            </Typography>
+            <Button
+              component="label"
+              variant="outlined"
+              size="small"
+              startIcon={<CloudUploadOutlinedIcon />}
+            >
+              {form.image ? "Change Image" : "Choose Image"}
+              <input
+                hidden
+                type="file"
+                accept="image/jpeg,image/png,image/webp"
+                onChange={(event) => {
+                  void selectImage(event.target.files?.[0]);
+                  event.target.value = "";
+                }}
+              />
+            </Button>
+            <Typography
+              variant="caption"
+              color="text.secondary"
+              sx={{ mt: 1, display: "block" }}
+            >
+              JPG, PNG or WebP · Max 5 MB
+            </Typography>
+          </Box>
+        </Box>
+        {imageError && (
+          <Alert severity="error" sx={{ gridColumn: "1 / -1" }}>
+            {imageError}
+          </Alert>
+        )}
+
         <FormControlLabel
           label="Featured book"
           control={

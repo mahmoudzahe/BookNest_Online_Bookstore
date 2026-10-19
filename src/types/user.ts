@@ -9,6 +9,7 @@ export interface AuthUser {
   address: string;
   role: UserRole;
   active: boolean;
+  archived?: boolean;
 }
 
 export interface UserRecord extends AuthUser {

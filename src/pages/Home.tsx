@@ -1,4 +1,5 @@
 import { useEffect, useRef, useState } from "react";
+import type { UIEvent } from "react";
 import {
   Box,
   Button,
@@ -6,38 +7,38 @@ import {
   Container,
   IconButton,
   Stack,
+  useMediaQuery,
   Typography,
 } from "@mui/material";
 import ChevronLeftIcon from "@mui/icons-material/ChevronLeft";
 import ChevronRightIcon from "@mui/icons-material/ChevronRight";
 import { Link as RouterLink } from "react-router-dom";
+import { useTheme } from "@mui/material/styles";
 import BookCard from "../components/BookCard";
 import BookGrid from "../components/BookGrid";
-import { getBooks, getCategories } from "../services/booksApi";
-import type { Book, Category } from "../types/book";
+import { getBooks } from "../services/booksApi";
+import type { Book } from "../types/book";
 
 function Home() {
   const [books, setBooks] = useState<Book[]>([]);
-  const [categories, setCategories] = useState<Category[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
 
   const featuredRef = useRef<HTMLDivElement>(null);
+  const [featuredIndex, setFeaturedIndex] = useState(0);
+  const theme = useTheme();
+  const isSm = useMediaQuery(theme.breakpoints.up("sm"));
+  const isMd = useMediaQuery(theme.breakpoints.up("md"));
+  const isLg = useMediaQuery(theme.breakpoints.up("lg"));
 
   useEffect(() => {
     let active = true;
 
     async function load() {
       try {
-        const [bookData, categoryData] = await Promise.all([
-          getBooks(),
-          getCategories(),
-        ]);
+        const bookData = await getBooks();
 
-        if (active) {
-          setBooks(bookData);
-          setCategories(categoryData);
-        }
+        if (active) setBooks(bookData);
       } catch {
         if (active) {
           setError("We couldn't load the books right now.");
@@ -55,6 +56,9 @@ function Home() {
   }, []);
 
   const featured = books.filter((book) => book.featured);
+  const visibleBooks = isLg ? 4 : isMd ? 3 : isSm ? 2 : 1;
+  const lastFeaturedIndex = Math.max(0, featured.length - visibleBooks);
+  const currentFeaturedIndex = Math.min(featuredIndex, lastFeaturedIndex);
 
   const newest = [...books]
     .sort((a, b) => b.createdAt.localeCompare(a.createdAt))
@@ -65,11 +69,29 @@ function Home() {
     .sort((a, b) => b.rating - a.rating)
     .slice(0, 4);
 
-  function scrollFeatured(direction: number) {
-    featuredRef.current?.scrollBy({
-      left: direction * featuredRef.current.clientWidth,
+  function scrollFeatured(index: number) {
+    const list = featuredRef.current;
+    if (!list) return;
+
+    const next = Math.max(0, Math.min(index, lastFeaturedIndex));
+    const scrollableWidth = list.scrollWidth - list.clientWidth;
+    list.scrollTo({
+      left: lastFeaturedIndex
+        ? (next / lastFeaturedIndex) * scrollableWidth
+        : 0,
       behavior: "smooth",
     });
+    setFeaturedIndex(next);
+  }
+
+  function handleFeaturedScroll(event: UIEvent<HTMLDivElement>) {
+    const list = event.currentTarget;
+    const scrollableWidth = list.scrollWidth - list.clientWidth;
+    setFeaturedIndex(
+      scrollableWidth > 0
+        ? Math.round((list.scrollLeft / scrollableWidth) * lastFeaturedIndex)
+        : 0,
+    );
   }
 
   if (loading) {
@@ -164,55 +186,13 @@ function Home() {
       </Box>
 
       <Typography variant="h5" sx={{ mb: 2 }}>
-        Categories
+        Featured books
       </Typography>
-
-      <Stack direction="row" sx={{ gap: 1, flexWrap: "wrap", mb: 4 }}>
-        {categories.map((category) => (
-          <Button
-            key={category.id}
-            variant="outlined"
-            component={RouterLink}
-            to={`/books?category=${category.id}`}
-            size="small"
-          >
-            {category.name}
-          </Button>
-        ))}
-      </Stack>
-
-      <Box
-        sx={{
-          display: "flex",
-          alignItems: "center",
-          justifyContent: "space-between",
-          mb: 2,
-        }}
-      >
-        <Typography variant="h5">Featured books</Typography>
-
-        {featured.length > 4 && (
-          <Box>
-            <IconButton
-              aria-label="Previous featured books"
-              onClick={() => scrollFeatured(-1)}
-            >
-              <ChevronLeftIcon />
-            </IconButton>
-
-            <IconButton
-              aria-label="Next featured books"
-              onClick={() => scrollFeatured(1)}
-            >
-              <ChevronRightIcon />
-            </IconButton>
-          </Box>
-        )}
-      </Box>
 
       {featured.length > 0 ? (
         <Box
           ref={featuredRef}
+          onScroll={handleFeaturedScroll}
           sx={{
             display: "flex",
             gap: 2,
@@ -245,6 +225,72 @@ function Home() {
         </Box>
       ) : (
         <Typography color="text.secondary">No featured books yet.</Typography>
+      )}
+
+      {lastFeaturedIndex > 0 && (
+        <Box
+          sx={{
+            display: "flex",
+            justifyContent: "center",
+            alignItems: "center",
+            gap: 2,
+            mt: 2.5,
+          }}
+        >
+          <IconButton
+            aria-label="Previous featured book"
+            disabled={currentFeaturedIndex === 0}
+            onClick={() => scrollFeatured(currentFeaturedIndex - 1)}
+            sx={{
+              border: "1px solid",
+              borderColor: "divider",
+              bgcolor: "background.paper",
+            }}
+          >
+            <ChevronLeftIcon />
+          </IconButton>
+
+          <Box sx={{ display: "flex", alignItems: "center", gap: 0.75 }}>
+            {Array.from({ length: lastFeaturedIndex + 1 }, (_, index) => (
+              <Box
+                key={index}
+                component="button"
+                type="button"
+                aria-label={`Show featured book ${index + 1}`}
+                aria-current={
+                  index === currentFeaturedIndex ? "step" : undefined
+                }
+                onClick={() => scrollFeatured(index)}
+                sx={{
+                  width: index === currentFeaturedIndex ? 22 : 9,
+                  height: 9,
+                  p: 0,
+                  border: 0,
+                  borderRadius: 5,
+                  bgcolor:
+                    index === currentFeaturedIndex
+                      ? "primary.main"
+                      : "action.disabledBackground",
+                  cursor: "pointer",
+                  transition: "width 0.2s ease",
+                }}
+              />
+            ))}
+          </Box>
+
+          <IconButton
+            aria-label="Next featured book"
+            disabled={currentFeaturedIndex === lastFeaturedIndex}
+            onClick={() => scrollFeatured(currentFeaturedIndex + 1)}
+            sx={{
+              border: "1px solid",
+              borderColor: "divider",
+              bgcolor: "background.paper",
+            }}
+          >
+            <ChevronRightIcon />
+          </IconButton>
+        </Box>
       )}
 
       <Typography variant="h5" sx={{ mt: 5, mb: 2 }}>

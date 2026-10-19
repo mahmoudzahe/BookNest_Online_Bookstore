@@ -9,7 +9,17 @@ type ProfileData = Pick<
 >;
 
 function publicUser(user: UserRecord): AuthUser {
-  const { id, firstName, lastName, email, phone, address, role, active } = user;
+  const {
+    id,
+    firstName,
+    lastName,
+    email,
+    phone,
+    address,
+    role,
+    active,
+    archived,
+  } = user;
   return {
     id,
     firstName,
@@ -19,6 +29,7 @@ function publicUser(user: UserRecord): AuthUser {
     address,
     role,
     active: active !== false,
+    archived: archived === true,
   };
 }
 
@@ -59,6 +70,11 @@ export async function loginUser(email: string, password: string) {
     (await hashPassword(password, found.salt)) !== found.passwordHash
   ) {
     throw new Error("Invalid email or password.");
+  }
+  if (found.archived === true) {
+    throw new Error(
+      "This account has been archived. Contact the administrator.",
+    );
   }
   if (found.active === false) {
     throw new Error(

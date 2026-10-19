@@ -7,35 +7,38 @@ import {
   IconButton,
   MenuItem,
   Paper,
-  Table,
-  TableBody,
-  TableCell,
-  TableContainer,
-  TableHead,
-  TableRow,
+  Tab,
+  Tabs,
   TextField,
   Tooltip,
   Typography,
 } from "@mui/material";
+import { DataGrid } from "@mui/x-data-grid";
+import type { GridColDef } from "@mui/x-data-grid";
 import DeleteOutlinedIcon from "@mui/icons-material/DeleteOutlined";
+import RestoreIcon from "@mui/icons-material/Restore";
 import { useAuth } from "../auth/AuthContext";
 import {
   changeUserActive,
   changeUserRole,
   getAdminOrders,
   getAdminUsers,
-  removeUser,
+  setUserArchived,
 } from "../services/adminApi";
 import type { AuthUser } from "../types/user";
 import type { Order } from "../types/order";
 import { LoadError, PageHeading } from "./AdminCommon";
 import ConfirmDialog from "./components/ConfirmDialog";
 
+type UserRow = AuthUser & { orderCount: number };
+
 export default function AdminUsers() {
   const { user: currentUser } = useAuth();
   const [users, setUsers] = useState<AuthUser[]>([]);
   const [orders, setOrders] = useState<Order[]>([]);
+  const [tab, setTab] = useState<"active" | "archived">("active");
   const [query, setQuery] = useState("");
+  const [roleUserId, setRoleUserId] = useState("");
   const [deleting, setDeleting] = useState<AuthUser | null>(null);
   const [changingStatus, setChangingStatus] = useState<AuthUser | null>(null);
   const [loading, setLoading] = useState(true);
@@ -55,9 +58,10 @@ export default function AdminUsers() {
     let active = true;
     Promise.all([getAdminUsers(), getAdminOrders()])
       .then(([allUsers, allOrders]) => {
-        if (!active) return;
-        setUsers(allUsers);
-        setOrders(allOrders);
+        if (active) {
+          setUsers(allUsers);
+          setOrders(allOrders);
+        }
       })
       .catch(() => {
         if (active) setError("Could not load users.");
@@ -65,19 +69,24 @@ export default function AdminUsers() {
       .finally(() => {
         if (active) setLoading(false);
       });
-
     return () => {
       active = false;
     };
   }, []);
 
-  async function setRole(user: AuthUser, role: AuthUser["role"]) {
-    if (user.id === currentUser?.id) return;
-
-    setError("");
+  async function setRole(role: AuthUser["role"]) {
+    const selected = users.find((user) => user.id === roleUserId);
+    if (
+      !selected ||
+      selected.id === currentUser?.id ||
+      selected.archived ||
+      !selected.active
+    )
+      return;
     setSaving(true);
+    setError("");
     try {
-      await changeUserRole(user.id, role);
+      await changeUserRole(selected.id, role);
       await load();
     } catch {
       setError("Could not update the user's role.");
@@ -87,9 +96,12 @@ export default function AdminUsers() {
   }
 
   async function toggleAccountStatus() {
-    if (!changingStatus || changingStatus.id === currentUser?.id) return;
-    if (changingStatus.role === "admin") return;
-
+    if (
+      !changingStatus ||
+      changingStatus.id === currentUser?.id ||
+      changingStatus.role === "admin"
+    )
+      return;
     setSaving(true);
     setError("");
     try {
@@ -103,36 +115,185 @@ export default function AdminUsers() {
     }
   }
 
-  async function deleteAccount() {
+  async function updateArchive() {
     if (!deleting || deleting.id === currentUser?.id) return;
-
     setSaving(true);
     setError("");
     try {
-      const latestOrders = await getAdminOrders();
-      if (latestOrders.some((order) => order.userId === deleting.id)) {
-        setError(
-          "This user has orders and cannot be deleted without affecting order history.",
-        );
-        setDeleting(null);
-        return;
-      }
-      await removeUser(deleting.id);
+      await setUserArchived(deleting.id, !deleting.archived);
       await load();
+      if (roleUserId === deleting.id) setRoleUserId("");
       setDeleting(null);
     } catch {
-      setError("Could not delete the user.");
+      setError("Could not update the user archive.");
       setDeleting(null);
     } finally {
       setSaving(false);
     }
   }
 
-  const displayedUsers = users.filter((user) =>
-    `${user.firstName} ${user.lastName} ${user.email}`
-      .toLowerCase()
-      .includes(query.toLowerCase().trim()),
+  const activeUsers = users.filter((user) => !user.archived);
+  const archivedUsers = users.filter((user) => user.archived);
+  const roleUsers = activeUsers.filter(
+    (user) => user.id !== currentUser?.id && user.active,
   );
+  const roleUser = roleUsers.find((user) => user.id === roleUserId);
+  const rows: UserRow[] = (tab === "active" ? activeUsers : archivedUsers)
+    .filter((user) =>
+      `${user.firstName} ${user.lastName} ${user.email}`
+        .toLowerCase()
+        .includes(query.toLowerCase().trim()),
+    )
+    .map((user) => ({
+      ...user,
+      orderCount: orders.filter((order) => order.userId === user.id).length,
+    }));
+
+  const columns: GridColDef<UserRow>[] = [
+    {
+      field: "firstName",
+      headerName: "User",
+      flex: 2,
+      minWidth: 230,
+      renderCell: ({ row }) => (
+        <Box
+          sx={{
+            display: "flex",
+            alignItems: "center",
+            height: "100%",
+            gap: 1.5,
+            minWidth: 0,
+          }}
+        >
+          <Avatar
+            sx={{
+              bgcolor: "primary.main",
+              width: 34,
+              height: 34,
+              fontSize: "0.9rem",
+            }}
+          >
+            {row.firstName.charAt(0).toUpperCase()}
+          </Avatar>
+          <Box
+            sx={{
+              minWidth: 0,
+              display: "flex",
+              flexDirection: "column",
+              justifyContent: "center",
+            }}
+          >
+            <Typography
+              variant="body2"
+              noWrap
+              sx={{ fontWeight: 700, lineHeight: 1.4 }}
+            >
+              {row.firstName} {row.lastName}
+              {row.id === currentUser?.id ? " (You)" : ""}
+            </Typography>
+            <Typography
+              variant="caption"
+              color="text.secondary"
+              noWrap
+              sx={{ lineHeight: 1.4 }}
+            >
+              {row.email}
+            </Typography>
+          </Box>
+        </Box>
+      ),
+    },
+    {
+      field: "phone",
+      headerName: "Phone",
+      flex: 1,
+      minWidth: 145,
+      valueGetter: (value) => value || "—",
+    },
+    { field: "orderCount", headerName: "Orders", width: 95, type: "number" },
+    {
+      field: "active",
+      headerName: "Status",
+      width: 120,
+      renderCell: ({ row }) => (
+        <Chip
+          size="small"
+          variant="outlined"
+          label={row.active ? "Active" : "Suspended"}
+          color={row.active ? "success" : "warning"}
+        />
+      ),
+    },
+    {
+      field: "actions",
+      headerName: "Actions",
+      width: 190,
+      sortable: false,
+      filterable: false,
+      renderCell: ({ row }) => {
+        const isSelf = row.id === currentUser?.id;
+        return (
+          <Box
+            sx={{
+              display: "flex",
+              alignItems: "center",
+              height: "100%",
+              gap: 0.5,
+            }}
+          >
+            {!row.archived && (
+              <Tooltip
+                title={
+                  isSelf
+                    ? "Cannot suspend your own account"
+                    : row.role === "admin"
+                      ? "Only customers can be suspended"
+                      : ""
+                }
+              >
+                <span>
+                  <Button
+                    size="small"
+                    variant="outlined"
+                    color={row.active ? "warning" : "success"}
+                    disabled={saving || isSelf || row.role === "admin"}
+                    onClick={() => setChangingStatus(row)}
+                  >
+                    {row.active ? "Suspend" : "Activate"}
+                  </Button>
+                </span>
+              </Tooltip>
+            )}
+            <Tooltip
+              title={
+                isSelf
+                  ? "Cannot archive your own account"
+                  : row.archived
+                    ? "Restore user"
+                    : "Archive user"
+              }
+            >
+              <span>
+                <IconButton
+                  size="small"
+                  color={row.archived ? "primary" : "error"}
+                  disabled={saving || isSelf}
+                  onClick={() => setDeleting(row)}
+                  aria-label={row.archived ? "Restore user" : "Archive user"}
+                >
+                  {row.archived ? (
+                    <RestoreIcon fontSize="small" />
+                  ) : (
+                    <DeleteOutlinedIcon fontSize="small" />
+                  )}
+                </IconButton>
+              </span>
+            </Tooltip>
+          </Box>
+        );
+      },
+    },
+  ];
 
   return (
     <>
@@ -141,170 +302,85 @@ export default function AdminUsers() {
         description="Manage customer accounts and administrator access."
       />
       <LoadError loading={loading} error={error} />
-
       {!loading && (
         <Paper variant="outlined" sx={{ p: 2, borderRadius: 3 }}>
-          <TextField
-            size="small"
-            label="Search users"
-            value={query}
-            onChange={(event) => setQuery(event.target.value)}
-            sx={{ mb: 2, minWidth: { xs: "100%", sm: 300 } }}
-          />
-          <TableContainer>
-            <Table size="small">
-              <TableHead>
-                <TableRow>
-                  <TableCell>User</TableCell>
-                  <TableCell>Phone</TableCell>
-                  <TableCell>Orders</TableCell>
-                  <TableCell>Role</TableCell>
-                  <TableCell>Status</TableCell>
-                  <TableCell align="right">Actions</TableCell>
-                </TableRow>
-              </TableHead>
-              <TableBody>
-                {displayedUsers.map((user) => {
-                  const count = orders.filter(
-                    (order) => order.userId === user.id,
-                  ).length;
-                  const isSelf = user.id === currentUser?.id;
-
-                  return (
-                    <TableRow key={user.id} hover>
-                      <TableCell>
-                        <Box
-                          sx={{
-                            display: "flex",
-                            alignItems: "center",
-                            gap: 1.5,
-                            minWidth: 200,
-                          }}
-                        >
-                          <Avatar
-                            sx={{
-                              bgcolor: "primary.main",
-                              width: 34,
-                              height: 34,
-                              fontSize: "0.9rem",
-                            }}
-                          >
-                            {user.firstName.charAt(0).toUpperCase()}
-                          </Avatar>
-                          <Box>
-                            <Typography sx={{ fontWeight: 600 }}>
-                              {user.firstName} {user.lastName}
-                              {isSelf ? " (You)" : ""}
-                            </Typography>
-                            <Typography
-                              color="text.secondary"
-                              variant="caption"
-                            >
-                              {user.email}
-                            </Typography>
-                          </Box>
-                        </Box>
-                      </TableCell>
-                      <TableCell>{user.phone || "—"}</TableCell>
-                      <TableCell>{count}</TableCell>
-                      <TableCell>
-                        {isSelf ? (
-                          <Chip size="small" label={user.role} />
-                        ) : (
-                          <TextField
-                            select
-                            size="small"
-                            value={user.role}
-                            disabled={saving || !user.active}
-                            onChange={(event) =>
-                              void setRole(
-                                user,
-                                event.target.value as AuthUser["role"],
-                              )
-                            }
-                            sx={{ minWidth: 108 }}
-                          >
-                            <MenuItem value="user">User</MenuItem>
-                            <MenuItem value="admin">Admin</MenuItem>
-                          </TextField>
-                        )}
-                      </TableCell>
-                      <TableCell>
-                        <Chip
-                          size="small"
-                          label={user.active ? "Active" : "Suspended"}
-                          color={user.active ? "success" : "warning"}
-                          variant="outlined"
-                        />
-                      </TableCell>
-                      <TableCell align="right">
-                        <Box
-                          sx={{
-                            display: "flex",
-                            alignItems: "center",
-                            justifyContent: "flex-end",
-                            gap: 1,
-                          }}
-                        >
-                          <Tooltip
-                            title={
-                              isSelf
-                                ? "Cannot suspend your own account"
-                                : user.role === "admin"
-                                  ? "Only customer accounts can be suspended"
-                                  : ""
-                            }
-                          >
-                            <span>
-                              <Button
-                                size="small"
-                                variant="outlined"
-                                color={user.active ? "warning" : "success"}
-                                disabled={
-                                  saving || isSelf || user.role === "admin"
-                                }
-                                onClick={() => setChangingStatus(user)}
-                              >
-                                {user.active ? "Suspend" : "Activate"}
-                              </Button>
-                            </span>
-                          </Tooltip>
-                          <Tooltip
-                            title={
-                              isSelf
-                                ? "Cannot delete your own account"
-                                : count
-                                  ? "Cannot delete a user with orders"
-                                  : "Delete"
-                            }
-                          >
-                            <span>
-                              <IconButton
-                                color="error"
-                                size="small"
-                                disabled={isSelf || count > 0 || saving}
-                                onClick={() => setDeleting(user)}
-                              >
-                                <DeleteOutlinedIcon fontSize="small" />
-                              </IconButton>
-                            </span>
-                          </Tooltip>
-                        </Box>
-                      </TableCell>
-                    </TableRow>
-                  );
-                })}
-                {displayedUsers.length === 0 && (
-                  <TableRow>
-                    <TableCell colSpan={6}>No users found.</TableCell>
-                  </TableRow>
-                )}
-              </TableBody>
-            </Table>
-          </TableContainer>
+          <Tabs
+            value={tab}
+            onChange={(_event, value: "active" | "archived") => setTab(value)}
+            sx={{ mb: 2 }}
+          >
+            <Tab label={`Active (${activeUsers.length})`} value="active" />
+            <Tab
+              label={`Archived (${archivedUsers.length})`}
+              value="archived"
+            />
+          </Tabs>
+          <Box sx={{ display: "flex", flexWrap: "wrap", gap: 2, mb: 2 }}>
+            <TextField
+              size="small"
+              label="Search users"
+              value={query}
+              onChange={(event) => setQuery(event.target.value)}
+              sx={{ minWidth: 210, flex: 1 }}
+            />
+            {tab === "active" && (
+              <>
+                <TextField
+                  select
+                  size="small"
+                  label="Change role for"
+                  value={roleUserId}
+                  onChange={(event) => setRoleUserId(event.target.value)}
+                  sx={{ minWidth: 190 }}
+                >
+                  <MenuItem value="">Select user</MenuItem>
+                  {roleUsers.map((user) => (
+                    <MenuItem key={user.id} value={user.id}>
+                      {user.firstName} {user.lastName}
+                    </MenuItem>
+                  ))}
+                </TextField>
+                <TextField
+                  select
+                  size="small"
+                  label="Role"
+                  value={roleUser?.role ?? ""}
+                  disabled={!roleUser || saving}
+                  onChange={(event) =>
+                    void setRole(event.target.value as AuthUser["role"])
+                  }
+                  sx={{ minWidth: 115 }}
+                >
+                  <MenuItem value="user">User</MenuItem>
+                  <MenuItem value="admin">Admin</MenuItem>
+                </TextField>
+              </>
+            )}
+          </Box>
+          <Box
+            sx={{
+              height: Math.min(8, Math.max(rows.length, 2)) * 64 + 110,
+              width: "100%",
+            }}
+          >
+            <DataGrid
+              rows={rows}
+              columns={columns}
+              rowHeight={64}
+              pageSizeOptions={[8, 16, 24]}
+              initialState={{
+                pagination: { paginationModel: { page: 0, pageSize: 8 } },
+              }}
+              disableRowSelectionOnClick
+              disableColumnMenu
+              sx={{
+                border: 0,
+                "& .MuiDataGrid-columnHeaderTitle": { fontWeight: 700 },
+              }}
+            />
+          </Box>
         </Paper>
       )}
-
       <ConfirmDialog
         open={Boolean(changingStatus)}
         title={
@@ -312,25 +388,25 @@ export default function AdminUsers() {
         }
         busy={saving}
         confirmLabel={changingStatus?.active ? "Suspend" : "Activate"}
-        busyLabel="Saving..."
         confirmColor={changingStatus?.active ? "warning" : "success"}
         onClose={() => setChangingStatus(null)}
         onConfirm={() => void toggleAccountStatus()}
       >
         {changingStatus?.active ? "Suspend" : "Activate"} account{" "}
-        <strong>{changingStatus?.email}</strong>? All existing orders will keep
-        their current status.
+        <strong>{changingStatus?.email}</strong>? Existing orders will keep
+        their status.
       </ConfirmDialog>
-
       <ConfirmDialog
         open={Boolean(deleting)}
-        title="Delete User?"
+        title={deleting?.archived ? "Restore User?" : "Archive User?"}
         busy={saving}
+        confirmLabel={deleting?.archived ? "Restore" : "Archive"}
         onClose={() => setDeleting(null)}
-        onConfirm={() => void deleteAccount()}
+        onConfirm={() => void updateArchive()}
       >
-        Delete account <strong>{deleting?.email}</strong>? This cannot be
-        undone.
+        {deleting?.archived ? "Restore" : "Archive"} account{" "}
+        <strong>{deleting?.email}</strong>? Its orders will stay unchanged.
+        Archived users cannot log in.
       </ConfirmDialog>
     </>
   );

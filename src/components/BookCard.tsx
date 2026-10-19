@@ -1,4 +1,3 @@
-
 import {
   Box,
   Button,
@@ -21,8 +20,7 @@ interface BookCardProps {
 function BookCard({ book }: BookCardProps) {
   const { items, addBook } = useCart();
 
-  const quantity =
-    items.find((item) => item.bookId === book.id)?.quantity ?? 0;
+  const quantity = items.find((item) => item.bookId === book.id)?.quantity ?? 0;
 
   return (
     <Card
@@ -86,12 +84,7 @@ function BookCard({ book }: BookCardProps) {
             my: 1,
           }}
         >
-          <Rating
-            value={book.rating}
-            precision={0.5}
-            size="small"
-            readOnly
-          />
+          <Rating value={book.rating} precision={0.5} size="small" readOnly />
 
           <Typography variant="body2">
             {book.rating > 0 ? book.rating.toFixed(1) : "No Ratings"}
@@ -104,8 +97,16 @@ function BookCard({ book }: BookCardProps) {
 
         <Chip
           size="small"
-          label={book.stock > 0 ? "Available" : "Out of stock"}
-          color={book.stock > 0 ? "success" : "default"}
+          label={
+            book.stock === 0
+              ? "Out of Stock"
+              : book.stock <= 5
+                ? "Low Stock"
+                : "Available"
+          }
+          color={
+            book.stock === 0 ? "error" : book.stock <= 5 ? "warning" : "success"
+          }
         />
       </CardContent>
 

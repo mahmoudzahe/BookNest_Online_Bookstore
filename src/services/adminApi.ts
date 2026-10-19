@@ -51,6 +51,9 @@ export async function getAdminOrders(): Promise<Order[]> {
 export async function changeOrderStatus(id: string, status: Order["status"]) {
   await api.patch(`/orders/${id}`, { status });
 }
+export async function setOrderArchived(id: string, archived: boolean) {
+  await api.patch(`/orders/${id}`, { archived });
+}
 
 function publicUser({
   id,
@@ -61,6 +64,7 @@ function publicUser({
   address,
   role,
   active,
+  archived,
 }: UserRecord): AuthUser {
   return {
     id,
@@ -71,6 +75,7 @@ function publicUser({
     address,
     role,
     active: active !== false,
+    archived: archived === true,
   };
 }
 export async function getAdminUsers(): Promise<AuthUser[]> {
@@ -83,8 +88,8 @@ export async function changeUserRole(id: string, role: AuthUser["role"]) {
 export async function changeUserActive(id: string, active: boolean) {
   await api.patch(`/users/${id}`, { active });
 }
-export async function removeUser(id: string) {
-  await api.delete(`/users/${id}`);
+export async function setUserArchived(id: string, archived: boolean) {
+  await api.patch(`/users/${id}`, { archived });
 }
 
 export async function getAdminCoupons(): Promise<Coupon[]> {

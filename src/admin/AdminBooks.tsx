@@ -1,13 +1,6 @@
-import { useEffect, useMemo, useState } from "react";
-import {
-  Box,
-  Button,
-  MenuItem,
-  Pagination,
-  Paper,
-  Stack,
-  TextField,
-} from "@mui/material";
+import { useCallback, useEffect, useMemo, useState } from "react";
+import { Button, Paper, Stack, TextField } from "@mui/material";
+import type { GridPaginationModel } from "@mui/x-data-grid";
 import AddIcon from "@mui/icons-material/Add";
 import { getBooks, getCategories } from "../services/booksApi";
 import { removeBook, saveBook, setBookFeatured } from "../services/adminApi";
@@ -18,7 +11,6 @@ import BooksTable from "./components/BooksTable";
 import BookFormDialog from "./components/BookFormDialog";
 import ConfirmDialog from "./components/ConfirmDialog";
 
-const PAGE_SIZE = 8;
 const emptyBook: BookInput = {
   title: "",
   author: "",
@@ -34,8 +26,10 @@ export default function AdminBooks() {
   const [books, setBooks] = useState<Book[]>([]);
   const [categories, setCategories] = useState<Category[]>([]);
   const [query, setQuery] = useState("");
-  const [sort, setSort] = useState("newest");
-  const [page, setPage] = useState(1);
+  const [pagination, setPagination] = useState<GridPaginationModel>({
+    page: 0,
+    pageSize: 8,
+  });
   const [editing, setEditing] = useState<Book | null>(null);
   const [form, setForm] = useState<BookInput>(emptyBook);
   const [open, setOpen] = useState(false);
@@ -79,22 +73,10 @@ export default function AdminBooks() {
       .filter((book) =>
         `${book.title} ${book.author}`.toLowerCase().includes(search),
       )
-      .sort((a, b) => {
-        if (sort === "title") return a.title.localeCompare(b.title);
-        if (sort === "price") return a.price - b.price;
-        if (sort === "stock") return a.stock - b.stock;
-        return b.createdAt.localeCompare(a.createdAt);
-      });
-  }, [books, query, sort]);
+      .sort((a, b) => b.createdAt.localeCompare(a.createdAt));
+  }, [books, query]);
 
-  const pageCount = Math.max(1, Math.ceil(filteredBooks.length / PAGE_SIZE));
-  const currentPage = Math.min(page, pageCount);
-  const displayedBooks = filteredBooks.slice(
-    (currentPage - 1) * PAGE_SIZE,
-    currentPage * PAGE_SIZE,
-  );
-
-  function showForm(book?: Book) {
+  const showForm = useCallback((book?: Book) => {
     setEditing(book ?? null);
     setForm(
       book
@@ -112,7 +94,7 @@ export default function AdminBooks() {
     );
     setError("");
     setOpen(true);
-  }
+  }, []);
 
   function change<K extends keyof BookInput>(key: K, value: BookInput[K]) {
     setForm((current) => ({ ...current, [key]: value }));
@@ -131,7 +113,7 @@ export default function AdminBooks() {
       form.stock < 0
     ) {
       setError(
-        "Enter all book details. Price must be positive and stock must be a whole number (0 or more).",
+        "Fill all fields and choose a book cover. Price must be positive and stock a whole number (0 or more).",
       );
       return;
     }
@@ -145,7 +127,6 @@ export default function AdminBooks() {
           title: form.title.trim(),
           author: form.author.trim(),
           description: form.description.trim(),
-          image: form.image.trim(),
         },
         editing?.id,
       );
@@ -160,7 +141,6 @@ export default function AdminBooks() {
 
   async function handleDelete() {
     if (!deleting) return;
-
     setSaving(true);
     setError("");
     try {
@@ -175,7 +155,7 @@ export default function AdminBooks() {
     }
   }
 
-  async function toggleFeatured(book: Book) {
+  const toggleFeatured = useCallback(async (book: Book) => {
     setError("");
     try {
       await setBookFeatured(book.id, !book.featured);
@@ -183,7 +163,7 @@ export default function AdminBooks() {
     } catch {
       setError("Could not update featured status.");
     }
-  }
+  }, []);
 
   return (
     <>
@@ -204,57 +184,27 @@ export default function AdminBooks() {
 
       {!loading && (
         <Paper variant="outlined" sx={{ borderRadius: 3, p: 2 }}>
-          <Stack
-            direction={{ xs: "column", sm: "row" }}
-            spacing={2}
-            sx={{ mb: 2 }}
-          >
+          <Stack sx={{ mb: 2 }}>
             <TextField
               size="small"
               label="Search title or author"
               value={query}
               onChange={(event) => {
                 setQuery(event.target.value);
-                setPage(1);
+                setPagination((current) => ({ ...current, page: 0 }));
               }}
-              sx={{ flexGrow: 1 }}
             />
-            <TextField
-              select
-              size="small"
-              label="Sort by"
-              value={sort}
-              onChange={(event) => {
-                setSort(event.target.value);
-                setPage(1);
-              }}
-              sx={{ minWidth: 165 }}
-            >
-              <MenuItem value="newest">Newest</MenuItem>
-              <MenuItem value="title">Title A–Z</MenuItem>
-              <MenuItem value="price">Price: Low–High</MenuItem>
-              <MenuItem value="stock">Lowest Stock</MenuItem>
-            </TextField>
           </Stack>
 
           <BooksTable
-            books={displayedBooks}
+            books={filteredBooks}
             categories={categories}
+            paginationModel={pagination}
+            onPaginationChange={setPagination}
             onEdit={showForm}
             onDelete={setDeleting}
             onToggleFeatured={(book) => void toggleFeatured(book)}
           />
-
-          {pageCount > 1 && (
-            <Box sx={{ display: "flex", justifyContent: "center", mt: 2 }}>
-              <Pagination
-                count={pageCount}
-                page={currentPage}
-                onChange={(_, value) => setPage(value)}
-                color="primary"
-              />
-            </Box>
-          )}
         </Paper>
       )}
 

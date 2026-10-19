@@ -1,21 +1,25 @@
 import { useEffect, useMemo, useState } from "react";
 import {
+  Box,
   Button,
   Chip,
   MenuItem,
   Paper,
-  Table,
-  TableBody,
-  TableCell,
-  TableContainer,
-  TableHead,
-  TableRow,
+  Tabs,
+  Tab,
   TextField,
+  Tooltip,
+  IconButton,
 } from "@mui/material";
+import { DataGrid } from "@mui/x-data-grid";
+import type { GridColDef } from "@mui/x-data-grid";
+import DeleteOutlineIcon from "@mui/icons-material/DeleteOutlined";
+import RestoreIcon from "@mui/icons-material/Restore";
 import {
   getAdminOrders,
   getAdminUsers,
   changeOrderStatus,
+  setOrderArchived,
 } from "../services/adminApi";
 import type { Order } from "../types/order";
 import type { AuthUser } from "../types/user";
@@ -23,12 +27,15 @@ import { LoadError, PageHeading, money } from "./AdminCommon";
 import OrderDetailsDialog, {
   orderStatuses,
 } from "./components/OrderDetailsDialog";
+import ConfirmDialog from "./components/ConfirmDialog";
 
 export default function AdminOrders() {
   const [orders, setOrders] = useState<Order[]>([]);
   const [users, setUsers] = useState<AuthUser[]>([]);
+  const [tab, setTab] = useState<"active" | "archived">("active");
   const [filter, setFilter] = useState("all");
   const [selected, setSelected] = useState<Order | null>(null);
+  const [archiving, setArchiving] = useState<Order | null>(null);
   const [status, setStatus] = useState<Order["status"]>("pending");
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
@@ -38,9 +45,10 @@ export default function AdminOrders() {
     let active = true;
     Promise.all([getAdminOrders(), getAdminUsers()])
       .then(([allOrders, allUsers]) => {
-        if (!active) return;
-        setOrders(allOrders);
-        setUsers(allUsers);
+        if (active) {
+          setOrders(allOrders);
+          setUsers(allUsers);
+        }
       })
       .catch(() => {
         if (active) setError("Could not load orders.");
@@ -48,18 +56,19 @@ export default function AdminOrders() {
       .finally(() => {
         if (active) setLoading(false);
       });
-
     return () => {
       active = false;
     };
   }, []);
 
-  const displayedOrders = useMemo(
+  const rows = useMemo(
     () =>
-      filter === "all"
-        ? orders
-        : orders.filter((order) => order.status === filter),
-    [orders, filter],
+      orders.filter(
+        (order) =>
+          Boolean(order.archived) === (tab === "archived") &&
+          (filter === "all" || order.status === filter),
+      ),
+    [orders, filter, tab],
   );
 
   function openOrder(order: Order) {
@@ -70,7 +79,6 @@ export default function AdminOrders() {
 
   async function updateStatus() {
     if (!selected) return;
-
     setSaving(true);
     setError("");
     try {
@@ -84,6 +92,106 @@ export default function AdminOrders() {
     }
   }
 
+  async function updateArchive() {
+    if (!archiving) return;
+    setSaving(true);
+    setError("");
+    try {
+      await setOrderArchived(archiving.id, !archiving.archived);
+      setOrders(await getAdminOrders());
+      setArchiving(null);
+    } catch {
+      setError("Could not update order archive.");
+      setArchiving(null);
+    } finally {
+      setSaving(false);
+    }
+  }
+
+  const columns: GridColDef<Order>[] = [
+    {
+      field: "id",
+      headerName: "Order ID",
+      flex: 1.2,
+      minWidth: 155,
+      renderCell: ({ row }) => `#${row.id}`,
+    },
+    {
+      field: "customer",
+      headerName: "Customer",
+      flex: 1.2,
+      minWidth: 155,
+      valueGetter: (_value, row) => {
+        const customer = users.find((user) => user.id === row.userId);
+        return customer
+          ? `${customer.firstName} ${customer.lastName}`
+          : row.shipping.fullName;
+      },
+    },
+    {
+      field: "createdAt",
+      headerName: "Date",
+      minWidth: 125,
+      flex: 1,
+      renderCell: ({ row }) => new Date(row.createdAt).toLocaleDateString(),
+    },
+    {
+      field: "status",
+      headerName: "Status",
+      minWidth: 120,
+      flex: 1,
+      renderCell: ({ row }) => (
+        <Chip
+          size="small"
+          label={row.status}
+          color={
+            row.status === "delivered"
+              ? "success"
+              : row.status === "cancelled"
+                ? "error"
+                : "default"
+          }
+        />
+      ),
+    },
+    {
+      field: "total",
+      headerName: "Total",
+      minWidth: 110,
+      type: "number",
+      flex: 0.8,
+      renderCell: ({ row }) => money(row.total),
+    },
+    {
+      field: "actions",
+      headerName: "Actions",
+      minWidth: 140,
+      sortable: false,
+      filterable: false,
+      renderCell: ({ row }) => (
+        <Box sx={{ display: "flex", alignItems: "center", height: "100%" }}>
+          <Button size="small" onClick={() => openOrder(row)}>
+            View
+          </Button>
+          <Tooltip title={row.archived ? "Restore order" : "Archive order"}>
+            <IconButton
+              size="small"
+              color={row.archived ? "primary" : "error"}
+              aria-label={row.archived ? "Restore order" : "Archive order"}
+              onClick={() => setArchiving(row)}
+            >
+              {row.archived ? (
+                <RestoreIcon fontSize="small" />
+              ) : (
+                <DeleteOutlineIcon fontSize="small" />
+              )}
+            </IconButton>
+          </Tooltip>
+        </Box>
+      ),
+    },
+  ];
+
   return (
     <>
       <PageHeading
@@ -91,9 +199,22 @@ export default function AdminOrders() {
         description="Track customer purchases and update their status."
       />
       <LoadError loading={loading} error={selected ? "" : error} />
-
       {!loading && (
-        <Paper variant="outlined" sx={{ borderRadius: 3, p: 2 }}>
+        <Paper variant="outlined" sx={{ p: 2, borderRadius: 3 }}>
+          <Tabs
+            value={tab}
+            onChange={(_event, value: "active" | "archived") => setTab(value)}
+            sx={{ mb: 2 }}
+          >
+            <Tab
+              label={`Active (${orders.filter((order) => !order.archived).length})`}
+              value="active"
+            />
+            <Tab
+              label={`Archived (${orders.filter((order) => order.archived).length})`}
+              value="archived"
+            />
+          </Tabs>
           <TextField
             select
             size="small"
@@ -109,67 +230,30 @@ export default function AdminOrders() {
               </MenuItem>
             ))}
           </TextField>
-          <TableContainer>
-            <Table size="small">
-              <TableHead>
-                <TableRow>
-                  <TableCell>Order ID</TableCell>
-                  <TableCell>Customer</TableCell>
-                  <TableCell>Date</TableCell>
-                  <TableCell>Status</TableCell>
-                  <TableCell align="right">Total</TableCell>
-                  <TableCell align="right">Details</TableCell>
-                </TableRow>
-              </TableHead>
-              <TableBody>
-                {displayedOrders.map((order) => {
-                  const customer = users.find(
-                    (user) => user.id === order.userId,
-                  );
-                  return (
-                    <TableRow key={order.id} hover>
-                      <TableCell>#{order.id}</TableCell>
-                      <TableCell>
-                        {customer
-                          ? `${customer.firstName} ${customer.lastName}`
-                          : order.shipping.fullName}
-                      </TableCell>
-                      <TableCell>
-                        {new Date(order.createdAt).toLocaleDateString()}
-                      </TableCell>
-                      <TableCell>
-                        <Chip
-                          size="small"
-                          label={order.status}
-                          color={
-                            order.status === "delivered"
-                              ? "success"
-                              : order.status === "cancelled"
-                                ? "error"
-                                : "default"
-                          }
-                        />
-                      </TableCell>
-                      <TableCell align="right">{money(order.total)}</TableCell>
-                      <TableCell align="right">
-                        <Button size="small" onClick={() => openOrder(order)}>
-                          View
-                        </Button>
-                      </TableCell>
-                    </TableRow>
-                  );
-                })}
-                {displayedOrders.length === 0 && (
-                  <TableRow>
-                    <TableCell colSpan={6}>No orders found.</TableCell>
-                  </TableRow>
-                )}
-              </TableBody>
-            </Table>
-          </TableContainer>
+          <Box
+            sx={{
+              height: Math.min(8, Math.max(rows.length, 2)) * 56 + 110,
+              width: "100%",
+            }}
+          >
+            <DataGrid
+              rows={rows}
+              columns={columns}
+              rowHeight={56}
+              pageSizeOptions={[8, 16, 24]}
+              initialState={{
+                pagination: { paginationModel: { page: 0, pageSize: 8 } },
+              }}
+              disableRowSelectionOnClick
+              disableColumnMenu
+              sx={{
+                border: 0,
+                "& .MuiDataGrid-columnHeaderTitle": { fontWeight: 700 },
+              }}
+            />
+          </Box>
         </Paper>
       )}
-
       <OrderDetailsDialog
         order={selected}
         status={status}
@@ -179,6 +263,18 @@ export default function AdminOrders() {
         onClose={() => setSelected(null)}
         onSave={() => void updateStatus()}
       />
+      <ConfirmDialog
+        open={Boolean(archiving)}
+        busy={saving}
+        title={archiving?.archived ? "Restore Order?" : "Archive Order?"}
+        confirmLabel={archiving?.archived ? "Restore" : "Archive"}
+        onClose={() => setArchiving(null)}
+        onConfirm={() => void updateArchive()}
+      >
+        {archiving?.archived ? "Restore" : "Archive"} order{" "}
+        <strong>#{archiving?.id}</strong>? Its status and all order details will
+        be kept.
+      </ConfirmDialog>
     </>
   );
 }

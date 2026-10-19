@@ -11,13 +11,60 @@ import {
   TableRow,
   Typography,
 } from "@mui/material";
+import { DataGrid } from "@mui/x-data-grid";
+import type { GridColDef } from "@mui/x-data-grid";
 import { Link as RouterLink } from "react-router-dom";
 import MenuBookOutlinedIcon from "@mui/icons-material/MenuBookOutlined";
 import ReceiptLongOutlinedIcon from "@mui/icons-material/ReceiptLongOutlined";
-import PeopleOutlineIcon from "@mui/icons-material/People";
+import PeopleIcon from "@mui/icons-material/People";
 import PaymentsOutlinedIcon from "@mui/icons-material/PaymentsOutlined";
+import type { Order } from "../types/order";
 import { getAdminOverview } from "../services/adminApi";
 import { LoadError, PageHeading, money } from "./AdminCommon";
+
+const orderColumns: GridColDef<Order>[] = [
+  {
+    field: "id",
+    headerName: "Order",
+    minWidth: 140,
+    flex: 1,
+    renderCell: ({ row }) => `#${row.id}`,
+  },
+  {
+    field: "createdAt",
+    headerName: "Date",
+    minWidth: 125,
+    flex: 1,
+    renderCell: ({ row }) => new Date(row.createdAt).toLocaleDateString(),
+  },
+  {
+    field: "status",
+    headerName: "Status",
+    minWidth: 115,
+    flex: 1,
+    renderCell: ({ row }) => (
+      <Chip
+        size="small"
+        label={row.status}
+        color={
+          row.status === "delivered"
+            ? "success"
+            : row.status === "cancelled"
+              ? "error"
+              : "default"
+        }
+      />
+    ),
+  },
+  {
+    field: "total",
+    headerName: "Total",
+    type: "number",
+    minWidth: 105,
+    flex: 0.75,
+    renderCell: ({ row }) => money(row.total),
+  },
+];
 
 export default function AdminDashboard() {
   const [data, setData] = useState<Awaited<
@@ -39,7 +86,6 @@ export default function AdminDashboard() {
       .finally(() => {
         if (active) setLoading(false);
       });
-
     return () => {
       active = false;
     };
@@ -48,7 +94,9 @@ export default function AdminDashboard() {
   const lowStock = (data?.books ?? [])
     .filter((book) => book.stock <= 5)
     .sort((a, b) => a.stock - b.stock);
-  const recentOrders = (data?.orders ?? []).slice(0, 5);
+  const recentOrders = (data?.orders ?? [])
+    .filter((order) => !order.archived)
+    .slice(0, 5);
   const deliveredRevenue = (data?.orders ?? [])
     .filter((order) => order.status === "delivered")
     .reduce((total, order) => total + order.total, 0);
@@ -62,16 +110,19 @@ export default function AdminDashboard() {
     },
     {
       label: "Total Orders",
-      count: String(data?.orders.length ?? 0),
+      count: String(
+        data?.orders.filter((order) => !order.archived).length ?? 0,
+      ),
       icon: <ReceiptLongOutlinedIcon />,
       link: "/admin/orders",
     },
     {
       label: "Customers",
       count: String(
-        data?.users.filter((user) => user.role === "user").length ?? 0,
+        data?.users.filter((user) => user.role === "user" && !user.archived)
+          .length ?? 0,
       ),
-      icon: <PeopleOutlineIcon />,
+      icon: <PeopleIcon />,
       link: "/admin/users",
     },
     {
@@ -122,10 +173,23 @@ export default function AdminDashboard() {
                 }}
               >
                 <Box>
-                  <Typography variant="body2" color="text.secondary">
+                  <Typography
+                    sx={{
+                      fontSize: "0.95rem",
+                      fontWeight: 600,
+                      color: "text.secondary",
+                    }}
+                  >
                     {stat.label}
                   </Typography>
-                  <Typography variant="h4" sx={{ mt: 1, fontWeight: 800 }}>
+                  <Typography
+                    sx={{
+                      fontSize: { xs: "2rem", md: "2.3rem" },
+                      fontWeight: 800,
+                      mt: 0.75,
+                      lineHeight: 1.2,
+                    }}
+                  >
                     {stat.count}
                   </Typography>
                 </Box>
@@ -154,52 +218,30 @@ export default function AdminDashboard() {
               variant="outlined"
               sx={{ p: 2, borderRadius: 3, minWidth: 0 }}
             >
-              <Typography variant="h6" sx={{ fontWeight: 700, mb: 1 }}>
+              <Typography variant="h6" sx={{ fontWeight: 700, mb: 2 }}>
                 Recent Orders
               </Typography>
-              <TableContainer>
-                <Table size="small">
-                  <TableHead>
-                    <TableRow>
-                      <TableCell>Order</TableCell>
-                      <TableCell>Date</TableCell>
-                      <TableCell>Status</TableCell>
-                      <TableCell align="right">Total</TableCell>
-                    </TableRow>
-                  </TableHead>
-                  <TableBody>
-                    {recentOrders.map((order) => (
-                      <TableRow key={order.id} hover>
-                        <TableCell>#{order.id}</TableCell>
-                        <TableCell>
-                          {new Date(order.createdAt).toLocaleDateString()}
-                        </TableCell>
-                        <TableCell>
-                          <Chip
-                            size="small"
-                            label={order.status}
-                            color={
-                              order.status === "delivered"
-                                ? "success"
-                                : order.status === "cancelled"
-                                  ? "error"
-                                  : "default"
-                            }
-                          />
-                        </TableCell>
-                        <TableCell align="right">
-                          {money(order.total)}
-                        </TableCell>
-                      </TableRow>
-                    ))}
-                    {recentOrders.length === 0 && (
-                      <TableRow>
-                        <TableCell colSpan={4}>No orders yet.</TableCell>
-                      </TableRow>
-                    )}
-                  </TableBody>
-                </Table>
-              </TableContainer>
+              <Box
+                sx={{
+                  width: "100%",
+                  height: 60 + Math.max(1, recentOrders.length) * 52,
+                }}
+              >
+                <DataGrid
+                  rows={recentOrders}
+                  columns={orderColumns}
+                  rowHeight={52}
+                  columnHeaderHeight={52}
+                  hideFooter
+                  disableRowSelectionOnClick
+                  disableColumnMenu
+                  sx={{
+                    border: 0,
+                    "& .MuiDataGrid-columnHeaderTitle": { fontWeight: 700 },
+                  }}
+                  localeText={{ noRowsLabel: "No orders yet." }}
+                />
+              </Box>
             </Paper>
 
             <Paper variant="outlined" sx={{ p: 2, borderRadius: 3 }}>

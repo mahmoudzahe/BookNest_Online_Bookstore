@@ -41,7 +41,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     getCurrentUser(id)
       .then((account) => {
         if (!mounted) return;
-        if (account.active) {
+        if (account.active && !account.archived) {
           setUser(account);
         } else {
           localStorage.removeItem(STORAGE_KEY);
@@ -66,7 +66,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     const checkAccount = async () => {
       try {
         const account = await getCurrentUser(user.id);
-        if (mounted && !account.active) {
+        if (mounted && (!account.active || account.archived)) {
           localStorage.removeItem(STORAGE_KEY);
           setUser(null);
         }
