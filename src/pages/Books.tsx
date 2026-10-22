@@ -1,7 +1,7 @@
 import { useEffect, useMemo, useState } from "react";
 import {
   Alert,
-  Box,
+  Grid,
   CircularProgress,
   Container,
   MenuItem,
@@ -15,8 +15,7 @@ import { useSearchParams } from "react-router-dom";
 import BookGrid from "../components/BookGrid";
 import { getBooks, getCategories } from "../services/booksApi";
 import type { Book, Category } from "../types/book";
-
-const PAGE_SIZE = 8;
+import { BOOKS_PAGE_SIZE, BOOK_SORT_OPTIONS } from "../constants";
 
 function Books() {
   const [searchParams, setSearchParams] = useSearchParams();
@@ -88,111 +87,124 @@ function Books() {
     });
   }, [books, search, category, minPrice, maxPrice, sort]);
 
-  const pageCount = Math.max(1, Math.ceil(filteredBooks.length / PAGE_SIZE));
+  const pageCount = Math.max(
+    1,
+    Math.ceil(filteredBooks.length / BOOKS_PAGE_SIZE),
+  );
   const page = Math.min(requestedPage, pageCount);
   const visibleBooks = filteredBooks.slice(
-    (page - 1) * PAGE_SIZE,
-    page * PAGE_SIZE,
+    (page - 1) * BOOKS_PAGE_SIZE,
+    page * BOOKS_PAGE_SIZE,
   );
 
   return (
     <Container maxWidth="lg" sx={{ py: 4 }}>
-      <Typography variant="h4" sx={{ mb: 3 }}>
-        All books
-      </Typography>
-      <Paper variant="outlined" sx={{ p: 2, mb: 3 }}>
-        <Box
-          sx={{
-            display: "grid",
-            gridTemplateColumns: {
-              xs: "1fr",
-              sm: "repeat(2, 1fr)",
-              md: "repeat(5, 1fr)",
-            },
-            gap: 2,
-          }}
-        >
-          <TextField
-            label="Search title or author"
-            value={search}
-            onChange={(e) => updateFilter("q", e.target.value)}
-            size="small"
-          />
-          <TextField
-            select
-            label="Category"
-            value={
-              categories.some((item) => item.id === category) ? category : ""
-            }
-            onChange={(e) => updateFilter("category", e.target.value)}
-            size="small"
-          >
-            <MenuItem value="">All categories</MenuItem>
-            {categories.map((item) => (
-              <MenuItem key={item.id} value={item.id}>
-                {item.name}
-              </MenuItem>
-            ))}
-          </TextField>
-          <TextField
-            label="Min price"
-            type="number"
-            value={minPrice}
-            onChange={(e) => updateFilter("min", e.target.value)}
-            size="small"
-            slotProps={{ htmlInput: { min: 0 } }}
-          />
-          <TextField
-            label="Max price"
-            type="number"
-            value={maxPrice}
-            onChange={(e) => updateFilter("max", e.target.value)}
-            size="small"
-            slotProps={{ htmlInput: { min: 0 } }}
-          />
-          <TextField
-            select
-            label="Sort by"
-            value={sort}
-            onChange={(e) => updateFilter("sort", e.target.value)}
-            size="small"
-          >
-            <MenuItem value="newest">Newest</MenuItem>
-            <MenuItem value="price-low">Price: low to high</MenuItem>
-            <MenuItem value="price-high">Price: high to low</MenuItem>
-            <MenuItem value="rating">Best rated</MenuItem>
-          </TextField>
-        </Box>
-      </Paper>
-
-      {loading && <CircularProgress />}
-      {error && <Alert severity="error">{error}</Alert>}
-      {!loading && !error && (
-        <>
-          <Typography color="text.secondary" sx={{ mb: 2 }}>
-            {filteredBooks.length} books found
-          </Typography>
-          {visibleBooks.length > 0 ? (
-            <BookGrid books={visibleBooks} />
-          ) : (
-            <Alert severity="info">No books match your filters.</Alert>
-          )}
-          {filteredBooks.length > PAGE_SIZE && (
-            <Stack sx={{ alignItems: "center", mt: 4 }}>
-              <Pagination
-                count={pageCount}
-                page={page}
-                onChange={(_, nextPage) => {
-                  const next = new URLSearchParams(searchParams);
-                  next.set("page", String(nextPage));
-                  setSearchParams(next);
-                }}
-                color="primary"
+      <Stack spacing={3}>
+        <Typography variant="h4">All books</Typography>
+        <Paper variant="outlined" sx={{ p: 2, borderRadius: 1 }}>
+          <Grid container columns={{ xs: 1, sm: 2, md: 5 }} spacing={2}>
+            <Grid size={1}>
+              <TextField
+                fullWidth
+                label="Search title or author"
+                value={search}
+                onChange={(e) => updateFilter("q", e.target.value)}
+                size="small"
               />
+            </Grid>
+            <Grid size={1}>
+              <TextField
+                fullWidth
+                select
+                label="Category"
+                value={
+                  categories.some((item) => item.id === category)
+                    ? category
+                    : ""
+                }
+                onChange={(e) => updateFilter("category", e.target.value)}
+                size="small"
+              >
+                <MenuItem value="">All categories</MenuItem>
+                {categories.map((item) => (
+                  <MenuItem key={item.id} value={item.id}>
+                    {item.name}
+                  </MenuItem>
+                ))}
+              </TextField>
+            </Grid>
+            <Grid size={1}>
+              <TextField
+                fullWidth
+                label="Min price"
+                type="number"
+                value={minPrice}
+                onChange={(e) => updateFilter("min", e.target.value)}
+                size="small"
+                slotProps={{ htmlInput: { min: 0 } }}
+              />
+            </Grid>
+            <Grid size={1}>
+              <TextField
+                fullWidth
+                label="Max price"
+                type="number"
+                value={maxPrice}
+                onChange={(e) => updateFilter("max", e.target.value)}
+                size="small"
+                slotProps={{ htmlInput: { min: 0 } }}
+              />
+            </Grid>
+            <Grid size={1}>
+              <TextField
+                fullWidth
+                select
+                label="Sort by"
+                value={sort}
+                onChange={(e) => updateFilter("sort", e.target.value)}
+                size="small"
+              >
+                {BOOK_SORT_OPTIONS.map((option) => (
+                  <MenuItem key={option.value} value={option.value}>
+                    {option.label}
+                  </MenuItem>
+                ))}
+              </TextField>
+            </Grid>
+          </Grid>
+        </Paper>
+
+        {loading && <CircularProgress />}
+        {error && <Alert severity="error">{error}</Alert>}
+        {!loading && !error && (
+          <Stack spacing={4}>
+            <Stack spacing={2}>
+              <Typography color="text.secondary">
+                {filteredBooks.length} books found
+              </Typography>
+              {visibleBooks.length > 0 ? (
+                <BookGrid books={visibleBooks} />
+              ) : (
+                <Alert severity="info">No books match your filters.</Alert>
+              )}
             </Stack>
-          )}
-        </>
-      )}
+            {filteredBooks.length > BOOKS_PAGE_SIZE && (
+              <Stack direction="row" sx={{ justifyContent: "center" }}>
+                <Pagination
+                  count={pageCount}
+                  page={page}
+                  onChange={(_, nextPage) => {
+                    const next = new URLSearchParams(searchParams);
+                    next.set("page", String(nextPage));
+                    setSearchParams(next);
+                  }}
+                  color="primary"
+                />
+              </Stack>
+            )}
+          </Stack>
+        )}
+      </Stack>
     </Container>
   );
 }

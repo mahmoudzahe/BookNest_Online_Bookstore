@@ -1,4 +1,4 @@
-import { Box } from "@mui/material";
+import { Grid } from "@mui/material";
 import type { Book } from "../types/book";
 import BookCard from "./BookCard";
 
@@ -8,22 +8,13 @@ interface BookGridProps {
 
 function BookGrid({ books }: BookGridProps) {
   return (
-    <Box
-      sx={{
-        display: "grid",
-        gridTemplateColumns: {
-          xs: "1fr",
-          sm: "repeat(2, minmax(0, 1fr))",
-          md: "repeat(3, minmax(0, 1fr))",
-          lg: "repeat(4, minmax(0, 1fr))",
-        },
-        gap: 2,
-      }}
-    >
+    <Grid container spacing={2}>
       {books.map((book) => (
-        <BookCard key={book.id} book={book} />
+        <Grid key={book.id} size={{ xs: 12, sm: 6, md: 4, lg: 3 }}>
+          <BookCard book={book} />
+        </Grid>
       ))}
-    </Box>
+    </Grid>
   );
 }
 

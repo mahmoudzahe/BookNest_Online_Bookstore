@@ -1,7 +1,5 @@
-import axios from "axios";
+import { api } from "./api";
 import type { Book, BookReview, Category } from "../types/book";
-
-const api = axios.create({ baseURL: "http://localhost:3001" });
 
 async function getAllReviews(): Promise<BookReview[]> {
   const response = await api.get<BookReview[]>("/reviews");
@@ -48,7 +46,9 @@ export async function getReviews(bookId: string): Promise<BookReview[]> {
   return reviews.filter((review) => String(review.bookId) === String(bookId));
 }
 
-export async function addReview(data: Omit<BookReview, "id">): Promise<BookReview> {
+export async function addReview(
+  data: Omit<BookReview, "id">,
+): Promise<BookReview> {
   const response = await api.post<BookReview>("/reviews", data);
   return response.data;
 }

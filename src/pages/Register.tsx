@@ -16,43 +16,10 @@ import {
 } from "react-router-dom";
 import { useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
-import * as yup from "yup";
+import { registerSchema } from "../schemas/authSchemas";
+import type { RegisterForm } from "../types/user";
 import { useAuth } from "../auth/AuthContext";
 import AuthLayout from "../components/AuthLayout";
-
-type RegisterForm = {
-  firstName: string;
-  lastName: string;
-  email: string;
-  password: string;
-  confirmPassword: string;
-};
-
-const schema: yup.ObjectSchema<RegisterForm> = yup.object({
-  firstName: yup
-    .string()
-    .trim()
-    .min(2, "Enter at least 2 characters")
-    .required("First name is required"),
-  lastName: yup
-    .string()
-    .trim()
-    .min(2, "Enter at least 2 characters")
-    .required("Last name is required"),
-  email: yup
-    .string()
-    .trim()
-    .email("Enter a valid email")
-    .required("Email is required"),
-  password: yup
-    .string()
-    .min(8, "Use at least 8 characters")
-    .required("Password is required"),
-  confirmPassword: yup
-    .string()
-    .required("Confirm your password")
-    .oneOf([yup.ref("password")], "Passwords do not match"),
-});
 
 function Register() {
   const { user, register: createAccount } = useAuth();
@@ -69,7 +36,7 @@ function Register() {
     register,
     handleSubmit,
     formState: { errors, isSubmitting },
-  } = useForm<RegisterForm>({ resolver: yupResolver(schema) });
+  } = useForm<RegisterForm>({ resolver: yupResolver(registerSchema) });
 
   async function onSubmit(data: RegisterForm) {
     setError("");
@@ -163,7 +130,6 @@ function Register() {
             size="large"
             fullWidth
             disabled={isSubmitting}
-            sx={{ borderRadius: 2 }}
           >
             {isSubmitting ? "Creating account..." : "Create Account"}
           </Button>

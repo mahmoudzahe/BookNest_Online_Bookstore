@@ -10,41 +10,9 @@ import {
 } from "@mui/material";
 import { useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
-import * as yup from "yup";
+import { profileSchema } from "../schemas/authSchemas";
+import type { ProfileData } from "../types/user";
 import { useAuth } from "../auth/AuthContext";
-
-type ProfileData = {
-  firstName: string;
-  lastName: string;
-  phone: string;
-  address: string;
-};
-
-const schema: yup.ObjectSchema<ProfileData> = yup.object({
-  firstName: yup
-    .string()
-    .trim()
-    .min(2, "Enter at least 2 characters")
-    .required("First name is required"),
-  lastName: yup
-    .string()
-    .trim()
-    .min(2, "Enter at least 2 characters")
-    .required("Last name is required"),
-  phone: yup
-    .string()
-    .trim()
-    .matches(/^[0-9+()\s-]{7,20}$/, {
-      message: "Enter a valid phone number",
-      excludeEmptyString: true,
-    })
-    .required("Phone number is required"),
-  address: yup
-    .string()
-    .trim()
-    .min(5, "Enter a valid address")
-    .required("Address is required"),
-});
 
 function Profile() {
   const { user, updateProfile } = useAuth();
@@ -55,7 +23,7 @@ function Profile() {
     handleSubmit,
     formState: { errors, isSubmitting },
   } = useForm<ProfileData>({
-    resolver: yupResolver(schema),
+    resolver: yupResolver(profileSchema),
     values: {
       firstName: user?.firstName ?? "",
       lastName: user?.lastName ?? "",
@@ -80,7 +48,7 @@ function Profile() {
       <Typography variant="h4" sx={{ mb: 3 }}>
         My Profile
       </Typography>
-      <Paper variant="outlined" sx={{ p: { xs: 2, sm: 3 }, borderRadius: 3 }}>
+      <Paper variant="outlined" sx={{ p: { xs: 2, sm: 3 } }}>
         <Stack component="form" spacing={2} onSubmit={handleSubmit(onSubmit)}>
           {message && <Alert severity="success">{message}</Alert>}
           {error && <Alert severity="error">{error}</Alert>}
@@ -122,12 +90,7 @@ function Profile() {
             error={!!errors.address}
             helperText={errors.address?.message}
           />
-          <Button
-            type="submit"
-            variant="contained"
-            disabled={isSubmitting}
-            sx={{ borderRadius: 2 }}
-          >
+          <Button type="submit" variant="contained" disabled={isSubmitting}>
             {isSubmitting ? "Saving..." : "Save Changes"}
           </Button>
         </Stack>

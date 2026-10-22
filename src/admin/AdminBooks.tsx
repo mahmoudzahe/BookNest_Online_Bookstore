@@ -183,7 +183,7 @@ export default function AdminBooks() {
       <LoadError loading={loading} error={!open ? error : ""} />
 
       {!loading && (
-        <Paper variant="outlined" sx={{ borderRadius: 3, p: 2 }}>
+        <Paper variant="outlined" sx={{ p: 2 }}>
           <Stack sx={{ mb: 2 }}>
             <TextField
               size="small"

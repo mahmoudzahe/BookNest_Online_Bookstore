@@ -10,27 +10,10 @@ import {
 } from "@mui/material";
 import { useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
-import * as yup from "yup";
+import { passwordSchema } from "../schemas/authSchemas";
+import type { PasswordForm } from "../types/user";
 import { useAuth } from "../auth/AuthContext";
 import { changeUserPassword } from "../services/authApi";
-
-type PasswordForm = {
-  currentPassword: string;
-  newPassword: string;
-  confirmPassword: string;
-};
-
-const schema: yup.ObjectSchema<PasswordForm> = yup.object({
-  currentPassword: yup.string().required("Current password is required"),
-  newPassword: yup
-    .string()
-    .min(8, "Use at least 8 characters")
-    .required("New password is required"),
-  confirmPassword: yup
-    .string()
-    .required("Confirm the new password")
-    .oneOf([yup.ref("newPassword")], "Passwords do not match"),
-});
 
 function ChangePassword() {
   const { user } = useAuth();
@@ -41,7 +24,7 @@ function ChangePassword() {
     handleSubmit,
     reset,
     formState: { errors, isSubmitting },
-  } = useForm<PasswordForm>({ resolver: yupResolver(schema) });
+  } = useForm<PasswordForm>({ resolver: yupResolver(passwordSchema) });
 
   async function onSubmit(data: PasswordForm) {
     setError("");
@@ -63,7 +46,7 @@ function ChangePassword() {
       <Typography variant="h4" sx={{ mb: 3 }}>
         Change Password
       </Typography>
-      <Paper variant="outlined" sx={{ p: { xs: 2, sm: 3 }, borderRadius: 3 }}>
+      <Paper variant="outlined" sx={{ p: { xs: 2, sm: 3 } }}>
         <Stack component="form" spacing={2} onSubmit={handleSubmit(onSubmit)}>
           {message && <Alert severity="success">{message}</Alert>}
           {error && <Alert severity="error">{error}</Alert>}
@@ -94,12 +77,7 @@ function ChangePassword() {
             error={!!errors.confirmPassword}
             helperText={errors.confirmPassword?.message}
           />
-          <Button
-            type="submit"
-            variant="contained"
-            disabled={isSubmitting}
-            sx={{ borderRadius: 2 }}
-          >
+          <Button type="submit" variant="contained" disabled={isSubmitting}>
             {isSubmitting ? "Updating..." : "Update Password"}
           </Button>
         </Stack>

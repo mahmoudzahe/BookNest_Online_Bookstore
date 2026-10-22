@@ -1,7 +1,5 @@
-import axios from "axios";
+import { api } from "./api";
 import type { Order } from "../types/order";
-
-const api = axios.create({ baseURL: "http://localhost:3001" });
 
 export async function getUserOrders(userId: string): Promise<Order[]> {
   const response = await api.get<Order[]>("/orders", { params: { userId } });

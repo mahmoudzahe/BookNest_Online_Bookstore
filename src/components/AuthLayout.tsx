@@ -1,4 +1,4 @@
-import { Box, Container, Paper, Typography } from "@mui/material";
+import { Container, Paper, Stack, Typography } from "@mui/material";
 import type { ReactNode } from "react";
 
 interface AuthLayoutProps {
@@ -9,12 +9,11 @@ interface AuthLayoutProps {
 
 function AuthLayout({ title, subtitle, children }: AuthLayoutProps) {
   return (
-    <Box
+    <Stack
       sx={{
         minHeight: "calc(100vh - 74px)",
         py: { xs: 5, sm: 8 },
         px: 2,
-        display: "flex",
         alignItems: "center",
         justifyContent: "center",
         bgcolor: "background.default",
@@ -35,27 +34,14 @@ function AuthLayout({ title, subtitle, children }: AuthLayoutProps) {
             p: { xs: 3, sm: 4 },
           }}
         >
-          <Typography
-            variant="h4"
-            sx={{
-              textAlign: "center",
-              fontWeight: 700,
-              color: "text.primary",
-              mb: 1,
-            }}
-          >
-            {title}
-          </Typography>
-          <Typography
-            color="text.secondary"
-            sx={{ textAlign: "center", mb: 3 }}
-          >
-            {subtitle}
-          </Typography>
+          <Stack spacing={1} sx={{ textAlign: "center", mb: 3 }}>
+            <Typography variant="h4">{title}</Typography>
+            <Typography color="text.secondary">{subtitle}</Typography>
+          </Stack>
           {children}
         </Paper>
       </Container>
-    </Box>
+    </Stack>
   );
 }
 

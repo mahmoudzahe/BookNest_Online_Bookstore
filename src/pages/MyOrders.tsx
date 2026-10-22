@@ -1,4 +1,3 @@
-
 import { useEffect, useState } from "react";
 import {
   Alert,
@@ -34,7 +33,7 @@ function MyOrders() {
         if (active) {
           setOrders(data);
           setBookImages(
-            Object.fromEntries(books.map((book) => [book.id, book.image]))
+            Object.fromEntries(books.map((book) => [book.id, book.image])),
           );
         }
       })
@@ -60,10 +59,7 @@ function MyOrders() {
       {error && <Alert severity="error">{error}</Alert>}
 
       {!loading && !error && orders.length === 0 && (
-        <Paper
-          variant="outlined"
-          sx={{ p: 4, borderRadius: 3, textAlign: "center" }}
-        >
+        <Paper variant="outlined" sx={{ p: 4, textAlign: "center" }}>
           <Typography sx={{ mb: 2 }}>
             You haven't placed any orders yet.
           </Typography>
@@ -76,11 +72,7 @@ function MyOrders() {
       {!loading && !error && orders.length > 0 && (
         <Stack spacing={2}>
           {orders.map((order) => (
-            <Paper
-              key={order.id}
-              variant="outlined"
-              sx={{ p: 3, borderRadius: 3 }}
-            >
+            <Paper key={order.id} variant="outlined" sx={{ p: 3 }}>
               <Stack
                 direction={{ xs: "column", sm: "row" }}
                 sx={{ justifyContent: "space-between", gap: 2 }}

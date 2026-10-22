@@ -11,6 +11,7 @@ import {
   ListItemText,
   Menu,
   MenuItem,
+  Stack,
   TextField,
   Toolbar,
   Typography,
@@ -105,13 +106,13 @@ function NavBar() {
             flexWrap: "wrap",
           }}
         >
-          <Box
+          <Stack
             component={RouterLink}
             to="/"
+            direction="row"
+            spacing={1}
             sx={{
-              display: "flex",
               alignItems: "center",
-              gap: 1,
               textDecoration: "none",
               color: "inherit",
             }}
@@ -122,25 +123,15 @@ function NavBar() {
               alt="BookNest logo"
               sx={{ width: 37, height: 37 }}
             />
-            <Typography
-              variant="h6"
-              sx={{
-                fontFamily: "'Segoe UI', Arial, sans-serif",
-                fontWeight: 700,
-                fontSize: "1.3rem",
-                letterSpacing: "-0.3px",
-              }}
-            >
+            <Typography variant="h6" sx={{ fontWeight: 700 }}>
               BookNest
             </Typography>
-          </Box>
+          </Stack>
 
-          <Box
-            sx={{
-              display: "flex",
-              alignItems: "center",
-              gap: { xs: 0, sm: 0.5 },
-            }}
+          <Stack
+            direction="row"
+            spacing={{ xs: 0, sm: 0.5 }}
+            sx={{ alignItems: "center" }}
           >
             <Button component={RouterLink} to="/" sx={{ color: "inherit" }}>
               Home
@@ -182,14 +173,14 @@ function NavBar() {
                 </MenuItem>
               ))}
             </Menu>
-          </Box>
+          </Stack>
 
-          <Box
+          <Stack
             component="form"
+            direction="row"
+            spacing={0.5}
             onSubmit={submitSearch}
             sx={{
-              display: "flex",
-              gap: 0.5,
               flexGrow: 1,
               minWidth: { xs: "100%", sm: 165 },
               order: { xs: 2, sm: 0 },
@@ -212,10 +203,10 @@ function NavBar() {
               }}
             />
 
-            <Button type="submit" variant="outlined" sx={{ borderRadius: 2 }}>
+            <Button type="submit" variant="outlined">
               Search
             </Button>
-          </Box>
+          </Stack>
 
           <IconButton
             component={RouterLink}
@@ -330,19 +321,8 @@ function NavBar() {
                 </Menu>
               </>
             ) : (
-              <Box
-                sx={{
-                  display: "flex",
-                  alignItems: "center",
-                  gap: 1,
-                }}
-              >
-                <Button
-                  component={RouterLink}
-                  to="/login"
-                  variant="outlined"
-                  sx={{ borderRadius: 2 }}
-                >
+              <Stack direction="row" spacing={1} sx={{ alignItems: "center" }}>
+                <Button component={RouterLink} to="/login" variant="outlined">
                   Log In
                 </Button>
 
@@ -350,11 +330,10 @@ function NavBar() {
                   component={RouterLink}
                   to="/register"
                   variant="contained"
-                  sx={{ borderRadius: 2 }}
                 >
                   Register
                 </Button>
-              </Box>
+              </Stack>
             ))}
         </Toolbar>
       </Container>

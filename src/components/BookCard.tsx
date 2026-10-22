@@ -5,6 +5,7 @@ import {
   CardActions,
   CardContent,
   Chip,
+  Link,
   Rating,
   Stack,
   Typography,
@@ -23,15 +24,7 @@ function BookCard({ book }: BookCardProps) {
   const quantity = items.find((item) => item.bookId === book.id)?.quantity ?? 0;
 
   return (
-    <Card
-      variant="outlined"
-      sx={{
-        height: "100%",
-        display: "flex",
-        flexDirection: "column",
-        borderRadius: 3,
-      }}
-    >
+    <Card variant="outlined" className="BookNest-bookCard">
       <Box
         component={RouterLink}
         to={`/books/${book.id}`}
@@ -52,62 +45,53 @@ function BookCard({ book }: BookCardProps) {
       </Box>
 
       <CardContent sx={{ flexGrow: 1, textAlign: "center" }}>
-        <Typography
+        <Link
           component={RouterLink}
           to={`/books/${book.id}`}
-          variant="h6"
-          sx={{
-            display: "block",
-            fontSize: "1.05rem",
-            fontWeight: 700,
-            color: "text.primary",
-            textDecoration: "none",
-            "&:hover": {
-              color: "primary.main",
-              textDecoration: "underline",
-            },
-          }}
+          variant="subtitle1"
+          color="text.primary"
+          underline="hover"
         >
-          {book.title}
-        </Typography>
+          <strong>{book.title}</strong>
+        </Link>
 
-        <Typography variant="body2" color="text.secondary">
-          {book.author}
-        </Typography>
-
-        <Stack
-          direction="row"
-          spacing={1}
-          sx={{
-            alignItems: "center",
-            justifyContent: "center",
-            my: 1,
-          }}
-        >
-          <Rating value={book.rating} precision={0.5} size="small" readOnly />
-
-          <Typography variant="body2">
-            {book.rating > 0 ? book.rating.toFixed(1) : "No Ratings"}
+        <Stack spacing={1} sx={{ alignItems: "center" }}>
+          <Typography variant="body2" color="text.secondary">
+            {book.author}
           </Typography>
+          <Stack
+            direction="row"
+            spacing={1}
+            sx={{ alignItems: "center", justifyContent: "center" }}
+          >
+            <Rating value={book.rating} precision={0.5} size="small" readOnly />
+            <Typography variant="body2">
+              {book.rating > 0 ? book.rating.toFixed(1) : "No Ratings"}
+            </Typography>
+          </Stack>
+
+          <Typography variant="body1">
+            <strong>${book.price.toFixed(2)}</strong>
+          </Typography>
+
+          <Chip
+            size="small"
+            label={
+              book.stock === 0
+                ? "Out of Stock"
+                : book.stock <= 5
+                  ? "Low Stock"
+                  : "Available"
+            }
+            color={
+              book.stock === 0
+                ? "error"
+                : book.stock <= 5
+                  ? "warning"
+                  : "success"
+            }
+          />
         </Stack>
-
-        <Typography sx={{ fontWeight: 700, mb: 1 }}>
-          ${book.price.toFixed(2)}
-        </Typography>
-
-        <Chip
-          size="small"
-          label={
-            book.stock === 0
-              ? "Out of Stock"
-              : book.stock <= 5
-                ? "Low Stock"
-                : "Available"
-          }
-          color={
-            book.stock === 0 ? "error" : book.stock <= 5 ? "warning" : "success"
-          }
-        />
       </CardContent>
 
       <CardActions sx={{ p: 2, pt: 0 }}>
@@ -116,7 +100,6 @@ function BookCard({ book }: BookCardProps) {
           fullWidth
           disabled={book.stock <= 0 || quantity >= book.stock}
           onClick={() => addBook(book)}
-          sx={{ borderRadius: 2 }}
         >
           {book.stock <= 0
             ? "Sold out"

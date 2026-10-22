@@ -303,7 +303,7 @@ export default function AdminUsers() {
       />
       <LoadError loading={loading} error={error} />
       {!loading && (
-        <Paper variant="outlined" sx={{ p: 2, borderRadius: 3 }}>
+        <Paper variant="outlined" sx={{ p: 2 }}>
           <Tabs
             value={tab}
             onChange={(_event, value: "active" | "archived") => setTab(value)}
