@@ -16,5 +16,36 @@ export function makeTheme(mode: PaletteMode) {
       button: { textTransform: "none" },
     },
     shape: { borderRadius: 10 },
+    components: {
+      MuiButton: {
+        styleOverrides: {
+          root: {
+            borderRadius: 20,
+            "&.BookNest-heroButton": {
+              backgroundColor: "#ffffff",
+              color: "#20566a",
+              "&:hover": { backgroundColor: "#e8f3f5" },
+            },
+          },
+        },
+      },
+      MuiPaper: {
+        styleOverrides: {
+          outlined: { borderRadius: 30 },
+        },
+      },
+      MuiCard: {
+        styleOverrides: {
+          root: {
+            borderRadius: 30,
+            "&.BookNest-bookCard": {
+              height: "100%",
+              display: "flex",
+              flexDirection: "column",
+            },
+          },
+        },
+      },
+    },
   });
 }

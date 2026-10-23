@@ -5,6 +5,7 @@ import {
   Button,
   Container,
   Divider,
+  Grid,
   Link,
   Snackbar,
   TextField,
@@ -34,14 +35,8 @@ function Footer() {
       }}
     >
       <Container maxWidth="lg">
-        <Box
-          sx={{
-            display: "grid",
-            gridTemplateColumns: { xs: "1fr", md: "1fr 1.2fr" },
-            gap: { xs: 5, md: 8 },
-          }}
-        >
-          <Box>
+        <Grid container columns={{ xs: 1, md: 11 }} spacing={{ xs: 5, md: 8 }}>
+          <Grid size={{ xs: 1, md: 5 }}>
             <Box sx={{ display: "flex", alignItems: "center", gap: 1.5 }}>
               <Box
                 component="img"
@@ -65,9 +60,9 @@ function Footer() {
               Discover amazing books, explore new stories, and find your next
               favorite read.
             </Typography>
-          </Box>
+          </Grid>
 
-          <Box>
+          <Grid size={{ xs: 1, md: 6 }}>
             <Typography
               variant="h5"
               sx={{
@@ -121,7 +116,6 @@ function Footer() {
                   color: "#132B35",
                   fontWeight: 700,
                   px: 4,
-                  borderRadius: 2,
                   whiteSpace: "nowrap",
                   "&:hover": {
                     bgcolor: "#A6D7E2",
@@ -136,8 +130,8 @@ function Footer() {
               variant="caption"
               sx={{ display: "block", color: "#9EB1B9", mt: 1.5 }}
             ></Typography>
-          </Box>
-        </Box>
+          </Grid>
+        </Grid>
 
         <Divider sx={{ borderColor: "#344B53", my: 4 }} />
 

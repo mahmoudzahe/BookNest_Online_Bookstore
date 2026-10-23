@@ -16,20 +16,10 @@ import {
 } from "react-router-dom";
 import { useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
-import * as yup from "yup";
+import { loginSchema } from "../schemas/authSchemas";
+import type { LoginForm } from "../types/user";
 import { useAuth } from "../auth/AuthContext";
 import AuthLayout from "../components/AuthLayout";
-
-type LoginForm = { email: string; password: string };
-
-const schema: yup.ObjectSchema<LoginForm> = yup.object({
-  email: yup
-    .string()
-    .trim()
-    .email("Enter a valid email")
-    .required("Email is required"),
-  password: yup.string().required("Password is required"),
-});
 
 function Login() {
   const { user, login } = useAuth();
@@ -46,7 +36,7 @@ function Login() {
     register,
     handleSubmit,
     formState: { errors, isSubmitting },
-  } = useForm<LoginForm>({ resolver: yupResolver(schema) });
+  } = useForm<LoginForm>({ resolver: yupResolver(loginSchema) });
 
   async function onSubmit(data: LoginForm) {
     setError("");
@@ -116,7 +106,6 @@ function Login() {
             fullWidth
             size="large"
             disabled={isSubmitting}
-            sx={{ borderRadius: 2 }}
           >
             {isSubmitting ? "Logging in..." : "Log In"}
           </Button>

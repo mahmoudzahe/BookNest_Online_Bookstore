@@ -1,4 +1,3 @@
-import { useEffect, useState } from "react";
 import {
   Alert,
   Box,
@@ -14,14 +13,7 @@ import {
   Typography,
 } from "@mui/material";
 import { Link as RouterLink } from "react-router-dom";
-import { useAuth } from "../auth/AuthContext";
-import {
-  addReview,
-  deleteReview,
-  getReviews,
-  updateReview,
-} from "../services/booksApi";
-import { getUserOrders } from "../services/ordersApi";
+import { useBookReviews } from "../hooks/useBookReviews";
 import type { Book, BookReview } from "../types/book";
 
 type Props = {
@@ -31,211 +23,89 @@ type Props = {
 };
 
 function BookReviews({ book, reviews, onReviewsChange }: Props) {
-  const { user } = useAuth();
-  const [open, setOpen] = useState(false);
-  const [rating, setRating] = useState<number | null>(0);
-  const [comment, setComment] = useState("");
-  const [error, setError] = useState("");
-  const [submitting, setSubmitting] = useState(false);
-  const [hasOrdered, setHasOrdered] = useState(false);
-  const [checking, setChecking] = useState(false);
-  const [editing, setEditing] = useState<BookReview | null>(null);
-  const [confirmDelete, setConfirmDelete] = useState(false);
-  const [deleting, setDeleting] = useState(false);
-  const [deleteError, setDeleteError] = useState("");
-
-  useEffect(() => {
-    if (!user) {
-      setHasOrdered(false);
-      return;
-    }
-
-    let active = true;
-    setChecking(true);
-    getUserOrders(user.id)
-      .then((orders) => {
-        if (active) {
-          setHasOrdered(
-            orders.some(
-              (order) =>
-                order.status !== "cancelled" &&
-                order.items.some((item) => item.bookId === book.id),
-            ),
-          );
-        }
-      })
-      .catch(() => {
-        if (active) setError("Could not check your orders.");
-      })
-      .finally(() => {
-        if (active) setChecking(false);
-      });
-
-    return () => {
-      active = false;
-    };
-  }, [book.id, user?.id]);
-
-  const ownReview = user
-    ? reviews.find((review) => review.userId === user.id)
-    : undefined;
-
-  function openEditor(review: BookReview | null = null) {
-    setEditing(review);
-    setRating(review?.rating ?? 0);
-    setComment(review?.comment ?? "");
-    setError("");
-    setOpen(true);
-  }
-
-  async function submitReview() {
-    if (!user || !hasOrdered || submitting) return;
-    if (!rating || !comment.trim()) {
-      setError("Choose a rating and write a review.");
-      return;
-    }
-
-    setSubmitting(true);
-    setError("");
-    try {
-      const [orders, latestReviews] = await Promise.all([
-        getUserOrders(user.id),
-        getReviews(book.id),
-      ]);
-      if (
-        !orders.some(
-          (order) =>
-            order.status !== "cancelled" &&
-            order.items.some((item) => item.bookId === book.id),
-        )
-      ) {
-        setHasOrdered(false);
-        setError("You can only review books you have ordered.");
-        return;
-      }
-
-      const existing = latestReviews.find(
-        (review) => review.userId === user.id,
-      );
-      if (editing) {
-        if (!existing || String(existing.id) !== String(editing.id)) {
-          setError("Your review could not be found. Refresh the page.");
-          return;
-        }
-        await updateReview(editing.id, { rating, comment: comment.trim() });
-      } else {
-        if (existing) {
-          setError("You have already reviewed this book.");
-          return;
-        }
-        await addReview({
-          bookId: book.id,
-          userId: user.id,
-          userName: `${user.firstName} ${user.lastName}`,
-          rating,
-          comment: comment.trim(),
-        });
-      }
-      onReviewsChange(await getReviews(book.id));
-      setOpen(false);
-      setEditing(null);
-      setComment("");
-      setRating(0);
-    } catch {
-      setError("Could not save your review. Try again.");
-    } finally {
-      setSubmitting(false);
-    }
-  }
-
-  async function removeReview() {
-    if (!user || !ownReview || deleting) return;
-    setDeleting(true);
-    setDeleteError("");
-    try {
-      const latest = await getReviews(book.id);
-      const match = latest.find(
-        (review) => String(review.id) === String(ownReview.id),
-      );
-      if (!match || match.userId !== user.id) {
-        setDeleteError("Review not found. Refresh the page.");
-        return;
-      }
-      await deleteReview(ownReview.id);
-      onReviewsChange(await getReviews(book.id));
-      setConfirmDelete(false);
-    } catch {
-      setDeleteError("Could not delete your review. Try again.");
-    } finally {
-      setDeleting(false);
-    }
-  }
+  const {
+    user,
+    open,
+    setOpen,
+    rating,
+    setRating,
+    comment,
+    setComment,
+    error,
+    submitting,
+    hasOrdered,
+    checking,
+    editing,
+    ownReview,
+    confirmDelete,
+    setConfirmDelete,
+    deleting,
+    deleteError,
+    setDeleteError,
+    openEditor,
+    submitReview,
+    removeReview,
+  } = useBookReviews({ book, reviews, onReviewsChange });
 
   return (
-    <Box sx={{ mt: 5 }}>
-      <Typography variant="h5" sx={{ fontWeight: 700, mb: 1 }}>
-        Ratings & Reviews
-      </Typography>
-      {!user ? (
-        <Button
-          component={RouterLink}
-          to="/login"
-          variant="outlined"
-          sx={{ mb: 3 }}
-        >
-          Log in to write a review
-        </Button>
-      ) : checking ? (
-        <Typography color="text.secondary" sx={{ mb: 3 }}>
-          Checking your orders...
+    <Stack spacing={3}>
+      <Stack spacing={1} sx={{ alignItems: "flex-start" }}>
+        <Typography variant="h5">
+          <strong>Ratings & Reviews</strong>
         </Typography>
-      ) : ownReview ? (
-        <Stack direction="row" spacing={1} sx={{ mb: 3 }}>
-          <Button
-            variant="contained"
-            disabled={!hasOrdered}
-            onClick={() => openEditor(ownReview)}
-          >
-            Edit your Review
+        {!user ? (
+          <Button component={RouterLink} to="/login" variant="outlined">
+            Log in to write a review
           </Button>
-          <Button
-            variant="outlined"
-            color="error"
-            onClick={() => {
-              setDeleteError("");
-              setConfirmDelete(true);
-            }}
-          >
-            Delete Review
+        ) : checking ? (
+          <Typography color="text.secondary">
+            Checking your orders...
+          </Typography>
+        ) : ownReview ? (
+          <Stack direction="row" spacing={1}>
+            <Button
+              variant="contained"
+              disabled={!hasOrdered}
+              onClick={() => openEditor(ownReview)}
+            >
+              Edit your Review
+            </Button>
+            <Button
+              variant="outlined"
+              color="error"
+              onClick={() => {
+                setDeleteError("");
+                setConfirmDelete(true);
+              }}
+            >
+              Delete Review
+            </Button>
+          </Stack>
+        ) : !hasOrdered ? (
+          <Typography color="text.secondary">
+            You can only review books you have ordered.
+          </Typography>
+        ) : (
+          <Button variant="contained" onClick={() => openEditor()}>
+            Write a Review
           </Button>
-        </Stack>
-      ) : !hasOrdered ? (
-        <Typography color="text.secondary" sx={{ mb: 3 }}>
-          You can only review books you have ordered.
-        </Typography>
-      ) : (
-        <Button variant="contained" sx={{ mb: 3 }} onClick={() => openEditor()}>
-          Write a Review
-        </Button>
-      )}
-      {error && !open && (
-        <Alert severity="warning" sx={{ mb: 2 }}>
-          {error}
-        </Alert>
-      )}
+        )}
+      </Stack>
+      {error && !open && <Alert severity="warning">{error}</Alert>}
       {reviews.length === 0 && (
         <Typography color="text.secondary">No reviews yet.</Typography>
       )}
-      {reviews.map((review) => (
-        <Box key={review.id} sx={{ mb: 2, pb: 2 }}>
-          <Rating size="small" value={review.rating} readOnly />
-          <Typography>{review.comment}</Typography>
-          <Typography variant="body2" color="text.secondary" sx={{ mt: 1 }}>
-            by {review.userName}
-          </Typography>
-          <Divider sx={{ mt: 2 }} />
-        </Box>
-      ))}
+      <Stack spacing={2} divider={<Divider flexItem />}>
+        {reviews.map((review) => (
+          <Stack key={review.id} spacing={1}>
+            <Rating size="small" value={review.rating} readOnly />
+            <Typography>{review.comment}</Typography>
+            <Typography variant="body2" color="text.secondary">
+              by {review.userName}
+            </Typography>
+          </Stack>
+        ))}
+      </Stack>
 
       <Dialog
         open={open}
@@ -259,7 +129,9 @@ function BookReviews({ book, reviews, onReviewsChange }: Props) {
               alt={book.title}
               sx={{ width: 70, height: 95, objectFit: "contain" }}
             />
-            <Typography sx={{ fontWeight: 600 }}>{book.title}</Typography>
+            <Typography>
+              <strong>{book.title}</strong>
+            </Typography>
           </Stack>
           <Typography sx={{ mb: 1 }}>Overall Rating</Typography>
           <Rating
@@ -330,7 +202,7 @@ function BookReviews({ book, reviews, onReviewsChange }: Props) {
           </Button>
         </DialogActions>
       </Dialog>
-    </Box>
+    </Stack>
   );
 }
 

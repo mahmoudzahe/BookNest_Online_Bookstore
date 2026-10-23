@@ -184,7 +184,7 @@ export default function AdminCategories() {
       />
       <LoadError loading={loading} error={!open ? error : ""} />
       {!loading && (
-        <Paper variant="outlined" sx={{ borderRadius: 3, p: 2 }}>
+        <Paper variant="outlined" sx={{ p: 2 }}>
           <Box
             sx={{ height: Math.min(8, Math.max(rows.length, 2)) * 56 + 110 }}
           >

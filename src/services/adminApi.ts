@@ -1,9 +1,7 @@
-import axios from "axios";
+import { api } from "./api";
 import type { Book, Category } from "../types/book";
 import type { Coupon, Order } from "../types/order";
 import type { AuthUser, UserRecord } from "../types/user";
-
-const api = axios.create({ baseURL: "http://localhost:3001" });
 
 export type BookInput = Pick<
   Book,

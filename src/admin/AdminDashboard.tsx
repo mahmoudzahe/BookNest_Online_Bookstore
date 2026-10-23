@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import {
   Box,
   Chip,
+  Grid,
   Paper,
   Table,
   TableBody,
@@ -143,144 +144,132 @@ export default function AdminDashboard() {
 
       {data && (
         <>
-          <Box
-            sx={{
-              display: "grid",
-              gridTemplateColumns: {
-                xs: "1fr",
-                sm: "repeat(2, 1fr)",
-                lg: "repeat(4, 1fr)",
-              },
-              gap: 2.5,
-              mb: 3,
-            }}
-          >
+          <Grid container spacing={2.5} sx={{ mb: 3 }}>
             {stats.map((stat) => (
-              <Paper
-                key={stat.label}
-                component={RouterLink}
-                to={stat.link}
-                variant="outlined"
-                sx={{
-                  p: 2.5,
-                  borderRadius: 3,
-                  textDecoration: "none",
-                  color: "text.primary",
-                  display: "flex",
-                  justifyContent: "space-between",
-                  alignItems: "flex-start",
-                  gap: 1,
-                }}
-              >
-                <Box>
-                  <Typography
-                    sx={{
-                      fontSize: "0.95rem",
-                      fontWeight: 600,
-                      color: "text.secondary",
-                    }}
-                  >
-                    {stat.label}
-                  </Typography>
-                  <Typography
-                    sx={{
-                      fontSize: { xs: "2rem", md: "2.3rem" },
-                      fontWeight: 800,
-                      mt: 0.75,
-                      lineHeight: 1.2,
-                    }}
-                  >
-                    {stat.count}
-                  </Typography>
-                </Box>
-                <Box
+              <Grid key={stat.label} size={{ xs: 12, sm: 6, lg: 3 }}>
+                <Paper
+                  component={RouterLink}
+                  to={stat.link}
+                  variant="outlined"
                   sx={{
-                    bgcolor: "action.hover",
-                    color: "primary.main",
-                    p: 1.2,
-                    borderRadius: 2,
+                    p: 2.5,
+                    textDecoration: "none",
+                    color: "text.primary",
+                    display: "flex",
+                    justifyContent: "space-between",
+                    alignItems: "flex-start",
+                    gap: 1,
+                    height: "100%",
                   }}
                 >
-                  {stat.icon}
+                  <Box>
+                    <Typography
+                      sx={{
+                        fontSize: "0.95rem",
+                        fontWeight: 600,
+                        color: "text.secondary",
+                      }}
+                    >
+                      {stat.label}
+                    </Typography>
+                    <Typography
+                      sx={{
+                        fontSize: { xs: "2rem", md: "2.3rem" },
+                        fontWeight: 800,
+                        mt: 0.75,
+                        lineHeight: 1.2,
+                      }}
+                    >
+                      {stat.count}
+                    </Typography>
+                  </Box>
+                  <Box
+                    sx={{
+                      bgcolor: "action.hover",
+                      color: "primary.main",
+                      p: 1.2,
+                      borderRadius: 2,
+                    }}
+                  >
+                    {stat.icon}
+                  </Box>
+                </Paper>
+              </Grid>
+            ))}
+          </Grid>
+
+          <Grid container columns={{ xs: 12, xl: 5 }} spacing={3}>
+            <Grid size={{ xs: 12, xl: 3 }} sx={{ minWidth: 0 }}>
+              <Paper
+                variant="outlined"
+                sx={{ p: 2, minWidth: 0, height: "100%" }}
+              >
+                <Typography variant="h6" sx={{ fontWeight: 700, mb: 2 }}>
+                  Recent Orders
+                </Typography>
+                <Box
+                  sx={{
+                    width: "100%",
+                    height: 60 + Math.max(1, recentOrders.length) * 52,
+                  }}
+                >
+                  <DataGrid
+                    rows={recentOrders}
+                    columns={orderColumns}
+                    rowHeight={52}
+                    columnHeaderHeight={52}
+                    hideFooter
+                    disableRowSelectionOnClick
+                    disableColumnMenu
+                    sx={{
+                      border: 0,
+                      "& .MuiDataGrid-columnHeaderTitle": { fontWeight: 700 },
+                    }}
+                    localeText={{ noRowsLabel: "No orders yet." }}
+                  />
                 </Box>
               </Paper>
-            ))}
-          </Box>
+            </Grid>
 
-          <Box
-            sx={{
-              display: "grid",
-              gridTemplateColumns: { xs: "1fr", xl: "1.5fr 1fr" },
-              gap: 3,
-            }}
-          >
-            <Paper
-              variant="outlined"
-              sx={{ p: 2, borderRadius: 3, minWidth: 0 }}
-            >
-              <Typography variant="h6" sx={{ fontWeight: 700, mb: 2 }}>
-                Recent Orders
-              </Typography>
-              <Box
-                sx={{
-                  width: "100%",
-                  height: 60 + Math.max(1, recentOrders.length) * 52,
-                }}
-              >
-                <DataGrid
-                  rows={recentOrders}
-                  columns={orderColumns}
-                  rowHeight={52}
-                  columnHeaderHeight={52}
-                  hideFooter
-                  disableRowSelectionOnClick
-                  disableColumnMenu
-                  sx={{
-                    border: 0,
-                    "& .MuiDataGrid-columnHeaderTitle": { fontWeight: 700 },
-                  }}
-                  localeText={{ noRowsLabel: "No orders yet." }}
-                />
-              </Box>
-            </Paper>
-
-            <Paper variant="outlined" sx={{ p: 2, borderRadius: 3 }}>
-              <Typography variant="h6" sx={{ fontWeight: 700, mb: 1 }}>
-                Low Stock Books
-              </Typography>
-              <TableContainer>
-                <Table size="small">
-                  <TableHead>
-                    <TableRow>
-                      <TableCell>Book</TableCell>
-                      <TableCell align="right">In stock</TableCell>
-                    </TableRow>
-                  </TableHead>
-                  <TableBody>
-                    {lowStock.slice(0, 7).map((book) => (
-                      <TableRow key={book.id}>
-                        <TableCell>{book.title}</TableCell>
-                        <TableCell align="right">
-                          <Chip
-                            label={book.stock}
-                            size="small"
-                            color={book.stock === 0 ? "error" : "warning"}
-                          />
-                        </TableCell>
-                      </TableRow>
-                    ))}
-                    {lowStock.length === 0 && (
+            <Grid size={{ xs: 12, xl: 2 }}>
+              <Paper variant="outlined" sx={{ p: 2, height: "100%" }}>
+                <Typography variant="h6" sx={{ fontWeight: 700, mb: 1 }}>
+                  Low Stock Books
+                </Typography>
+                <TableContainer>
+                  <Table size="small">
+                    <TableHead>
                       <TableRow>
-                        <TableCell colSpan={2}>
-                          Stock levels look good.
-                        </TableCell>
+                        <TableCell>Book</TableCell>
+                        <TableCell align="right">In stock</TableCell>
                       </TableRow>
-                    )}
-                  </TableBody>
-                </Table>
-              </TableContainer>
-            </Paper>
-          </Box>
+                    </TableHead>
+                    <TableBody>
+                      {lowStock.slice(0, 7).map((book) => (
+                        <TableRow key={book.id}>
+                          <TableCell>{book.title}</TableCell>
+                          <TableCell align="right">
+                            <Chip
+                              label={book.stock}
+                              size="small"
+                              color={book.stock === 0 ? "error" : "warning"}
+                            />
+                          </TableCell>
+                        </TableRow>
+                      ))}
+                      {lowStock.length === 0 && (
+                        <TableRow>
+                          <TableCell colSpan={2}>
+                            Stock levels look good.
+                          </TableCell>
+                        </TableRow>
+                      )}
+                    </TableBody>
+                  </Table>
+                </TableContainer>
+              </Paper>
+            </Grid>
+          </Grid>
         </>
       )}
     </>

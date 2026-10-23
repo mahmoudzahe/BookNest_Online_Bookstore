@@ -6,6 +6,7 @@ import {
   CircularProgress,
   Container,
   Divider,
+  Grid,
   Paper,
   Stack,
   TextField,
@@ -288,206 +289,201 @@ function Checkout() {
         </Alert>
       )}
 
-      <Box
+      <Grid
+        container
         component="form"
         onSubmit={handleSubmit(handlePlaceOrder)}
-        sx={{
-          display: "grid",
-          gridTemplateColumns: {
-            xs: "1fr",
-            md: "minmax(0, 1fr) 340px",
-          },
-          gap: 3,
-          alignItems: "start",
-        }}
+        spacing={3}
+        sx={{ alignItems: "flex-start" }}
       >
-        <Paper
-          variant="outlined"
-          sx={{
-            p: 3,
-            borderRadius: 3,
-            "& .MuiOutlinedInput-root": {
-              borderRadius: 2,
-            },
-          }}
-        >
-          <Typography variant="h6" sx={{ mb: 3 }}>
-            Shipping Information
-          </Typography>
+        <Grid size={{ xs: 12, md: "grow" }} sx={{ minWidth: 0 }}>
+          <Paper
+            variant="outlined"
+            sx={{
+              p: 3,
+              "& .MuiOutlinedInput-root": {
+                borderRadius: 2,
+              },
+            }}
+          >
+            <Typography variant="h6" sx={{ mb: 3 }}>
+              Shipping Information
+            </Typography>
 
-          <Stack spacing={2}>
-            <TextField
-              label="Full Name"
-              fullWidth
-              {...register("fullName")}
-              error={!!errors.fullName}
-              helperText={errors.fullName?.message}
-            />
+            <Stack spacing={2}>
+              <TextField
+                label="Full Name"
+                fullWidth
+                {...register("fullName")}
+                error={!!errors.fullName}
+                helperText={errors.fullName?.message}
+              />
 
-            <TextField
-              label="Phone Number"
-              fullWidth
-              {...register("phone")}
-              error={!!errors.phone}
-              helperText={errors.phone?.message}
-            />
+              <TextField
+                label="Phone Number"
+                fullWidth
+                {...register("phone")}
+                error={!!errors.phone}
+                helperText={errors.phone?.message}
+              />
 
-            <TextField
-              label="Shipping Address"
-              fullWidth
-              multiline
-              rows={3}
-              {...register("address")}
-              error={!!errors.address}
-              helperText={errors.address?.message}
-            />
-          </Stack>
-        </Paper>
+              <TextField
+                label="Shipping Address"
+                fullWidth
+                multiline
+                rows={3}
+                {...register("address")}
+                error={!!errors.address}
+                helperText={errors.address?.message}
+              />
+            </Stack>
+          </Paper>
+        </Grid>
 
-        <Paper
-          variant="outlined"
-          sx={{
-            p: 3,
-            borderRadius: 3,
-            bgcolor: "background.paper",
-          }}
-        >
-          <Typography variant="h6" sx={{ mb: 2 }}>
-            Order Summary
-          </Typography>
+        <Grid size={{ xs: 12, md: "auto" }} sx={{ width: { md: 340 } }}>
+          <Paper
+            variant="outlined"
+            sx={{
+              p: 3,
+              bgcolor: "background.paper",
+            }}
+          >
+            <Typography variant="h6" sx={{ mb: 2 }}>
+              Order Summary
+            </Typography>
 
-          <Stack spacing={1}>
-            {cartBooks.map(({ book, quantity }) => (
-              <Box
-                key={book.id}
-                sx={{
-                  display: "flex",
-                  justifyContent: "space-between",
-                  gap: 2,
+            <Stack spacing={1}>
+              {cartBooks.map(({ book, quantity }) => (
+                <Box
+                  key={book.id}
+                  sx={{
+                    display: "flex",
+                    justifyContent: "space-between",
+                    gap: 2,
+                  }}
+                >
+                  <Typography variant="body2">
+                    {book.title} × {quantity}
+                  </Typography>
+
+                  <Typography variant="body2">
+                    ${(book.price * quantity).toFixed(2)}
+                  </Typography>
+                </Box>
+              ))}
+            </Stack>
+
+            <Divider sx={{ my: 2 }} />
+
+            <Typography sx={{ mb: 1 }}>Discount Coupon</Typography>
+
+            <Stack direction="row" spacing={1}>
+              <TextField
+                size="small"
+                placeholder="Coupon code"
+                value={couponInput}
+                onChange={(event) => {
+                  setCouponInput(event.target.value.toUpperCase());
+                  setAppliedCoupon(null);
+                  setCouponError("");
                 }}
-              >
-                <Typography variant="body2">
-                  {book.title} × {quantity}
-                </Typography>
-
-                <Typography variant="body2">
-                  ${(book.price * quantity).toFixed(2)}
-                </Typography>
-              </Box>
-            ))}
-          </Stack>
-
-          <Divider sx={{ my: 2 }} />
-
-          <Typography sx={{ mb: 1 }}>Discount Coupon</Typography>
-
-          <Stack direction="row" spacing={1}>
-            <TextField
-              size="small"
-              placeholder="Coupon code"
-              value={couponInput}
-              onChange={(event) => {
-                setCouponInput(event.target.value.toUpperCase());
-                setAppliedCoupon(null);
-                setCouponError("");
-              }}
-              fullWidth
-              sx={{
-                "& .MuiOutlinedInput-root": {
-                  borderRadius: 2,
-                },
-              }}
-            />
-
-            <Button
-              type="button"
-              variant="outlined"
-              disabled={checkingCoupon || isSubmitting}
-              onClick={handleApplyCoupon}
-              sx={{ borderRadius: 2 }}
-            >
-              {checkingCoupon ? "Checking..." : "Apply"}
-            </Button>
-          </Stack>
-
-          {couponError && (
-            <Alert severity="error" sx={{ mt: 2 }}>
-              {couponError}
-            </Alert>
-          )}
-
-          {appliedCoupon && (
-            <Alert severity="success" sx={{ mt: 2 }}>
-              {appliedCoupon.code} applied ({appliedCoupon.discountPercent}%
-              off).
-            </Alert>
-          )}
-
-          <Divider sx={{ my: 2 }} />
-
-          <Stack spacing={1.5}>
-            <Box
-              sx={{
-                display: "flex",
-                justifyContent: "space-between",
-              }}
-            >
-              <Typography>Subtotal</Typography>
-
-              <Typography>${subtotal.toFixed(2)}</Typography>
-            </Box>
-
-            {appliedCoupon && (
-              <Box
+                fullWidth
                 sx={{
-                  display: "flex",
-                  justifyContent: "space-between",
+                  "& .MuiOutlinedInput-root": {
+                    borderRadius: 2,
+                  },
                 }}
-              >
-                <Typography>Discount</Typography>
+              />
 
-                <Typography color="success.main">
-                  -${discount.toFixed(2)}
-                </Typography>
-              </Box>
+              <Button
+                type="button"
+                variant="outlined"
+                disabled={checkingCoupon || isSubmitting}
+                onClick={handleApplyCoupon}
+              >
+                {checkingCoupon ? "Checking..." : "Apply"}
+              </Button>
+            </Stack>
+
+            {couponError && (
+              <Alert severity="error" sx={{ mt: 2 }}>
+                {couponError}
+              </Alert>
             )}
 
-            <Divider />
+            {appliedCoupon && (
+              <Alert severity="success" sx={{ mt: 2 }}>
+                {appliedCoupon.code} applied ({appliedCoupon.discountPercent}%
+                off).
+              </Alert>
+            )}
 
-            <Box
-              sx={{
-                display: "flex",
-                justifyContent: "space-between",
-              }}
+            <Divider sx={{ my: 2 }} />
+
+            <Stack spacing={1.5}>
+              <Box
+                sx={{
+                  display: "flex",
+                  justifyContent: "space-between",
+                }}
+              >
+                <Typography>Subtotal</Typography>
+
+                <Typography>${subtotal.toFixed(2)}</Typography>
+              </Box>
+
+              {appliedCoupon && (
+                <Box
+                  sx={{
+                    display: "flex",
+                    justifyContent: "space-between",
+                  }}
+                >
+                  <Typography>Discount</Typography>
+
+                  <Typography color="success.main">
+                    -${discount.toFixed(2)}
+                  </Typography>
+                </Box>
+              )}
+
+              <Divider />
+
+              <Box
+                sx={{
+                  display: "flex",
+                  justifyContent: "space-between",
+                }}
+              >
+                <Typography variant="h6">Total</Typography>
+
+                <Typography variant="h6">${total.toFixed(2)}</Typography>
+              </Box>
+            </Stack>
+
+            <Button
+              type="submit"
+              variant="contained"
+              fullWidth
+              size="large"
+              disabled={isSubmitting || checkingCoupon}
+              sx={{ mt: 3 }}
             >
-              <Typography variant="h6">Total</Typography>
+              {isSubmitting ? "Placing Order..." : "Place Order"}
+            </Button>
 
-              <Typography variant="h6">${total.toFixed(2)}</Typography>
-            </Box>
-          </Stack>
-
-          <Button
-            type="submit"
-            variant="contained"
-            fullWidth
-            size="large"
-            disabled={isSubmitting || checkingCoupon}
-            sx={{ mt: 3, borderRadius: 2 }}
-          >
-            {isSubmitting ? "Placing Order..." : "Place Order"}
-          </Button>
-
-          <Button
-            component={RouterLink}
-            to="/cart"
-            fullWidth
-            disabled={isSubmitting}
-            sx={{ mt: 1, borderRadius: 2 }}
-          >
-            Back to Cart
-          </Button>
-        </Paper>
-      </Box>
+            <Button
+              component={RouterLink}
+              to="/cart"
+              fullWidth
+              disabled={isSubmitting}
+              sx={{ mt: 1 }}
+            >
+              Back to Cart
+            </Button>
+          </Paper>
+        </Grid>
+      </Grid>
     </Container>
   );
 }
