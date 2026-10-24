@@ -134,10 +134,10 @@ function BookDetails() {
                     onClick={() => addBook(book)}
                   >
                     {book.stock <= 0
-                      ? "Sold out"
+                      ? CART_ACTION_LABELS.soldOut
                       : quantity >= book.stock
-                        ? "Max added"
-                        : "Add to cart"}
+                        ? CART_ACTION_LABELS.maxAdded
+                        : CART_ACTION_LABELS.addToCart}
                   </Button>
                 </Stack>
               </Grid>
