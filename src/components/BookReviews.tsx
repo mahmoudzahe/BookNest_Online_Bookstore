@@ -23,8 +23,13 @@ type Props = {
 };
 
 function BookReviews({ book, reviews, onReviewsChange }: Props) {
+  const { user, ownReview, eligibility, editor, deletion } = useBookReviews({
+    book,
+    reviews,
+    onReviewsChange,
+  });
+  const { hasOrdered, checking } = eligibility;
   const {
-    user,
     open,
     setOpen,
     rating,
@@ -33,25 +38,24 @@ function BookReviews({ book, reviews, onReviewsChange }: Props) {
     setComment,
     error,
     submitting,
-    hasOrdered,
-    checking,
     editing,
-    ownReview,
+    openEditor,
+    submitReview,
+  } = editor;
+  const {
     confirmDelete,
     setConfirmDelete,
     deleting,
     deleteError,
     setDeleteError,
-    openEditor,
-    submitReview,
     removeReview,
-  } = useBookReviews({ book, reviews, onReviewsChange });
+  } = deletion;
 
   return (
     <Stack spacing={3}>
       <Stack spacing={1} sx={{ alignItems: "flex-start" }}>
-        <Typography variant="h5">
-          <strong>Ratings & Reviews</strong>
+        <Typography variant="h5" sx={{ fontWeight: "bold" }}>
+          Ratings & Reviews
         </Typography>
         {!user ? (
           <Button component={RouterLink} to="/login" variant="outlined">
@@ -91,7 +95,9 @@ function BookReviews({ book, reviews, onReviewsChange }: Props) {
           </Button>
         )}
       </Stack>
-      {error && !open && <Alert severity="warning">{error}</Alert>}
+      {eligibility.error && !open && (
+        <Alert severity="warning">{eligibility.error}</Alert>
+      )}
       {reviews.length === 0 && (
         <Typography color="text.secondary">No reviews yet.</Typography>
       )}
@@ -129,9 +135,7 @@ function BookReviews({ book, reviews, onReviewsChange }: Props) {
               alt={book.title}
               sx={{ width: 70, height: 95, objectFit: "contain" }}
             />
-            <Typography>
-              <strong>{book.title}</strong>
-            </Typography>
+            <Typography sx={{ fontWeight: "bold" }}>{book.title}</Typography>
           </Stack>
           <Typography sx={{ mb: 1 }}>Overall Rating</Typography>
           <Rating

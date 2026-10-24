@@ -25,9 +25,7 @@ import { Link as RouterLink } from "react-router-dom";
 import { useCart } from "../cart/CartContext";
 import { getBooks } from "../services/booksApi";
 import type { Book } from "../types/book";
-
-const CART_COVER_WIDTH = { xs: 65, sm: 85 };
-const CART_COVER_HEIGHT = 110;
+import { CART_COVER_WIDTH, CART_COVER_HEIGHT } from "../constants";
 
 function Cart() {
   const { items, setQuantity, removeBook, syncStock } = useCart();
@@ -91,8 +89,8 @@ function Cart() {
             textAlign: "center",
           }}
         >
-          <Typography variant="h5">
-            <strong>Your shopping cart is empty</strong>
+          <Typography variant="h5" sx={{ fontWeight: "bold" }}>
+            Your shopping cart is empty
           </Typography>
           <Typography color="text.secondary">
             You have no books in your cart yet.
@@ -142,8 +140,9 @@ function Cart() {
                         color="text.primary"
                         underline="hover"
                         variant="subtitle1"
+                        sx={{ fontWeight: "bold" }}
                       >
-                        <strong>{book.title}</strong>
+                        {book.title}
                       </Link>
                       <Typography variant="body2" color="text.secondary">
                         {book.author}
@@ -228,11 +227,11 @@ function Cart() {
                 direction="row"
                 sx={{ justifyContent: "space-between", mb: 3 }}
               >
-                <Typography variant="subtitle1">
-                  <strong>Subtotal</strong>
+                <Typography variant="subtitle1" sx={{ fontWeight: "bold" }}>
+                  Subtotal
                 </Typography>
-                <Typography variant="subtitle1">
-                  <strong>${total.toFixed(2)}</strong>
+                <Typography variant="subtitle1" sx={{ fontWeight: "bold" }}>
+                  ${total.toFixed(2)}
                 </Typography>
               </Stack>
               <Stack spacing={1.5}>

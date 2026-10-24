@@ -1,10 +1,10 @@
 import { useEffect, useRef, useState } from "react";
 import type { UIEvent } from "react";
 import {
-  Box,
   Button,
   CircularProgress,
   Container,
+  Grid,
   IconButton,
   Paper,
   Stack,
@@ -20,30 +20,20 @@ import BookGrid from "../components/BookGrid";
 import { getBooks } from "../services/booksApi";
 import type { Book } from "../types/book";
 
-const FeaturedScroller = styled(Stack)(({ theme }) => ({
-  display: "flex",
-  flexDirection: "row",
-  gap: theme.spacing(2),
+const FeaturedScroller = styled(Grid)({
   overflowX: "auto",
   scrollBehavior: "smooth",
   scrollSnapType: "x mandatory",
   scrollbarWidth: "none",
-  "&::-webkit-scrollbar": { display: "none" },
-  "& > .BookNest-featuredItem": {
-    flex: "0 0 100%",
+  "&::-webkit-scrollbar": {
+    display: "none",
+  },
+  "& > .MuiGrid-root": {
+    flexShrink: 0,
     minWidth: 0,
     scrollSnapAlign: "start",
-    [theme.breakpoints.up("sm")]: {
-      flexBasis: `calc((100% - ${theme.spacing(2)}) / 2)`,
-    },
-    [theme.breakpoints.up("md")]: {
-      flexBasis: `calc((100% - ${theme.spacing(4)}) / 3)`,
-    },
-    [theme.breakpoints.up("lg")]: {
-      flexBasis: `calc((100% - ${theme.spacing(6)}) / 4)`,
-    },
   },
-}));
+});
 
 const FeaturedDot = styled("button")(({ theme }) => ({
   width: theme.spacing(1),
@@ -67,6 +57,7 @@ function Home() {
 
   const featuredRef = useRef<HTMLDivElement>(null);
   const [featuredIndex, setFeaturedIndex] = useState(0);
+
   const theme = useTheme();
   const isSm = useMediaQuery(theme.breakpoints.up("sm"));
   const isMd = useMediaQuery(theme.breakpoints.up("md"));
@@ -79,13 +70,17 @@ function Home() {
       try {
         const bookData = await getBooks();
 
-        if (active) setBooks(bookData);
+        if (active) {
+          setBooks(bookData);
+        }
       } catch {
         if (active) {
           setError("We couldn't load the books right now.");
         }
       } finally {
-        if (active) setLoading(false);
+        if (active) {
+          setLoading(false);
+        }
       }
     }
 
@@ -97,8 +92,11 @@ function Home() {
   }, []);
 
   const featured = books.filter((book) => book.featured);
+
   const visibleBooks = isLg ? 4 : isMd ? 3 : isSm ? 2 : 1;
+
   const lastFeaturedIndex = Math.max(0, featured.length - visibleBooks);
+
   const currentFeaturedIndex = Math.min(featuredIndex, lastFeaturedIndex);
 
   const newest = [...books]
@@ -112,22 +110,28 @@ function Home() {
 
   function scrollFeatured(index: number) {
     const list = featuredRef.current;
+
     if (!list) return;
 
     const next = Math.max(0, Math.min(index, lastFeaturedIndex));
+
     const scrollableWidth = list.scrollWidth - list.clientWidth;
+
     list.scrollTo({
       left: lastFeaturedIndex
         ? (next / lastFeaturedIndex) * scrollableWidth
         : 0,
       behavior: "smooth",
     });
+
     setFeaturedIndex(next);
   }
 
   function handleFeaturedScroll(event: UIEvent<HTMLDivElement>) {
     const list = event.currentTarget;
+
     const scrollableWidth = list.scrollWidth - list.clientWidth;
+
     setFeaturedIndex(
       scrollableWidth > 0
         ? Math.round((list.scrollLeft / scrollableWidth) * lastFeaturedIndex)
@@ -141,9 +145,9 @@ function Home() {
         <Stack
           spacing={2}
           sx={{
-            minHeight: "70vh",
             alignItems: "center",
             justifyContent: "center",
+            minHeight: "70vh",
           }}
         >
           <CircularProgress />
@@ -171,8 +175,8 @@ function Home() {
             textAlign: "center",
           }}
         >
-          <Typography variant="h5">
-            <strong>Unable to load books</strong>
+          <Typography variant="h5" sx={{ fontWeight: "bold" }}>
+            Unable to load books
           </Typography>
 
           <Typography color="text.secondary">
@@ -200,12 +204,17 @@ function Home() {
           }}
         >
           <Stack spacing={2} sx={{ alignItems: "flex-start" }}>
-            <Typography variant={isMd ? "h3" : "h4"}>
-              <strong>Find your next favorite book</strong>
+            <Typography
+              variant={isMd ? "h3" : "h4"}
+              sx={{ fontWeight: "bold" }}
+            >
+              Find your next favorite book
             </Typography>
+
             <Typography>
               Browse stories, discover new authors, and explore our collection.
             </Typography>
+
             <Button
               variant="contained"
               component={RouterLink}
@@ -223,13 +232,24 @@ function Home() {
 
             {featured.length > 0 ? (
               <FeaturedScroller
+                container
+                wrap="nowrap"
+                spacing={2}
                 ref={featuredRef}
                 onScroll={handleFeaturedScroll}
               >
                 {featured.map((book) => (
-                  <Box key={book.id} className="BookNest-featuredItem">
+                  <Grid
+                    key={book.id}
+                    size={{
+                      xs: 12,
+                      sm: 6,
+                      md: 4,
+                      lg: 3,
+                    }}
+                  >
                     <BookCard book={book} />
-                  </Box>
+                  </Grid>
                 ))}
               </FeaturedScroller>
             ) : (
@@ -242,7 +262,10 @@ function Home() {
               <Stack
                 direction="row"
                 spacing={2}
-                sx={{ alignItems: "center", justifyContent: "center" }}
+                sx={{
+                  alignItems: "center",
+                  justifyContent: "center",
+                }}
               >
                 <IconButton
                   aria-label="Previous featured book"
@@ -288,11 +311,13 @@ function Home() {
 
           <Stack spacing={2}>
             <Typography variant="h5">Newest books</Typography>
+
             <BookGrid books={newest} />
           </Stack>
 
           <Stack spacing={2}>
             <Typography variant="h5">Best rated books</Typography>
+
             {bestRated.length > 0 ? (
               <BookGrid books={bestRated} />
             ) : (

@@ -1,7 +1,6 @@
 import { useEffect, useState } from "react";
 import {
   Alert,
-  Box,
   Button,
   CircularProgress,
   Container,
@@ -354,13 +353,11 @@ function Checkout() {
 
             <Stack spacing={1}>
               {cartBooks.map(({ book, quantity }) => (
-                <Box
+                <Stack
                   key={book.id}
-                  sx={{
-                    display: "flex",
-                    justifyContent: "space-between",
-                    gap: 2,
-                  }}
+                  direction="row"
+                  spacing={2}
+                  sx={{ justifyContent: "space-between" }}
                 >
                   <Typography variant="body2">
                     {book.title} × {quantity}
@@ -369,7 +366,7 @@ function Checkout() {
                   <Typography variant="body2">
                     ${(book.price * quantity).toFixed(2)}
                   </Typography>
-                </Box>
+                </Stack>
               ))}
             </Stack>
 
@@ -421,44 +418,29 @@ function Checkout() {
             <Divider sx={{ my: 2 }} />
 
             <Stack spacing={1.5}>
-              <Box
-                sx={{
-                  display: "flex",
-                  justifyContent: "space-between",
-                }}
-              >
+              <Stack direction="row" sx={{ justifyContent: "space-between" }}>
                 <Typography>Subtotal</Typography>
 
                 <Typography>${subtotal.toFixed(2)}</Typography>
-              </Box>
+              </Stack>
 
               {appliedCoupon && (
-                <Box
-                  sx={{
-                    display: "flex",
-                    justifyContent: "space-between",
-                  }}
-                >
+                <Stack direction="row" sx={{ justifyContent: "space-between" }}>
                   <Typography>Discount</Typography>
 
                   <Typography color="success.main">
                     -${discount.toFixed(2)}
                   </Typography>
-                </Box>
+                </Stack>
               )}
 
               <Divider />
 
-              <Box
-                sx={{
-                  display: "flex",
-                  justifyContent: "space-between",
-                }}
-              >
+              <Stack direction="row" sx={{ justifyContent: "space-between" }}>
                 <Typography variant="h6">Total</Typography>
 
                 <Typography variant="h6">${total.toFixed(2)}</Typography>
-              </Box>
+              </Stack>
             </Stack>
 
             <Button

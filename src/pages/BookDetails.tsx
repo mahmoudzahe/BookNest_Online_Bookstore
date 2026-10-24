@@ -16,6 +16,11 @@ import { useCart } from "../cart/CartContext";
 import BookReviews from "../components/BookReviews";
 import { getBook, getCategories, getReviews } from "../services/booksApi";
 import type { Book, BookReview, Category } from "../types/book";
+import {
+  LOW_STOCK_THRESHOLD,
+  STOCK_LABELS,
+  CART_ACTION_LABELS,
+} from "../constants";
 
 function BookDetails() {
   const { id } = useParams<{ id: string }>();
@@ -104,22 +109,22 @@ function BookDetails() {
                         : "No Ratings"}
                     </Typography>
                   </Stack>
-                  <Typography variant="body1">
-                    <strong>${book.price.toFixed(2)}</strong>
+                  <Typography variant="body1" sx={{ fontWeight: "bold" }}>
+                    ${book.price.toFixed(2)}
                   </Typography>
                   <Typography
                     color={
                       book.stock === 0
                         ? "error.main"
-                        : book.stock <= 5
+                        : book.stock <= LOW_STOCK_THRESHOLD
                           ? "warning.main"
                           : "success.main"
                     }
                   >
                     {book.stock === 0
-                      ? "Out of Stock"
-                      : book.stock <= 5
-                        ? `Low Stock · ${book.stock} left`
+                      ? STOCK_LABELS.outOfStock
+                      : book.stock <= LOW_STOCK_THRESHOLD
+                        ? `${STOCK_LABELS.lowStock} · ${book.stock} left`
                         : `${book.stock} in stock`}
                   </Typography>
                   <Typography>{book.description}</Typography>

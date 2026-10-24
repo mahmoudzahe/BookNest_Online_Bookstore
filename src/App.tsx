@@ -27,6 +27,9 @@ import AdminCoupons from "./admin/AdminCoupons";
 function App() {
   const pathname = useLocation().pathname;
   const isAdminPage = pathname === "/admin" || pathname.startsWith("/admin/");
+  const isAuthPage = pathname === "/login" || pathname === "/register";
+  const isCheckoutPage = pathname === "/checkout";
+  const showStoreLayout = !isAdminPage && !isAuthPage && !isCheckoutPage;
 
   return (
     <Box
@@ -36,7 +39,7 @@ function App() {
         flexDirection: "column",
       }}
     >
-      {!isAdminPage && <NavBar />}
+      {showStoreLayout && <NavBar />}
 
       <Box component="main" sx={{ flex: 1 }}>
         <Routes>
@@ -123,7 +126,7 @@ function App() {
         </Routes>
       </Box>
 
-      {!isAdminPage && <Footer />}
+      {showStoreLayout && <Footer />}
     </Box>
   );
 }

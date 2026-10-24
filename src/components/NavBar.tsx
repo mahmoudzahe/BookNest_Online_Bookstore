@@ -18,6 +18,7 @@ import {
   Typography,
 } from "@mui/material";
 import ShoppingCartOutlinedIcon from "@mui/icons-material/ShoppingCartOutlined";
+import { alpha } from "@mui/material/styles";
 import DarkModeOutlinedIcon from "@mui/icons-material/DarkModeOutlined";
 import LightModeIcon from "@mui/icons-material/LightMode";
 import { Link as RouterLink, useLocation, useNavigate } from "react-router-dom";
@@ -92,7 +93,7 @@ function NavBar() {
         bgcolor: "background.paper",
         color: "text.primary",
         borderBottom: "1px solid",
-        borderColor: "divider",
+        borderColor: (theme) => alpha(theme.palette.text.primary, 0.06),
         top: 0,
         zIndex: (theme) => theme.zIndex.appBar,
       }}

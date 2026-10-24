@@ -13,6 +13,11 @@ import {
 import { Link as RouterLink } from "react-router-dom";
 import { useCart } from "../cart/CartContext";
 import type { Book } from "../types/book";
+import {
+  LOW_STOCK_THRESHOLD,
+  STOCK_LABELS,
+  CART_ACTION_LABELS,
+} from "../constants";
 
 interface BookCardProps {
   book: Book;
@@ -24,7 +29,10 @@ function BookCard({ book }: BookCardProps) {
   const quantity = items.find((item) => item.bookId === book.id)?.quantity ?? 0;
 
   return (
-    <Card variant="outlined" className="BookNest-bookCard">
+    <Card
+      variant="outlined"
+      sx={{ height: "100%", display: "flex", flexDirection: "column" }}
+    >
       <Box
         component={RouterLink}
         to={`/books/${book.id}`}
@@ -51,8 +59,9 @@ function BookCard({ book }: BookCardProps) {
           variant="subtitle1"
           color="text.primary"
           underline="hover"
+          sx={{ fontWeight: "bold" }}
         >
-          <strong>{book.title}</strong>
+          {book.title}
         </Link>
 
         <Stack spacing={1} sx={{ alignItems: "center" }}>
@@ -70,23 +79,23 @@ function BookCard({ book }: BookCardProps) {
             </Typography>
           </Stack>
 
-          <Typography variant="body1">
-            <strong>${book.price.toFixed(2)}</strong>
+          <Typography variant="body1" sx={{ fontWeight: "bold" }}>
+            ${book.price.toFixed(2)}
           </Typography>
 
           <Chip
             size="small"
             label={
               book.stock === 0
-                ? "Out of Stock"
-                : book.stock <= 5
-                  ? "Low Stock"
-                  : "Available"
+                ? STOCK_LABELS.outOfStock
+                : book.stock <= LOW_STOCK_THRESHOLD
+                  ? STOCK_LABELS.lowStock
+                  : STOCK_LABELS.available
             }
             color={
               book.stock === 0
                 ? "error"
-                : book.stock <= 5
+                : book.stock <= LOW_STOCK_THRESHOLD
                   ? "warning"
                   : "success"
             }
@@ -102,10 +111,10 @@ function BookCard({ book }: BookCardProps) {
           onClick={() => addBook(book)}
         >
           {book.stock <= 0
-            ? "Sold out"
+            ? CART_ACTION_LABELS.soldOut
             : quantity >= book.stock
-              ? "Max added"
-              : "Add to Cart"}
+              ? CART_ACTION_LABELS.maxAdded
+              : CART_ACTION_LABELS.addToCart}
         </Button>
       </CardActions>
     </Card>
