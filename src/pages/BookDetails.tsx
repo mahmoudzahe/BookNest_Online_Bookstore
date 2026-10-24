@@ -53,7 +53,8 @@ function BookDetails() {
     };
   }, [id]);
 
-  const quantity = items.find((item) => item.bookId === book?.id)?.quantity ?? 0;
+  const quantity =
+    items.find((item) => item.bookId === book?.id)?.quantity ?? 0;
   const averageRating = reviews.length
     ? reviews.reduce((sum, review) => sum + review.rating, 0) / reviews.length
     : 0;
@@ -88,17 +89,35 @@ function BookDetails() {
               <Typography variant="h4">{book.title}</Typography>
               <Typography color="text.secondary">by {book.author}</Typography>
               <Typography>
-                Category: {categories.find((category) => category.id === book.categoryId)?.name ?? "Unknown"}
+                Category:{" "}
+                {categories.find((category) => category.id === book.categoryId)
+                  ?.name ?? "Unknown"}
               </Typography>
               <Stack direction="row" spacing={1} sx={{ alignItems: "center" }}>
                 <Rating value={averageRating} precision={0.5} readOnly />
                 <Typography variant="body2" color="text.secondary">
-                  {averageRating.toFixed(1)} ({reviews.length} {reviews.length === 1 ? "review" : "reviews"})
+                  {reviews.length > 0
+                    ? `${averageRating.toFixed(1)} (${reviews.length} ${reviews.length === 1 ? "review" : "reviews"})`
+                    : "No Ratings"}
                 </Typography>
               </Stack>
-              <Typography sx={{ fontWeight: 700 }}>${book.price.toFixed(2)}</Typography>
-              <Typography color={book.stock > 0 ? "success.main" : "error.main"}>
-                {book.stock > 0 ? `${book.stock} in stock` : "Out of stock"}
+              <Typography sx={{ fontWeight: 700 }}>
+                ${book.price.toFixed(2)}
+              </Typography>
+              <Typography
+                color={
+                  book.stock === 0
+                    ? "error.main"
+                    : book.stock <= 5
+                      ? "warning.main"
+                      : "success.main"
+                }
+              >
+                {book.stock === 0
+                  ? "Out of Stock"
+                  : book.stock <= 5
+                    ? `Low Stock · ${book.stock} left`
+                    : `${book.stock} in stock`}
               </Typography>
               <Typography>{book.description}</Typography>
               <Button
@@ -106,7 +125,11 @@ function BookDetails() {
                 disabled={book.stock <= 0 || quantity >= book.stock}
                 onClick={() => addBook(book)}
               >
-                {book.stock <= 0 ? "Sold out" : quantity >= book.stock ? "Max added" : "Add to cart"}
+                {book.stock <= 0
+                  ? "Sold out"
+                  : quantity >= book.stock
+                    ? "Max added"
+                    : "Add to cart"}
               </Button>
             </Stack>
           </Paper>
@@ -114,7 +137,6 @@ function BookDetails() {
           <BookReviews
             book={book}
             reviews={reviews}
-            averageRating={averageRating}
             onReviewsChange={setReviews}
           />
         </>

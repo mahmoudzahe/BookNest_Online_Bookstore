@@ -29,6 +29,7 @@ export interface Order {
   couponCode: string | null;
   status: "pending" | "shipped" | "delivered" | "cancelled";
   createdAt: string;
+  archived?: boolean;
 }
 
 export type NewOrder = Omit<Order, "id">;

@@ -12,7 +12,10 @@ export function ThemeModeProvider({ children }: { children: ReactNode }) {
   const [darkMode, setDarkMode] = useState(
     () => localStorage.getItem("booknest-dark-mode") === "true",
   );
-  const theme = useMemo(() => makeTheme(darkMode ? "dark" : "light"), [darkMode]);
+  const theme = useMemo(
+    () => makeTheme(darkMode ? "dark" : "light"),
+    [darkMode],
+  );
 
   useEffect(() => {
     localStorage.setItem("booknest-dark-mode", String(darkMode));
