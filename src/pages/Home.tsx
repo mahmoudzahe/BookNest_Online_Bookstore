@@ -14,11 +14,51 @@ import {
 import ChevronLeftIcon from "@mui/icons-material/ChevronLeft";
 import ChevronRightIcon from "@mui/icons-material/ChevronRight";
 import { Link as RouterLink } from "react-router-dom";
-import { useTheme } from "@mui/material/styles";
+import { styled, useTheme } from "@mui/material/styles";
 import BookCard from "../components/BookCard";
 import BookGrid from "../components/BookGrid";
 import { getBooks } from "../services/booksApi";
 import type { Book } from "../types/book";
+
+const FeaturedScroller = styled(Stack)(({ theme }) => ({
+  display: "flex",
+  flexDirection: "row",
+  gap: theme.spacing(2),
+  overflowX: "auto",
+  scrollBehavior: "smooth",
+  scrollSnapType: "x mandatory",
+  scrollbarWidth: "none",
+  "&::-webkit-scrollbar": { display: "none" },
+  "& > .BookNest-featuredItem": {
+    flex: "0 0 100%",
+    minWidth: 0,
+    scrollSnapAlign: "start",
+    [theme.breakpoints.up("sm")]: {
+      flexBasis: `calc((100% - ${theme.spacing(2)}) / 2)`,
+    },
+    [theme.breakpoints.up("md")]: {
+      flexBasis: `calc((100% - ${theme.spacing(4)}) / 3)`,
+    },
+    [theme.breakpoints.up("lg")]: {
+      flexBasis: `calc((100% - ${theme.spacing(6)}) / 4)`,
+    },
+  },
+}));
+
+const FeaturedDot = styled("button")(({ theme }) => ({
+  width: theme.spacing(1),
+  height: theme.spacing(1),
+  padding: 0,
+  border: 0,
+  borderRadius: theme.shape.borderRadius,
+  backgroundColor: theme.palette.action.disabledBackground,
+  cursor: "pointer",
+  transition: "width 0.2s ease",
+  "&.is-active": {
+    width: theme.spacing(3),
+    backgroundColor: theme.palette.primary.main,
+  },
+}));
 
 function Home() {
   const [books, setBooks] = useState<Book[]>([]);
@@ -182,39 +222,16 @@ function Home() {
             <Typography variant="h5">Featured books</Typography>
 
             {featured.length > 0 ? (
-              <Box
+              <FeaturedScroller
                 ref={featuredRef}
                 onScroll={handleFeaturedScroll}
-                sx={{
-                  display: "flex",
-                  gap: 2,
-                  overflowX: "auto",
-                  scrollBehavior: "smooth",
-                  scrollSnapType: "x mandatory",
-                  scrollbarWidth: "none",
-                  "&::-webkit-scrollbar": {
-                    display: "none",
-                  },
-                }}
               >
                 {featured.map((book) => (
-                  <Box
-                    key={book.id}
-                    sx={{
-                      flex: {
-                        xs: "0 0 100%",
-                        sm: "0 0 calc((100% - 16px) / 2)",
-                        md: "0 0 calc((100% - 32px) / 3)",
-                        lg: "0 0 calc((100% - 48px) / 4)",
-                      },
-                      minWidth: 0,
-                      scrollSnapAlign: "start",
-                    }}
-                  >
+                  <Box key={book.id} className="BookNest-featuredItem">
                     <BookCard book={book} />
                   </Box>
                 ))}
-              </Box>
+              </FeaturedScroller>
             ) : (
               <Typography color="text.secondary">
                 No featured books yet.
@@ -222,68 +239,50 @@ function Home() {
             )}
 
             {lastFeaturedIndex > 0 && (
-              <Box
-                sx={{
-                  display: "flex",
-                  justifyContent: "center",
-                  alignItems: "center",
-                  gap: 2,
-                }}
+              <Stack
+                direction="row"
+                spacing={2}
+                sx={{ alignItems: "center", justifyContent: "center" }}
               >
                 <IconButton
                   aria-label="Previous featured book"
                   disabled={currentFeaturedIndex === 0}
                   onClick={() => scrollFeatured(currentFeaturedIndex - 1)}
-                  sx={{
-                    border: "1px solid",
-                    borderColor: "divider",
-                    bgcolor: "background.paper",
-                  }}
+                  className="BookNest-featuredNavButton"
                 >
                   <ChevronLeftIcon />
                 </IconButton>
 
-                <Box sx={{ display: "flex", alignItems: "center", gap: 0.75 }}>
+                <Stack
+                  direction="row"
+                  spacing={0.75}
+                  sx={{ alignItems: "center" }}
+                >
                   {Array.from({ length: lastFeaturedIndex + 1 }, (_, index) => (
-                    <Box
+                    <FeaturedDot
                       key={index}
-                      component="button"
                       type="button"
                       aria-label={`Show featured book ${index + 1}`}
                       aria-current={
                         index === currentFeaturedIndex ? "step" : undefined
                       }
                       onClick={() => scrollFeatured(index)}
-                      sx={{
-                        width: index === currentFeaturedIndex ? 22 : 9,
-                        height: 9,
-                        p: 0,
-                        border: 0,
-                        borderRadius: 5,
-                        bgcolor:
-                          index === currentFeaturedIndex
-                            ? "primary.main"
-                            : "action.disabledBackground",
-                        cursor: "pointer",
-                        transition: "width 0.2s ease",
-                      }}
+                      className={
+                        index === currentFeaturedIndex ? "is-active" : undefined
+                      }
                     />
                   ))}
-                </Box>
+                </Stack>
 
                 <IconButton
                   aria-label="Next featured book"
                   disabled={currentFeaturedIndex === lastFeaturedIndex}
                   onClick={() => scrollFeatured(currentFeaturedIndex + 1)}
-                  sx={{
-                    border: "1px solid",
-                    borderColor: "divider",
-                    bgcolor: "background.paper",
-                  }}
+                  className="BookNest-featuredNavButton"
                 >
                   <ChevronRightIcon />
                 </IconButton>
-              </Box>
+              </Stack>
             )}
           </Stack>
 

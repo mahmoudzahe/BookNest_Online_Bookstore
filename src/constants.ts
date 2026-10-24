@@ -8,3 +8,5 @@ export const BOOK_SORT_OPTIONS = [
   { value: "price-high", label: "Price: high to low" },
   { value: "rating", label: "Best rated" },
 ] as const;
+
+export const ACCOUNT_MENU_WIDTH = 245;

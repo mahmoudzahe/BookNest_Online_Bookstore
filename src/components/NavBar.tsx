@@ -1,3 +1,4 @@
+import { ACCOUNT_MENU_WIDTH } from "../constants";
 import { useEffect, useState } from "react";
 import {
   AppBar,
@@ -259,7 +260,7 @@ function NavBar() {
                   slotProps={{
                     paper: {
                       sx: {
-                        width: 245,
+                        width: ACCOUNT_MENU_WIDTH,
                         borderRadius: 3,
                         mt: 1,
                       },

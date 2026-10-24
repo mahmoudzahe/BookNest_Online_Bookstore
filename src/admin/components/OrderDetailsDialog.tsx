@@ -1,24 +1,19 @@
 import {
   Alert,
-  Box,
   Button,
   Dialog,
   DialogActions,
   DialogContent,
   DialogTitle,
+  Grid,
   MenuItem,
+  Stack,
   TextField,
   Typography,
 } from "@mui/material";
 import type { Order } from "../../types/order";
-import { money } from "../AdminCommon";
-
-export const orderStatuses: Order["status"][] = [
-  "pending",
-  "shipped",
-  "delivered",
-  "cancelled",
-];
+import { money } from "../formatters";
+import { ORDER_STATUSES } from "../constants";
 
 interface OrderDetailsDialogProps {
   order: Order | null;
@@ -48,77 +43,109 @@ export default function OrderDetailsDialog({
     >
       <DialogTitle>Order #{order?.id}</DialogTitle>
       <DialogContent>
-        {error && (
-          <Alert severity="error" sx={{ mb: 2 }}>
-            {error}
-          </Alert>
-        )}
-        {order && (
-          <Box sx={{ display: "grid", gap: 2 }}>
-            <Typography variant="body2" color="text.secondary">
-              Placed {new Date(order.createdAt).toLocaleString()}
-            </Typography>
-            <Box>
-              <Typography sx={{ fontWeight: 700, mb: 0.5 }}>
-                Shipping Information
-              </Typography>
-              <Typography>{order.shipping.fullName}</Typography>
-              <Typography>{order.shipping.phone}</Typography>
-              <Typography>{order.shipping.address}</Typography>
-            </Box>
-            <Box>
-              <Typography sx={{ fontWeight: 700, mb: 0.5 }}>Items</Typography>
-              {order.items.map((item, index) => (
-                <Box
-                  key={`${item.bookId}-${index}`}
-                  sx={{
-                    display: "flex",
-                    justifyContent: "space-between",
-                    gap: 2,
-                    py: 0.5,
-                  }}
-                >
-                  <Typography>
-                    {item.title} × {item.quantity}
-                  </Typography>
-                  <Typography>{money(item.price * item.quantity)}</Typography>
-                </Box>
-              ))}
-            </Box>
-            <Box sx={{ borderTop: "1px solid", borderColor: "divider", pt: 1 }}>
-              <Box sx={{ display: "flex", justifyContent: "space-between" }}>
-                <Typography>Subtotal</Typography>
-                <Typography>{money(order.subtotal)}</Typography>
-              </Box>
-              <Box sx={{ display: "flex", justifyContent: "space-between" }}>
-                <Typography>Discount</Typography>
-                <Typography>−{money(order.discount)}</Typography>
-              </Box>
-              <Box
-                sx={{ display: "flex", justifyContent: "space-between", mt: 1 }}
-              >
-                <Typography sx={{ fontWeight: 700 }}>Total</Typography>
-                <Typography sx={{ fontWeight: 700 }}>
-                  {money(order.total)}
+        <Grid container spacing={2} sx={{ pt: 1 }}>
+          {error && (
+            <Grid size={12}>
+              <Alert severity="error">{error}</Alert>
+            </Grid>
+          )}
+          {order && (
+            <>
+              <Grid size={12}>
+                <Typography variant="body2" color="text.secondary">
+                  Placed {new Date(order.createdAt).toLocaleString()}
                 </Typography>
-              </Box>
-            </Box>
-            <TextField
-              select
-              label="Order Status"
-              value={status}
-              onChange={(event) =>
-                onStatusChange(event.target.value as Order["status"])
-              }
-            >
-              {orderStatuses.map((item) => (
-                <MenuItem key={item} value={item}>
-                  {item}
-                </MenuItem>
-              ))}
-            </TextField>
-          </Box>
-        )}
+              </Grid>
+              <Grid size={{ xs: 12, sm: 6 }}>
+                <Stack spacing={0.5}>
+                  <Typography
+                    variant="subtitle1"
+                    className="BookNest-textWeight700"
+                  >
+                    Shipping Information
+                  </Typography>
+                  <Typography>{order.shipping.fullName}</Typography>
+                  <Typography>{order.shipping.phone}</Typography>
+                  <Typography>{order.shipping.address}</Typography>
+                </Stack>
+              </Grid>
+              <Grid size={{ xs: 12, sm: 6 }}>
+                <Stack spacing={0.5}>
+                  <Typography
+                    variant="subtitle1"
+                    className="BookNest-textWeight700"
+                  >
+                    Items
+                  </Typography>
+                  {order.items.map((item, index) => (
+                    <Stack
+                      key={`${item.bookId}-${index}`}
+                      direction="row"
+                      spacing={2}
+                      sx={{ justifyContent: "space-between" }}
+                    >
+                      <Typography>
+                        {item.title} × {item.quantity}
+                      </Typography>
+                      <Typography>
+                        {money(item.price * item.quantity)}
+                      </Typography>
+                    </Stack>
+                  ))}
+                </Stack>
+              </Grid>
+              <Grid size={12}>
+                <Stack
+                  spacing={1}
+                  sx={{ borderTop: "1px solid", borderColor: "divider", pt: 2 }}
+                >
+                  <Stack
+                    direction="row"
+                    sx={{ justifyContent: "space-between" }}
+                  >
+                    <Typography>Subtotal</Typography>
+                    <Typography>{money(order.subtotal)}</Typography>
+                  </Stack>
+                  <Stack
+                    direction="row"
+                    sx={{ justifyContent: "space-between" }}
+                  >
+                    <Typography>Discount</Typography>
+                    <Typography>−{money(order.discount)}</Typography>
+                  </Stack>
+                  <Stack
+                    direction="row"
+                    sx={{ justifyContent: "space-between" }}
+                  >
+                    <Typography className="BookNest-textWeight700">
+                      Total
+                    </Typography>
+                    <Typography className="BookNest-textWeight700">
+                      {money(order.total)}
+                    </Typography>
+                  </Stack>
+                </Stack>
+              </Grid>
+              <Grid size={12}>
+                <TextField
+                  select
+                  fullWidth
+                  label="Order Status"
+                  value={status}
+                  onChange={(event) =>
+                    onStatusChange(event.target.value as Order["status"])
+                  }
+                >
+                  {ORDER_STATUSES.map((item) => (
+                    <MenuItem key={item} value={item}>
+                      {item}
+                    </MenuItem>
+                  ))}
+                </TextField>
+              </Grid>
+            </>
+          )}
+        </Grid>
       </DialogContent>
       <DialogActions sx={{ p: 2 }}>
         <Button disabled={saving} onClick={onClose}>

@@ -8,11 +8,13 @@ import {
   Grid,
   Link,
   Snackbar,
+  Stack,
   TextField,
   Typography,
 } from "@mui/material";
 import { Link as RouterLink } from "react-router-dom";
 import booknestLogo from "../assets/booknest-logo.svg";
+import { FOOTER_LINKS } from "./footerLinks";
 
 function Footer() {
   const [email, setEmail] = useState("");
@@ -27,154 +29,120 @@ function Footer() {
   return (
     <Box
       component="footer"
-      sx={{
-        bgcolor: "#132B35",
-        color: "#F7F4ED",
+      sx={(theme) => ({
+        bgcolor:
+          theme.palette.mode === "dark"
+            ? theme.palette.background.paper
+            : theme.palette.primary.dark,
+        color: theme.palette.getContrastText(
+          theme.palette.mode === "dark"
+            ? theme.palette.background.paper
+            : theme.palette.primary.dark,
+        ),
         pt: 6,
         pb: 3,
-      }}
+      })}
     >
       <Container maxWidth="lg">
         <Grid container columns={{ xs: 1, md: 11 }} spacing={{ xs: 5, md: 8 }}>
           <Grid size={{ xs: 1, md: 5 }}>
-            <Box sx={{ display: "flex", alignItems: "center", gap: 1.5 }}>
-              <Box
-                component="img"
-                src={booknestLogo}
-                alt="BookNest logo"
-                sx={{ width: 42, height: 42 }}
-              />
-              <Typography variant="h5" sx={{ fontWeight: 700 }}>
-                BookNest
-              </Typography>
-            </Box>
-
-            <Typography
-              sx={{
-                color: "#B6C7CD",
-                mt: 2,
-                maxWidth: 350,
-                lineHeight: 1.8,
-              }}
-            >
-              Discover amazing books, explore new stories, and find your next
-              favorite read.
-            </Typography>
-          </Grid>
-
-          <Grid size={{ xs: 1, md: 6 }}>
-            <Typography
-              variant="h5"
-              sx={{
-                fontWeight: 700,
-                mb: 1.5,
-              }}
-            >
-              Get Our Deals In Your Inbox
-            </Typography>
-
-            <Typography sx={{ color: "#B6C7CD", mb: 2.5 }}>
-              Stay updated with new arrivals, book offers, and recommendations.
-            </Typography>
-
-            <Box
-              component="form"
-              onSubmit={handleSubscribe}
-              sx={{
-                display: "flex",
-                gap: 1,
-                flexDirection: { xs: "column", sm: "row" },
-              }}
-            >
-              <TextField
-                type="email"
-                placeholder="Enter your email address"
-                value={email}
-                onChange={(event) => setEmail(event.target.value)}
-                required
-                size="small"
-                fullWidth
-                slotProps={{
-                  htmlInput: {
-                    "aria-label": "Email address",
-                    maxLength: 254,
-                  },
-                }}
-                sx={{
-                  "& .MuiOutlinedInput-root": {
-                    bgcolor: "#FFFFFF",
-                    borderRadius: 2,
-                  },
-                }}
-              />
-
-              <Button
-                type="submit"
-                variant="contained"
-                sx={{
-                  bgcolor: "#8BC4D2",
-                  color: "#132B35",
-                  fontWeight: 700,
-                  px: 4,
-                  whiteSpace: "nowrap",
-                  "&:hover": {
-                    bgcolor: "#A6D7E2",
-                  },
-                }}
+            <Stack spacing={2}>
+              <Stack
+                direction="row"
+                spacing={1.5}
+                sx={{ alignItems: "center" }}
               >
-                Subscribe
-              </Button>
-            </Box>
-
-            <Typography
-              variant="caption"
-              sx={{ display: "block", color: "#9EB1B9", mt: 1.5 }}
-            ></Typography>
+                <Box
+                  component="img"
+                  src={booknestLogo}
+                  alt="BookNest logo"
+                  sx={{ width: 42, height: 42 }}
+                />
+                <Typography variant="h5" className="BookNest-textWeight700">
+                  BookNest
+                </Typography>
+              </Stack>
+              <Typography sx={{ maxWidth: 350, opacity: 0.8 }}>
+                Discover amazing books, explore new stories, and find your next
+                favorite read.
+              </Typography>
+            </Stack>
+          </Grid>
+          <Grid size={{ xs: 1, md: 6 }}>
+            <Stack spacing={2}>
+              <Typography variant="h5" className="BookNest-textWeight700">
+                Get Our Deals In Your Inbox
+              </Typography>
+              <Typography sx={{ opacity: 0.8 }}>
+                Stay updated with new arrivals, book offers, and
+                recommendations.
+              </Typography>
+              <Stack
+                component="form"
+                onSubmit={handleSubscribe}
+                direction={{ xs: "column", sm: "row" }}
+                spacing={1}
+              >
+                <TextField
+                  type="email"
+                  placeholder="Enter your email address"
+                  value={email}
+                  onChange={(event) => setEmail(event.target.value)}
+                  required
+                  size="small"
+                  fullWidth
+                  slotProps={{
+                    htmlInput: {
+                      "aria-label": "Email address",
+                      maxLength: 254,
+                    },
+                  }}
+                  className="BookNest-footerEmailInput"
+                />
+                <Button
+                  type="submit"
+                  variant="contained"
+                  className="BookNest-footerSubscribeButton"
+                >
+                  Subscribe
+                </Button>
+              </Stack>
+            </Stack>
           </Grid>
         </Grid>
-
-        <Divider sx={{ borderColor: "#344B53", my: 4 }} />
-
-        <Box
-          sx={{
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "space-between",
-            flexDirection: { xs: "column", sm: "row" },
-            gap: 2,
-          }}
+        <Divider sx={{ borderColor: "currentColor", opacity: 0.3, my: 4 }} />
+        <Stack
+          direction={{ xs: "column", sm: "row" }}
+          spacing={2}
+          sx={{ justifyContent: "space-between", alignItems: "center" }}
         >
-          <Box sx={{ display: "flex", gap: 3, flexWrap: "wrap" }}>
-            {[
-              { label: "Home", path: "/" },
-              { label: "Books", path: "/books" },
-              { label: "Cart", path: "/cart" },
-            ].map((item) => (
+          <Stack
+            direction="row"
+            spacing={3}
+            useFlexGap
+            sx={{ flexWrap: "wrap" }}
+          >
+            {FOOTER_LINKS.map((item) => (
               <Link
                 key={item.path}
                 component={RouterLink}
                 to={item.path}
-                underline="none"
-                sx={{
-                  color: "#B6C7CD",
-                  fontSize: "0.9rem",
-                  "&:hover": { color: "#D9B77A" },
-                }}
+                underline="hover"
+                color="inherit"
+                sx={{ opacity: 0.9 }}
               >
                 {item.label}
               </Link>
             ))}
-          </Box>
-
+          </Stack>
           <Typography
             variant="body2"
-            sx={{ color: "#B6C7CD", textAlign: "center" }}
+            sx={{ textAlign: "center", opacity: 0.85 }}
           >
             © {new Date().getFullYear()} BookNest. All rights reserved.
           </Typography>
-        </Box>
+        </Stack>
       </Container>
-
       <Snackbar
         open={showMessage}
         autoHideDuration={1000}

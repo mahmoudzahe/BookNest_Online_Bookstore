@@ -9,6 +9,7 @@ import {
   DialogTitle,
   FormControlLabel,
   Grid,
+  Stack,
   MenuItem,
   Switch,
   TextField,
@@ -17,6 +18,16 @@ import {
 import CloudUploadOutlinedIcon from "@mui/icons-material/CloudUploadOutlined";
 import type { Book, Category } from "../../types/book";
 import type { BookInput } from "../../services/adminApi";
+import {
+  BOOK_IMAGE_TYPES,
+  BOOK_IMAGE_ACCEPT,
+  BOOK_IMAGE_MAX_BYTES,
+  BOOK_IMAGE_MAX_WIDTH,
+  BOOK_IMAGE_MAX_HEIGHT,
+  BOOK_IMAGE_QUALITY,
+  BOOK_COVER_PREVIEW_WIDTH,
+  BOOK_COVER_PREVIEW_HEIGHT,
+} from "../constants";
 
 interface BookFormDialogProps {
   open: boolean;
@@ -49,18 +60,22 @@ export default function BookFormDialog({
 
   async function selectImage(file?: File) {
     if (!file) return;
-    if (!["image/jpeg", "image/png", "image/webp"].includes(file.type)) {
+    if (!BOOK_IMAGE_TYPES.includes(file.type)) {
       setImageError("Choose a JPG, PNG, or WebP image.");
       return;
     }
-    if (file.size > 5 * 1024 * 1024) {
+    if (file.size > BOOK_IMAGE_MAX_BYTES) {
       setImageError("Choose an image smaller than 5 MB.");
       return;
     }
 
     try {
       const bitmap = await createImageBitmap(file);
-      const scale = Math.min(1, 600 / bitmap.width, 900 / bitmap.height);
+      const scale = Math.min(
+        1,
+        BOOK_IMAGE_MAX_WIDTH / bitmap.width,
+        BOOK_IMAGE_MAX_HEIGHT / bitmap.height,
+      );
       const canvas = document.createElement("canvas");
       canvas.width = Math.round(bitmap.width * scale);
       canvas.height = Math.round(bitmap.height * scale);
@@ -68,7 +83,7 @@ export default function BookFormDialog({
       if (!context) throw new Error("Canvas not supported");
       context.drawImage(bitmap, 0, 0, canvas.width, canvas.height);
       bitmap.close();
-      onChange("image", canvas.toDataURL("image/webp", 0.8));
+      onChange("image", canvas.toDataURL("image/webp", BOOK_IMAGE_QUALITY));
       setImageError("");
     } catch {
       setImageError("Could not read the image. Try another file.");
@@ -83,8 +98,8 @@ export default function BookFormDialog({
       maxWidth="sm"
     >
       <DialogTitle>{book ? "Edit Book" : "Add Book"}</DialogTitle>
-      <DialogContent sx={{ pt: "12px !important" }}>
-        <Grid container spacing={2}>
+      <DialogContent>
+        <Grid container spacing={2} sx={{ pt: 1 }}>
           {error && (
             <Grid size={12}>
               <Alert severity="error">{error}</Alert>
@@ -164,22 +179,21 @@ export default function BookFormDialog({
           </Grid>
 
           <Grid size={12}>
-            <Box
+            <Stack
               onDragOver={(event) => event.preventDefault()}
               onDrop={(event) => {
                 event.preventDefault();
                 void selectImage(event.dataTransfer.files[0]);
               }}
+              direction={{ xs: "column", sm: "row" }}
+              spacing={2}
               sx={{
+                alignItems: "center",
+                justifyContent: "center",
                 border: "2px dashed",
                 borderColor: "divider",
                 borderRadius: 2,
                 p: 2,
-                display: "flex",
-                flexDirection: { xs: "column", sm: "row" },
-                alignItems: "center",
-                justifyContent: "center",
-                gap: 2,
               }}
             >
               {form.image && (
@@ -187,11 +201,15 @@ export default function BookFormDialog({
                   component="img"
                   src={form.image}
                   alt="Book cover preview"
-                  sx={{ width: 65, height: 88, objectFit: "contain" }}
+                  sx={{
+                    width: BOOK_COVER_PREVIEW_WIDTH,
+                    height: BOOK_COVER_PREVIEW_HEIGHT,
+                    objectFit: "contain",
+                  }}
                 />
               )}
-              <Box sx={{ textAlign: "center" }}>
-                <Typography variant="body2" sx={{ mb: 1 }}>
+              <Stack spacing={1} sx={{ alignItems: "center" }}>
+                <Typography variant="body2">
                   Drag your book cover here, or choose an image
                 </Typography>
                 <Button
@@ -204,22 +222,18 @@ export default function BookFormDialog({
                   <input
                     hidden
                     type="file"
-                    accept="image/jpeg,image/png,image/webp"
+                    accept={BOOK_IMAGE_ACCEPT}
                     onChange={(event) => {
                       void selectImage(event.target.files?.[0]);
                       event.target.value = "";
                     }}
                   />
                 </Button>
-                <Typography
-                  variant="caption"
-                  color="text.secondary"
-                  sx={{ mt: 1, display: "block" }}
-                >
+                <Typography variant="caption" color="text.secondary">
                   JPG, PNG or WebP · Max 5 MB
                 </Typography>
-              </Box>
-            </Box>
+              </Stack>
+            </Stack>
           </Grid>
           {imageError && (
             <Grid size={12}>

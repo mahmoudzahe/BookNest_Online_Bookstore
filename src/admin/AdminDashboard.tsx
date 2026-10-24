@@ -1,17 +1,5 @@
 import { useEffect, useState } from "react";
-import {
-  Box,
-  Chip,
-  Grid,
-  Paper,
-  Table,
-  TableBody,
-  TableCell,
-  TableContainer,
-  TableHead,
-  TableRow,
-  Typography,
-} from "@mui/material";
+import { Box, Chip, Grid, Paper, Stack, Typography } from "@mui/material";
 import { DataGrid } from "@mui/x-data-grid";
 import type { GridColDef } from "@mui/x-data-grid";
 import { Link as RouterLink } from "react-router-dom";
@@ -20,8 +8,18 @@ import ReceiptLongOutlinedIcon from "@mui/icons-material/ReceiptLongOutlined";
 import PeopleIcon from "@mui/icons-material/People";
 import PaymentsOutlinedIcon from "@mui/icons-material/PaymentsOutlined";
 import type { Order } from "../types/order";
+import type { Book } from "../types/book";
 import { getAdminOverview } from "../services/adminApi";
-import { LoadError, PageHeading, money } from "./AdminCommon";
+import { PageHeading } from "./AdminCommon";
+import LoadError from "./components/LoadError";
+import { money } from "./formatters";
+import {
+  ADMIN_LOW_STOCK_LIMIT,
+  ADMIN_LOW_STOCK_DISPLAY_LIMIT,
+  ADMIN_RECENT_ORDERS_LIMIT,
+  ADMIN_TABLE_HEADER_HEIGHT,
+  ADMIN_TABLE_ROW_HEIGHT,
+} from "./constants";
 
 const orderColumns: GridColDef<Order>[] = [
   {
@@ -67,6 +65,24 @@ const orderColumns: GridColDef<Order>[] = [
   },
 ];
 
+const stockColumns: GridColDef<Book>[] = [
+  { field: "title", headerName: "Book", flex: 2, minWidth: 165 },
+  {
+    field: "stock",
+    headerName: "In stock",
+    type: "number",
+    flex: 1,
+    minWidth: 90,
+    renderCell: ({ row }) => (
+      <Chip
+        label={row.stock}
+        size="small"
+        color={row.stock === 0 ? "error" : "warning"}
+      />
+    ),
+  },
+];
+
 export default function AdminDashboard() {
   const [data, setData] = useState<Awaited<
     ReturnType<typeof getAdminOverview>
@@ -93,11 +109,12 @@ export default function AdminDashboard() {
   }, []);
 
   const lowStock = (data?.books ?? [])
-    .filter((book) => book.stock <= 5)
-    .sort((a, b) => a.stock - b.stock);
+    .filter((book) => book.stock <= ADMIN_LOW_STOCK_LIMIT)
+    .sort((a, b) => a.stock - b.stock)
+    .slice(0, ADMIN_LOW_STOCK_DISPLAY_LIMIT);
   const recentOrders = (data?.orders ?? [])
     .filter((order) => !order.archived)
-    .slice(0, 5);
+    .slice(0, ADMIN_RECENT_ORDERS_LIMIT);
   const deliveredRevenue = (data?.orders ?? [])
     .filter((order) => order.status === "delivered")
     .reduce((total, order) => total + order.total, 0);
@@ -141,136 +158,96 @@ export default function AdminDashboard() {
         description="A quick look at your bookstore performance."
       />
       <LoadError error={error} loading={loading} />
-
       {data && (
-        <>
-          <Grid container spacing={2.5} sx={{ mb: 3 }}>
+        <Stack spacing={3}>
+          <Grid container spacing={2.5}>
             {stats.map((stat) => (
               <Grid key={stat.label} size={{ xs: 12, sm: 6, lg: 3 }}>
                 <Paper
+                  className="BookNest-dashboardStat"
                   component={RouterLink}
                   to={stat.link}
                   variant="outlined"
-                  sx={{
-                    p: 2.5,
-                    textDecoration: "none",
-                    color: "text.primary",
-                    display: "flex",
-                    justifyContent: "space-between",
-                    alignItems: "flex-start",
-                    gap: 1,
-                    height: "100%",
-                  }}
                 >
-                  <Box>
+                  <Stack spacing={1}>
                     <Typography
-                      sx={{
-                        fontSize: "0.95rem",
-                        fontWeight: 600,
-                        color: "text.secondary",
-                      }}
+                      variant="subtitle1"
+                      color="text.secondary"
+                      className="BookNest-textWeight600"
                     >
                       {stat.label}
                     </Typography>
-                    <Typography
-                      sx={{
-                        fontSize: { xs: "2rem", md: "2.3rem" },
-                        fontWeight: 800,
-                        mt: 0.75,
-                        lineHeight: 1.2,
-                      }}
-                    >
+                    <Typography variant="h4" className="BookNest-textWeight800">
                       {stat.count}
                     </Typography>
-                  </Box>
-                  <Box
-                    sx={{
-                      bgcolor: "action.hover",
-                      color: "primary.main",
-                      p: 1.2,
-                      borderRadius: 2,
-                    }}
-                  >
-                    {stat.icon}
-                  </Box>
+                  </Stack>
+                  <Box className="BookNest-dashboardStatIcon">{stat.icon}</Box>
                 </Paper>
               </Grid>
             ))}
           </Grid>
-
           <Grid container columns={{ xs: 12, xl: 5 }} spacing={3}>
             <Grid size={{ xs: 12, xl: 3 }} sx={{ minWidth: 0 }}>
-              <Paper
-                variant="outlined"
-                sx={{ p: 2, minWidth: 0, height: "100%" }}
-              >
-                <Typography variant="h6" sx={{ fontWeight: 700, mb: 2 }}>
-                  Recent Orders
-                </Typography>
-                <Box
-                  sx={{
-                    width: "100%",
-                    height: 60 + Math.max(1, recentOrders.length) * 52,
-                  }}
-                >
-                  <DataGrid
-                    rows={recentOrders}
-                    columns={orderColumns}
-                    rowHeight={52}
-                    columnHeaderHeight={52}
-                    hideFooter
-                    disableRowSelectionOnClick
-                    disableColumnMenu
+              <Paper variant="outlined" className="BookNest-dashboardPanel">
+                <Stack spacing={2}>
+                  <Typography variant="h6" className="BookNest-textWeight700">
+                    Recent Orders
+                  </Typography>
+                  <Box
                     sx={{
-                      border: 0,
-                      "& .MuiDataGrid-columnHeaderTitle": { fontWeight: 700 },
+                      width: "100%",
+                      height:
+                        ADMIN_TABLE_HEADER_HEIGHT +
+                        Math.max(1, recentOrders.length) *
+                          ADMIN_TABLE_ROW_HEIGHT,
                     }}
-                    localeText={{ noRowsLabel: "No orders yet." }}
-                  />
-                </Box>
+                  >
+                    <DataGrid
+                      rows={recentOrders}
+                      columns={orderColumns}
+                      rowHeight={ADMIN_TABLE_ROW_HEIGHT}
+                      columnHeaderHeight={ADMIN_TABLE_HEADER_HEIGHT}
+                      hideFooter
+                      disableRowSelectionOnClick
+                      disableColumnMenu
+                      className="BookNest-adminDataGrid"
+                      localeText={{ noRowsLabel: "No orders yet." }}
+                    />
+                  </Box>
+                </Stack>
               </Paper>
             </Grid>
-
-            <Grid size={{ xs: 12, xl: 2 }}>
-              <Paper variant="outlined" sx={{ p: 2, height: "100%" }}>
-                <Typography variant="h6" sx={{ fontWeight: 700, mb: 1 }}>
-                  Low Stock Books
-                </Typography>
-                <TableContainer>
-                  <Table size="small">
-                    <TableHead>
-                      <TableRow>
-                        <TableCell>Book</TableCell>
-                        <TableCell align="right">In stock</TableCell>
-                      </TableRow>
-                    </TableHead>
-                    <TableBody>
-                      {lowStock.slice(0, 7).map((book) => (
-                        <TableRow key={book.id}>
-                          <TableCell>{book.title}</TableCell>
-                          <TableCell align="right">
-                            <Chip
-                              label={book.stock}
-                              size="small"
-                              color={book.stock === 0 ? "error" : "warning"}
-                            />
-                          </TableCell>
-                        </TableRow>
-                      ))}
-                      {lowStock.length === 0 && (
-                        <TableRow>
-                          <TableCell colSpan={2}>
-                            Stock levels look good.
-                          </TableCell>
-                        </TableRow>
-                      )}
-                    </TableBody>
-                  </Table>
-                </TableContainer>
+            <Grid size={{ xs: 12, xl: 2 }} sx={{ minWidth: 0 }}>
+              <Paper variant="outlined" className="BookNest-dashboardPanel">
+                <Stack spacing={2}>
+                  <Typography variant="h6" className="BookNest-textWeight700">
+                    Low Stock Books
+                  </Typography>
+                  <Box
+                    sx={{
+                      width: "100%",
+                      height:
+                        ADMIN_TABLE_HEADER_HEIGHT +
+                        Math.max(1, lowStock.length) * ADMIN_TABLE_ROW_HEIGHT,
+                    }}
+                  >
+                    <DataGrid
+                      rows={lowStock}
+                      columns={stockColumns}
+                      rowHeight={ADMIN_TABLE_ROW_HEIGHT}
+                      columnHeaderHeight={ADMIN_TABLE_HEADER_HEIGHT}
+                      hideFooter
+                      disableRowSelectionOnClick
+                      disableColumnMenu
+                      className="BookNest-adminDataGrid"
+                      localeText={{ noRowsLabel: "Stock levels look good." }}
+                    />
+                  </Box>
+                </Stack>
               </Paper>
             </Grid>
           </Grid>
-        </>
+        </Stack>
       )}
     </>
   );

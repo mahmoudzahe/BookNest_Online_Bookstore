@@ -1,6 +1,7 @@
 import { useMemo } from "react";
 import {
   Box,
+  Stack,
   Chip,
   IconButton,
   Switch,
@@ -12,7 +13,15 @@ import type { GridColDef, GridPaginationModel } from "@mui/x-data-grid";
 import EditOutlinedIcon from "@mui/icons-material/EditOutlined";
 import DeleteOutlinedIcon from "@mui/icons-material/DeleteOutlined";
 import type { Book, Category } from "../../types/book";
-import { money } from "../AdminCommon";
+import { money } from "../formatters";
+import {
+  ADMIN_BOOK_ROW_HEIGHT,
+  ADMIN_BOOK_TABLE_HEIGHT,
+  ADMIN_LOW_STOCK_LIMIT,
+  ADMIN_PAGE_SIZE_OPTIONS,
+  BOOK_TABLE_COVER_WIDTH,
+  BOOK_TABLE_COVER_HEIGHT,
+} from "../constants";
 
 interface BooksTableProps {
   books: Book[];
@@ -41,45 +50,38 @@ export default function BooksTable({
         flex: 2,
         minWidth: 220,
         renderCell: ({ row }) => (
-          <Box
-            sx={{
-              display: "flex",
-              alignItems: "center",
-              gap: 1.5,
-              height: "100%",
-              minWidth: 0,
-            }}
+          <Stack
+            direction="row"
+            spacing={1.5}
+            sx={{ alignItems: "center", height: "100%", minWidth: 0 }}
           >
             <Box
               component="img"
               src={row.image}
               alt=""
               sx={{
-                width: 38,
-                height: 48,
+                width: BOOK_TABLE_COVER_WIDTH,
+                height: BOOK_TABLE_COVER_HEIGHT,
                 objectFit: "cover",
                 borderRadius: 1,
                 flexShrink: 0,
               }}
             />
 
-            <Box
-              sx={{
-                minWidth: 0,
-                display: "flex",
-                flexDirection: "column",
-                justifyContent: "center",
-              }}
-            >
-              <Typography variant="body2" noWrap sx={{ fontWeight: 700 }}>
+            <Stack sx={{ justifyContent: "center", minWidth: 0 }}>
+              <Typography
+                variant="body2"
+                noWrap
+                className="BookNest-textWeight700"
+              >
                 {row.title}
               </Typography>
 
               <Typography variant="caption" color="text.secondary" noWrap>
                 {row.author}
               </Typography>
-            </Box>
-          </Box>
+            </Stack>
+          </Stack>
         ),
       },
       {
@@ -107,7 +109,11 @@ export default function BooksTable({
             size="small"
             label={row.stock === 0 ? "Out of stock" : `${row.stock} left`}
             color={
-              row.stock === 0 ? "error" : row.stock <= 5 ? "warning" : "default"
+              row.stock === 0
+                ? "error"
+                : row.stock <= ADMIN_LOW_STOCK_LIMIT
+                  ? "warning"
+                  : "default"
             }
           />
         ),
@@ -138,13 +144,7 @@ export default function BooksTable({
         sortable: false,
         filterable: false,
         renderCell: ({ row }) => (
-          <Box
-            sx={{
-              display: "flex",
-              alignItems: "center",
-              height: "100%",
-            }}
-          >
+          <Stack direction="row" sx={{ alignItems: "center", height: "100%" }}>
             <Tooltip title="Edit">
               <IconButton
                 size="small"
@@ -165,7 +165,7 @@ export default function BooksTable({
                 <DeleteOutlinedIcon fontSize="small" />
               </IconButton>
             </Tooltip>
-          </Box>
+          </Stack>
         ),
       },
     ],
@@ -173,30 +173,20 @@ export default function BooksTable({
   );
 
   return (
-    <Box sx={{ height: 630, width: "100%" }}>
+    <Box sx={{ height: ADMIN_BOOK_TABLE_HEIGHT, width: "100%" }}>
       <DataGrid
         rows={books}
         columns={columns}
-        rowHeight={64}
+        rowHeight={ADMIN_BOOK_ROW_HEIGHT}
         paginationModel={paginationModel}
         onPaginationModelChange={onPaginationChange}
-        pageSizeOptions={[8, 16, 24]}
+        pageSizeOptions={ADMIN_PAGE_SIZE_OPTIONS}
         disableRowSelectionOnClick
         disableColumnMenu
-        getRowClassName={({ row }) => (row.stock <= 5 ? "low-stock" : "")}
-        sx={{
-          border: 0,
-          "& .MuiDataGrid-cell": {
-            display: "flex",
-            alignItems: "center",
-          },
-          "& .MuiDataGrid-columnHeaderTitle": {
-            fontWeight: 700,
-          },
-          "& .low-stock": {
-            bgcolor: "action.hover",
-          },
-        }}
+        getRowClassName={({ row }) =>
+          row.stock <= ADMIN_LOW_STOCK_LIMIT ? "low-stock" : ""
+        }
+        className="BookNest-adminDataGrid"
       />
     </Box>
   );
