@@ -71,17 +71,10 @@ function OrderSuccess() {
           sx={{
             p: { xs: 3, sm: 4 },
             textAlign: "center",
-            borderRadius: 3,
           }}
         >
           <Stack spacing={2} sx={{ alignItems: "center" }}>
-            <Typography
-              sx={{
-                fontSize: 60,
-                color: "success.main",
-                lineHeight: 1,
-              }}
-            >
+            <Typography variant="h2" color="success.main" aria-hidden="true">
               ✓
             </Typography>
 
@@ -103,7 +96,7 @@ function OrderSuccess() {
               variant="contained"
               component={RouterLink}
               to="/books"
-              sx={{ borderRadius: 2, px: 3 }}
+              sx={{ px: 3 }}
             >
               Continue Shopping
             </Button>

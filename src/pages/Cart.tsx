@@ -11,7 +11,9 @@ import {
   DialogContentText,
   DialogTitle,
   Divider,
+  Grid,
   IconButton,
+  Link,
   Paper,
   Stack,
   Typography,
@@ -23,6 +25,7 @@ import { Link as RouterLink } from "react-router-dom";
 import { useCart } from "../cart/CartContext";
 import { getBooks } from "../services/booksApi";
 import type { Book } from "../types/book";
+import { CART_COVER_WIDTH, CART_COVER_HEIGHT } from "../constants";
 
 function Cart() {
   const { items, setQuantity, removeBook, syncStock } = useCart();
@@ -77,177 +80,182 @@ function Cart() {
       {error && items.length > 0 && <Alert severity="error">{error}</Alert>}
 
       {!loading && items.length === 0 && (
-        <Box sx={{ textAlign: "center", py: 7 }}>
-          <Typography variant="h5" sx={{ fontWeight: 700, mb: 1 }}>
+        <Stack
+          spacing={2}
+          sx={{
+            minHeight: 220,
+            justifyContent: "center",
+            alignItems: "center",
+            textAlign: "center",
+          }}
+        >
+          <Typography variant="h5" sx={{ fontWeight: "bold" }}>
             Your shopping cart is empty
           </Typography>
-          <Typography color="text.secondary" sx={{ mb: 2 }}>
+          <Typography color="text.secondary">
             You have no books in your cart yet.
           </Typography>
           <Button component={RouterLink} to="/books" variant="outlined">
             Continue Shopping
           </Button>
-        </Box>
+        </Stack>
       )}
 
       {!loading && !error && cartBooks.length > 0 && (
-        <Box
-          sx={{
-            display: "grid",
-            gridTemplateColumns: { xs: "1fr", md: "minmax(0, 1fr) 340px" },
-            gap: 3,
-            alignItems: "start",
-          }}
-        >
-          <Paper variant="outlined" sx={{ p: { xs: 2, sm: 3 } }}>
-            <Stack spacing={2} divider={<Divider flexItem />}>
-              {cartBooks.map(({ book, quantity }) => (
-                <Stack
-                  key={book.id}
-                  direction="row"
-                  spacing={2}
-                  sx={{ alignItems: "flex-start" }}
-                >
-                  <Box
-                    component={RouterLink}
-                    to={`/books/${book.id}`}
-                    sx={{ flexShrink: 0 }}
+        <Grid container spacing={3} sx={{ alignItems: "flex-start" }}>
+          <Grid size={{ xs: 12, md: "grow" }} sx={{ minWidth: 0 }}>
+            <Paper
+              variant="outlined"
+              sx={{ p: { xs: 2, sm: 3 }, borderRadius: 1 }}
+            >
+              <Stack spacing={2} divider={<Divider flexItem />}>
+                {cartBooks.map(({ book, quantity }) => (
+                  <Stack
+                    key={book.id}
+                    direction="row"
+                    spacing={2}
+                    sx={{ alignItems: "flex-start" }}
                   >
                     <Box
-                      component="img"
-                      src={book.image}
-                      alt={book.title}
-                      sx={{
-                        width: { xs: 65, sm: 85 },
-                        height: 110,
-                        objectFit: "contain",
-                      }}
-                    />
-                  </Box>
-
-                  <Box sx={{ flexGrow: 1, minWidth: 0 }}>
-                    <Typography
                       component={RouterLink}
                       to={`/books/${book.id}`}
-                      sx={{
-                        fontWeight: 700,
-                        color: "text.primary",
-                        textDecoration: "none",
-                        "&:hover": { textDecoration: "underline" },
-                      }}
+                      sx={{ flexShrink: 0 }}
                     >
-                      {book.title}
-                    </Typography>
-                    <Typography variant="body2" color="text.secondary">
-                      {book.author}
-                    </Typography>
-                    <Typography
-                      variant="body2"
-                      color="text.secondary"
-                      sx={{ mt: 0.5 }}
-                    >
-                      ${book.price.toFixed(2)} each
-                    </Typography>
+                      <Box
+                        component="img"
+                        src={book.image}
+                        alt={book.title}
+                        sx={{
+                          width: CART_COVER_WIDTH,
+                          height: CART_COVER_HEIGHT,
+                          objectFit: "contain",
+                        }}
+                      />
+                    </Box>
+
+                    <Stack spacing={0.5} sx={{ flexGrow: 1, minWidth: 0 }}>
+                      <Link
+                        component={RouterLink}
+                        to={`/books/${book.id}`}
+                        color="text.primary"
+                        underline="hover"
+                        variant="subtitle1"
+                        sx={{ fontWeight: "bold" }}
+                      >
+                        {book.title}
+                      </Link>
+                      <Typography variant="body2" color="text.secondary">
+                        {book.author}
+                      </Typography>
+                      <Typography variant="body2" color="text.secondary">
+                        ${book.price.toFixed(2)} each
+                      </Typography>
+
+                      <Stack
+                        direction="row"
+                        spacing={0.5}
+                        sx={{ alignItems: "center" }}
+                      >
+                        <IconButton
+                          size="small"
+                          aria-label={`Decrease quantity of ${book.title}`}
+                          disabled={quantity <= 1}
+                          onClick={() =>
+                            setQuantity(book.id, quantity - 1, book.stock)
+                          }
+                        >
+                          <RemoveIcon fontSize="small" />
+                        </IconButton>
+                        <Typography sx={{ minWidth: 25, textAlign: "center" }}>
+                          {quantity}
+                        </Typography>
+                        <IconButton
+                          size="small"
+                          aria-label={`Increase quantity of ${book.title}`}
+                          disabled={quantity >= book.stock}
+                          onClick={() =>
+                            setQuantity(book.id, quantity + 1, book.stock)
+                          }
+                        >
+                          <AddIcon fontSize="small" />
+                        </IconButton>
+                      </Stack>
+                    </Stack>
 
                     <Stack
-                      direction="row"
-                      spacing={0.5}
-                      sx={{ alignItems: "center", mt: 1 }}
+                      spacing={1}
+                      sx={{ alignItems: "flex-end", flexShrink: 0 }}
                     >
                       <IconButton
                         size="small"
-                        aria-label={`Decrease quantity of ${book.title}`}
-                        disabled={quantity <= 1}
-                        onClick={() =>
-                          setQuantity(book.id, quantity - 1, book.stock)
-                        }
+                        color="error"
+                        aria-label={`Remove ${book.title} from cart`}
+                        onClick={() => setBookToDelete(book)}
                       >
-                        <RemoveIcon fontSize="small" />
+                        <DeleteIcon fontSize="small" />
                       </IconButton>
-                      <Typography sx={{ minWidth: 25, textAlign: "center" }}>
-                        {quantity}
+                      <Typography sx={{ fontWeight: 700 }}>
+                        ${(book.price * quantity).toFixed(2)}
                       </Typography>
-                      <IconButton
-                        size="small"
-                        aria-label={`Increase quantity of ${book.title}`}
-                        disabled={quantity >= book.stock}
-                        onClick={() =>
-                          setQuantity(book.id, quantity + 1, book.stock)
-                        }
-                      >
-                        <AddIcon fontSize="small" />
-                      </IconButton>
                     </Stack>
-                  </Box>
-
-                  <Stack
-                    spacing={1}
-                    sx={{ alignItems: "flex-end", flexShrink: 0 }}
-                  >
-                    <IconButton
-                      size="small"
-                      color="error"
-                      aria-label={`Remove ${book.title} from cart`}
-                      onClick={() => setBookToDelete(book)}
-                    >
-                      <DeleteIcon fontSize="small" />
-                    </IconButton>
-                    <Typography sx={{ fontWeight: 700 }}>
-                      ${(book.price * quantity).toFixed(2)}
-                    </Typography>
                   </Stack>
-                </Stack>
-              ))}
-            </Stack>
-          </Paper>
+                ))}
+              </Stack>
+            </Paper>
+          </Grid>
 
-          <Paper
-            variant="outlined"
-            sx={{ p: 3, bgcolor: "background.paper", borderRadius: 3 }}
-          >
-            <Typography variant="h6" sx={{ mb: 2 }}>
-              Order Summary
-            </Typography>
-            <Stack
-              direction="row"
-              sx={{ justifyContent: "space-between", gap: 1, mb: 2 }}
+          <Grid size={{ xs: 12, md: "auto" }} sx={{ width: { md: 340 } }}>
+            <Paper
+              variant="outlined"
+              sx={{ p: 3, bgcolor: "background.paper" }}
             >
-              <Typography variant="body2" color="text.secondary">
-                Discounts
+              <Typography variant="h6" sx={{ mb: 2 }}>
+                Order Summary
               </Typography>
-              <Typography variant="body2">Applied at checkout</Typography>
-            </Stack>
-            <Divider sx={{ mb: 2 }} />
-            <Stack
-              direction="row"
-              sx={{ justifyContent: "space-between", mb: 3 }}
-            >
-              <Typography sx={{ fontWeight: 700 }}>Subtotal</Typography>
-              <Typography sx={{ fontWeight: 700 }}>
-                ${total.toFixed(2)}
-              </Typography>
-            </Stack>
-            <Stack spacing={1.5}>
-              <Button
-                component={RouterLink}
-                to="/checkout"
-                variant="contained"
-                fullWidth
-                size="large"
+              <Stack
+                direction="row"
+                spacing={1}
+                sx={{ justifyContent: "space-between", mb: 2 }}
               >
-                Proceed to Checkout
-              </Button>
-              <Button
-                component={RouterLink}
-                to="/books"
-                variant="outlined"
-                fullWidth
+                <Typography variant="body2" color="text.secondary">
+                  Discounts
+                </Typography>
+                <Typography variant="body2">Applied at checkout</Typography>
+              </Stack>
+              <Divider sx={{ mb: 2 }} />
+              <Stack
+                direction="row"
+                sx={{ justifyContent: "space-between", mb: 3 }}
               >
-                Continue Shopping
-              </Button>
-            </Stack>
-          </Paper>
-        </Box>
+                <Typography variant="subtitle1" sx={{ fontWeight: "bold" }}>
+                  Subtotal
+                </Typography>
+                <Typography variant="subtitle1" sx={{ fontWeight: "bold" }}>
+                  ${total.toFixed(2)}
+                </Typography>
+              </Stack>
+              <Stack spacing={1.5}>
+                <Button
+                  component={RouterLink}
+                  to="/checkout"
+                  variant="contained"
+                  fullWidth
+                  size="large"
+                >
+                  Proceed to Checkout
+                </Button>
+                <Button
+                  component={RouterLink}
+                  to="/books"
+                  variant="outlined"
+                  fullWidth
+                >
+                  Continue Shopping
+                </Button>
+              </Stack>
+            </Paper>
+          </Grid>
+        </Grid>
       )}
 
       <Dialog

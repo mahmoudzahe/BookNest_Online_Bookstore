@@ -5,6 +5,7 @@ import {
   Button,
   CircularProgress,
   Container,
+  Grid,
   Paper,
   Rating,
   Stack,
@@ -15,6 +16,11 @@ import { useCart } from "../cart/CartContext";
 import BookReviews from "../components/BookReviews";
 import { getBook, getCategories, getReviews } from "../services/booksApi";
 import type { Book, BookReview, Category } from "../types/book";
+import {
+  LOW_STOCK_THRESHOLD,
+  STOCK_LABELS,
+  CART_ACTION_LABELS,
+} from "../constants";
 
 function BookDetails() {
   const { id } = useParams<{ id: string }>();
@@ -68,70 +74,74 @@ function BookDetails() {
       {error && <Alert severity="error">{error}</Alert>}
 
       {book && !loading && !error && (
-        <>
-          <Paper
-            variant="outlined"
-            sx={{
-              p: 3,
-              borderRadius: 3,
-              display: "grid",
-              gridTemplateColumns: { xs: "1fr", md: "220px 1fr" },
-              gap: 3,
-            }}
-          >
-            <Box
-              component="img"
-              src={book.image}
-              alt={book.title}
-              sx={{ width: "100%", height: 300, objectFit: "contain" }}
-            />
-            <Stack spacing={1.5} sx={{ alignItems: "flex-start" }}>
-              <Typography variant="h4">{book.title}</Typography>
-              <Typography color="text.secondary">by {book.author}</Typography>
-              <Typography>
-                Category:{" "}
-                {categories.find((category) => category.id === book.categoryId)
-                  ?.name ?? "Unknown"}
-              </Typography>
-              <Stack direction="row" spacing={1} sx={{ alignItems: "center" }}>
-                <Rating value={averageRating} precision={0.5} readOnly />
-                <Typography variant="body2" color="text.secondary">
-                  {reviews.length > 0
-                    ? `${averageRating.toFixed(1)} (${reviews.length} ${reviews.length === 1 ? "review" : "reviews"})`
-                    : "No Ratings"}
-                </Typography>
-              </Stack>
-              <Typography sx={{ fontWeight: 700 }}>
-                ${book.price.toFixed(2)}
-              </Typography>
-              <Typography
-                color={
-                  book.stock === 0
-                    ? "error.main"
-                    : book.stock <= 5
-                      ? "warning.main"
-                      : "success.main"
-                }
-              >
-                {book.stock === 0
-                  ? "Out of Stock"
-                  : book.stock <= 5
-                    ? `Low Stock · ${book.stock} left`
-                    : `${book.stock} in stock`}
-              </Typography>
-              <Typography>{book.description}</Typography>
-              <Button
-                variant="contained"
-                disabled={book.stock <= 0 || quantity >= book.stock}
-                onClick={() => addBook(book)}
-              >
-                {book.stock <= 0
-                  ? "Sold out"
-                  : quantity >= book.stock
-                    ? "Max added"
-                    : "Add to cart"}
-              </Button>
-            </Stack>
+        <Stack spacing={5}>
+          <Paper variant="outlined" sx={{ p: 3 }}>
+            <Grid container spacing={3}>
+              <Grid size={{ xs: 12, md: "auto" }} sx={{ width: { md: 220 } }}>
+                <Box
+                  component="img"
+                  src={book.image}
+                  alt={book.title}
+                  sx={{ width: "100%", height: 300, objectFit: "contain" }}
+                />
+              </Grid>
+              <Grid size={{ xs: 12, md: "grow" }} sx={{ minWidth: 0 }}>
+                <Stack spacing={1.5} sx={{ alignItems: "flex-start" }}>
+                  <Typography variant="h4">{book.title}</Typography>
+                  <Typography color="text.secondary">
+                    by {book.author}
+                  </Typography>
+                  <Typography>
+                    Category:{" "}
+                    {categories.find(
+                      (category) => category.id === book.categoryId,
+                    )?.name ?? "Unknown"}
+                  </Typography>
+                  <Stack
+                    direction="row"
+                    spacing={1}
+                    sx={{ alignItems: "center" }}
+                  >
+                    <Rating value={averageRating} precision={0.5} readOnly />
+                    <Typography variant="body2" color="text.secondary">
+                      {reviews.length > 0
+                        ? `${averageRating.toFixed(1)} (${reviews.length} ${reviews.length === 1 ? "review" : "reviews"})`
+                        : "No Ratings"}
+                    </Typography>
+                  </Stack>
+                  <Typography variant="body1" sx={{ fontWeight: "bold" }}>
+                    ${book.price.toFixed(2)}
+                  </Typography>
+                  <Typography
+                    color={
+                      book.stock === 0
+                        ? "error.main"
+                        : book.stock <= LOW_STOCK_THRESHOLD
+                          ? "warning.main"
+                          : "success.main"
+                    }
+                  >
+                    {book.stock === 0
+                      ? STOCK_LABELS.outOfStock
+                      : book.stock <= LOW_STOCK_THRESHOLD
+                        ? `${STOCK_LABELS.lowStock} · ${book.stock} left`
+                        : `${book.stock} in stock`}
+                  </Typography>
+                  <Typography>{book.description}</Typography>
+                  <Button
+                    variant="contained"
+                    disabled={book.stock <= 0 || quantity >= book.stock}
+                    onClick={() => addBook(book)}
+                  >
+                    {book.stock <= 0
+                      ? CART_ACTION_LABELS.soldOut
+                      : quantity >= book.stock
+                        ? CART_ACTION_LABELS.maxAdded
+                        : CART_ACTION_LABELS.addToCart}
+                  </Button>
+                </Stack>
+              </Grid>
+            </Grid>
           </Paper>
 
           <BookReviews
@@ -139,7 +149,7 @@ function BookDetails() {
             reviews={reviews}
             onReviewsChange={setReviews}
           />
-        </>
+        </Stack>
       )}
     </Container>
   );

@@ -5,6 +5,7 @@ import {
   CardActions,
   CardContent,
   Chip,
+  Link,
   Rating,
   Stack,
   Typography,
@@ -12,6 +13,11 @@ import {
 import { Link as RouterLink } from "react-router-dom";
 import { useCart } from "../cart/CartContext";
 import type { Book } from "../types/book";
+import {
+  LOW_STOCK_THRESHOLD,
+  STOCK_LABELS,
+  CART_ACTION_LABELS,
+} from "../constants";
 
 interface BookCardProps {
   book: Book;
@@ -25,12 +31,7 @@ function BookCard({ book }: BookCardProps) {
   return (
     <Card
       variant="outlined"
-      sx={{
-        height: "100%",
-        display: "flex",
-        flexDirection: "column",
-        borderRadius: 3,
-      }}
+      sx={{ height: "100%", display: "flex", flexDirection: "column" }}
     >
       <Box
         component={RouterLink}
@@ -52,62 +53,54 @@ function BookCard({ book }: BookCardProps) {
       </Box>
 
       <CardContent sx={{ flexGrow: 1, textAlign: "center" }}>
-        <Typography
+        <Link
           component={RouterLink}
           to={`/books/${book.id}`}
-          variant="h6"
-          sx={{
-            display: "block",
-            fontSize: "1.05rem",
-            fontWeight: 700,
-            color: "text.primary",
-            textDecoration: "none",
-            "&:hover": {
-              color: "primary.main",
-              textDecoration: "underline",
-            },
-          }}
+          variant="subtitle1"
+          color="text.primary"
+          underline="hover"
+          sx={{ fontWeight: "bold" }}
         >
           {book.title}
-        </Typography>
+        </Link>
 
-        <Typography variant="body2" color="text.secondary">
-          {book.author}
-        </Typography>
-
-        <Stack
-          direction="row"
-          spacing={1}
-          sx={{
-            alignItems: "center",
-            justifyContent: "center",
-            my: 1,
-          }}
-        >
-          <Rating value={book.rating} precision={0.5} size="small" readOnly />
-
-          <Typography variant="body2">
-            {book.rating > 0 ? book.rating.toFixed(1) : "No Ratings"}
+        <Stack spacing={1} sx={{ alignItems: "center" }}>
+          <Typography variant="body2" color="text.secondary">
+            {book.author}
           </Typography>
+          <Stack
+            direction="row"
+            spacing={1}
+            sx={{ alignItems: "center", justifyContent: "center" }}
+          >
+            <Rating value={book.rating} precision={0.5} size="small" readOnly />
+            <Typography variant="body2">
+              {book.rating > 0 ? book.rating.toFixed(1) : "No Ratings"}
+            </Typography>
+          </Stack>
+
+          <Typography variant="body1" sx={{ fontWeight: "bold" }}>
+            ${book.price.toFixed(2)}
+          </Typography>
+
+          <Chip
+            size="small"
+            label={
+              book.stock === 0
+                ? STOCK_LABELS.outOfStock
+                : book.stock <= LOW_STOCK_THRESHOLD
+                  ? STOCK_LABELS.lowStock
+                  : STOCK_LABELS.available
+            }
+            color={
+              book.stock === 0
+                ? "error"
+                : book.stock <= LOW_STOCK_THRESHOLD
+                  ? "warning"
+                  : "success"
+            }
+          />
         </Stack>
-
-        <Typography sx={{ fontWeight: 700, mb: 1 }}>
-          ${book.price.toFixed(2)}
-        </Typography>
-
-        <Chip
-          size="small"
-          label={
-            book.stock === 0
-              ? "Out of Stock"
-              : book.stock <= 5
-                ? "Low Stock"
-                : "Available"
-          }
-          color={
-            book.stock === 0 ? "error" : book.stock <= 5 ? "warning" : "success"
-          }
-        />
       </CardContent>
 
       <CardActions sx={{ p: 2, pt: 0 }}>
@@ -116,13 +109,12 @@ function BookCard({ book }: BookCardProps) {
           fullWidth
           disabled={book.stock <= 0 || quantity >= book.stock}
           onClick={() => addBook(book)}
-          sx={{ borderRadius: 2 }}
         >
           {book.stock <= 0
-            ? "Sold out"
+            ? CART_ACTION_LABELS.soldOut
             : quantity >= book.stock
-              ? "Max added"
-              : "Add to Cart"}
+              ? CART_ACTION_LABELS.maxAdded
+              : CART_ACTION_LABELS.addToCart}
         </Button>
       </CardActions>
     </Card>

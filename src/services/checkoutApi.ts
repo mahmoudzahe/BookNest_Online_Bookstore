@@ -1,9 +1,5 @@
-import axios from "axios";
+import { api } from "./api";
 import type { Coupon, NewOrder, Order } from "../types/order";
-
-const api = axios.create({
-  baseURL: "http://localhost:3001",
-});
 
 export async function findCoupon(code: string): Promise<Coupon | null> {
   const response = await api.get<Coupon[]>("/coupons", {

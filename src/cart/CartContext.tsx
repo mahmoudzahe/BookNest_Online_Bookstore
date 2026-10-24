@@ -1,35 +1,13 @@
-
 import {
   createContext,
   useCallback,
   useContext,
   useEffect,
-  useReducer,
+  useState,
 } from "react";
 import type { ReactNode } from "react";
 import type { Book } from "../types/book";
-
-type CartItem = {
-  bookId: string;
-  quantity: number;
-};
-
-type CartAction =
-  | { type: "ADD"; bookId: string; stock: number }
-  | { type: "SET_QUANTITY"; bookId: string; quantity: number; stock: number }
-  | { type: "REMOVE"; bookId: string }
-  | { type: "SYNC_STOCK"; books: Book[] }
-  | { type: "CLEAR" };
-
-type CartContextValue = {
-  items: CartItem[];
-  totalItems: number;
-  addBook: (book: Book) => void;
-  setQuantity: (bookId: string, quantity: number, stock: number) => void;
-  removeBook: (bookId: string) => void;
-  syncStock: (books: Book[]) => void;
-  clearCart: () => void;
-};
+import type { CartContextValue, CartItem } from "../types/cart";
 
 const STORAGE_KEY = "booknest-cart";
 
@@ -47,128 +25,71 @@ function loadCart(): CartItem[] {
       (item): item is CartItem =>
         typeof item?.bookId === "string" &&
         Number.isInteger(item.quantity) &&
-        item.quantity > 0
+        item.quantity > 0,
     );
   } catch {
     return [];
   }
 }
 
-function cartReducer(state: CartItem[], action: CartAction): CartItem[] {
-  switch (action.type) {
-    case "ADD": {
-      if (action.stock <= 0) {
-        return state;
-      }
-
-      const item = state.find(
-        (item) => item.bookId === action.bookId
-      );
-
-      if (item) {
-        return state.map((current) =>
-          current.bookId === action.bookId
-            ? {
-                ...current,
-                quantity: Math.min(current.quantity + 1, action.stock),
-              }
-            : current
-        );
-      }
-
-      return [...state, { bookId: action.bookId, quantity: 1 }];
-    }
-
-    case "SET_QUANTITY": {
-      if (action.stock <= 0) {
-        return state;
-      }
-
-      return state.map((item) =>
-        item.bookId === action.bookId
-          ? {
-              ...item,
-              quantity: Math.min(
-                Math.max(1, Math.floor(action.quantity)),
-                action.stock
-              ),
-            }
-          : item
-      );
-    }
-
-    case "REMOVE":
-      return state.filter((item) => item.bookId !== action.bookId);
-
-    case "SYNC_STOCK": {
-      const stockById = new Map(
-        action.books.map((book) => [book.id, book.stock])
-      );
-
-      return state.flatMap((item) => {
-        const stock = stockById.get(item.bookId) ?? 0;
-
-        return stock > 0
-          ? [{ ...item, quantity: Math.min(item.quantity, stock) }]
-          : [];
-      });
-    }
-
-    case "CLEAR":
-      return [];
-  }
-}
-
 export function CartProvider({ children }: { children: ReactNode }) {
-  const [items, dispatch] = useReducer(cartReducer, [], loadCart);
+  const [items, setItems] = useState<CartItem[]>(loadCart);
 
   useEffect(() => {
     localStorage.setItem(STORAGE_KEY, JSON.stringify(items));
   }, [items]);
 
   const addBook = (book: Book) => {
-    dispatch({
-      type: "ADD",
-      bookId: book.id,
-      stock: book.stock,
+    setItems((current) => {
+      if (book.stock <= 0) return current;
+
+      const existing = current.find((item) => item.bookId === book.id);
+      if (existing) {
+        return current.map((item) =>
+          item.bookId === book.id
+            ? { ...item, quantity: Math.min(item.quantity + 1, book.stock) }
+            : item,
+        );
+      }
+
+      return [...current, { bookId: book.id, quantity: 1 }];
     });
   };
 
-  const setQuantity = (
-    bookId: string,
-    quantity: number,
-    stock: number
-  ) => {
-    dispatch({
-      type: "SET_QUANTITY",
-      bookId,
-      quantity,
-      stock,
+  const setQuantity = (bookId: string, quantity: number, stock: number) => {
+    setItems((current) => {
+      if (stock <= 0) return current;
+
+      return current.map((item) =>
+        item.bookId === bookId
+          ? {
+              ...item,
+              quantity: Math.min(Math.max(1, Math.floor(quantity)), stock),
+            }
+          : item,
+      );
     });
   };
 
   const removeBook = (bookId: string) => {
-    dispatch({
-      type: "REMOVE",
-      bookId,
-    });
+    setItems((current) => current.filter((item) => item.bookId !== bookId));
   };
 
   const syncStock = useCallback((books: Book[]) => {
-    dispatch({
-      type: "SYNC_STOCK",
-      books,
-    });
+    const stockById = new Map(books.map((book) => [book.id, book.stock]));
+    setItems((current) =>
+      current.flatMap((item) => {
+        const stock = stockById.get(item.bookId) ?? 0;
+        return stock > 0
+          ? [{ ...item, quantity: Math.min(item.quantity, stock) }]
+          : [];
+      }),
+    );
   }, []);
 
-  const clearCart = () => {
-    dispatch({ type: "CLEAR" });
-  };
+  const clearCart = () => setItems([]);
 
-  const totalItems = items.reduce(
-    (total, item) => total + item.quantity,
-    0
-  );
+  const totalItems = items.reduce((total, item) => total + item.quantity, 0);
 
   return (
     <CartContext.Provider

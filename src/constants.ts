@@ -10,3 +10,20 @@ export const BOOK_SORT_OPTIONS = [
 ] as const;
 
 export const ACCOUNT_MENU_WIDTH = 245;
+
+export const LOW_STOCK_THRESHOLD = 5;
+
+export const STOCK_LABELS = {
+  outOfStock: "Out of Stock",
+  lowStock: "Low Stock",
+  available: "Available",
+} as const;
+
+export const CART_ACTION_LABELS = {
+  soldOut: "Sold out",
+  maxAdded: "Max added",
+  addToCart: "Add to Cart",
+} as const;
+
+export const CART_COVER_WIDTH = { xs: 65, sm: 85 };
+export const CART_COVER_HEIGHT = 110;
