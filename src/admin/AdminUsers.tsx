@@ -1,3 +1,10 @@
+import {
+  ADMIN_PAGE_SIZE,
+  ADMIN_PAGE_SIZE_OPTIONS,
+  ADMIN_BOOK_ROW_HEIGHT,
+  ADMIN_TABLE_FOOTER_HEIGHT,
+  ADMIN_TABLE_MIN_ROWS,
+} from "./constants";
 import { useEffect, useState } from "react";
 import {
   Avatar,
@@ -27,7 +34,8 @@ import {
 } from "../services/adminApi";
 import type { AuthUser } from "../types/user";
 import type { Order } from "../types/order";
-import { LoadError, PageHeading } from "./AdminCommon";
+import { PageHeading } from "./AdminCommon";
+import LoadError from "./components/LoadError";
 import ConfirmDialog from "./components/ConfirmDialog";
 
 type UserRow = AuthUser & { orderCount: number };
@@ -303,7 +311,7 @@ export default function AdminUsers() {
       />
       <LoadError loading={loading} error={error} />
       {!loading && (
-        <Paper variant="outlined" sx={{ p: 2, borderRadius: 3 }}>
+        <Paper variant="outlined" sx={{ p: 2 }}>
           <Tabs
             value={tab}
             onChange={(_event, value: "active" | "archived") => setTab(value)}
@@ -359,24 +367,29 @@ export default function AdminUsers() {
           </Box>
           <Box
             sx={{
-              height: Math.min(8, Math.max(rows.length, 2)) * 64 + 110,
+              height:
+                Math.min(
+                  ADMIN_PAGE_SIZE,
+                  Math.max(rows.length, ADMIN_TABLE_MIN_ROWS),
+                ) *
+                  ADMIN_BOOK_ROW_HEIGHT +
+                ADMIN_TABLE_FOOTER_HEIGHT,
               width: "100%",
             }}
           >
             <DataGrid
               rows={rows}
               columns={columns}
-              rowHeight={64}
-              pageSizeOptions={[8, 16, 24]}
+              rowHeight={ADMIN_BOOK_ROW_HEIGHT}
+              pageSizeOptions={ADMIN_PAGE_SIZE_OPTIONS}
               initialState={{
-                pagination: { paginationModel: { page: 0, pageSize: 8 } },
+                pagination: {
+                  paginationModel: { page: 0, pageSize: ADMIN_PAGE_SIZE },
+                },
               }}
               disableRowSelectionOnClick
               disableColumnMenu
-              sx={{
-                border: 0,
-                "& .MuiDataGrid-columnHeaderTitle": { fontWeight: 700 },
-              }}
+              className="BookNest-adminDataGrid"
             />
           </Box>
         </Paper>

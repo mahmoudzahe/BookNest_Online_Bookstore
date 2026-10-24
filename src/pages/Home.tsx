@@ -6,6 +6,7 @@ import {
   CircularProgress,
   Container,
   IconButton,
+  Paper,
   Stack,
   useMediaQuery,
   Typography,
@@ -13,11 +14,51 @@ import {
 import ChevronLeftIcon from "@mui/icons-material/ChevronLeft";
 import ChevronRightIcon from "@mui/icons-material/ChevronRight";
 import { Link as RouterLink } from "react-router-dom";
-import { useTheme } from "@mui/material/styles";
+import { styled, useTheme } from "@mui/material/styles";
 import BookCard from "../components/BookCard";
 import BookGrid from "../components/BookGrid";
 import { getBooks } from "../services/booksApi";
 import type { Book } from "../types/book";
+
+const FeaturedScroller = styled(Stack)(({ theme }) => ({
+  display: "flex",
+  flexDirection: "row",
+  gap: theme.spacing(2),
+  overflowX: "auto",
+  scrollBehavior: "smooth",
+  scrollSnapType: "x mandatory",
+  scrollbarWidth: "none",
+  "&::-webkit-scrollbar": { display: "none" },
+  "& > .BookNest-featuredItem": {
+    flex: "0 0 100%",
+    minWidth: 0,
+    scrollSnapAlign: "start",
+    [theme.breakpoints.up("sm")]: {
+      flexBasis: `calc((100% - ${theme.spacing(2)}) / 2)`,
+    },
+    [theme.breakpoints.up("md")]: {
+      flexBasis: `calc((100% - ${theme.spacing(4)}) / 3)`,
+    },
+    [theme.breakpoints.up("lg")]: {
+      flexBasis: `calc((100% - ${theme.spacing(6)}) / 4)`,
+    },
+  },
+}));
+
+const FeaturedDot = styled("button")(({ theme }) => ({
+  width: theme.spacing(1),
+  height: theme.spacing(1),
+  padding: 0,
+  border: 0,
+  borderRadius: theme.shape.borderRadius,
+  backgroundColor: theme.palette.action.disabledBackground,
+  cursor: "pointer",
+  transition: "width 0.2s ease",
+  "&.is-active": {
+    width: theme.spacing(3),
+    backgroundColor: theme.palette.primary.main,
+  },
+}));
 
 function Home() {
   const [books, setBooks] = useState<Book[]>([]);
@@ -130,8 +171,8 @@ function Home() {
             textAlign: "center",
           }}
         >
-          <Typography variant="h5" sx={{ fontWeight: 600 }}>
-            Unable to load books
+          <Typography variant="h5">
+            <strong>Unable to load books</strong>
           </Typography>
 
           <Typography color="text.secondary">
@@ -148,166 +189,118 @@ function Home() {
 
   return (
     <Container maxWidth="lg" sx={{ py: 4 }}>
-      <Box
-        sx={{
-          bgcolor: "#20566a",
-          color: "white",
-          p: { xs: 3, md: 5 },
-          borderRadius: 2,
-          mb: 4,
-        }}
-      >
-        <Typography
-          variant="h3"
+      <Stack spacing={4}>
+        <Paper
+          elevation={0}
           sx={{
-            fontWeight: 700,
-            fontSize: { xs: "2rem", md: "3rem" },
+            bgcolor: "primary.main",
+            color: "primary.contrastText",
+            p: { xs: 3, md: 5 },
+            borderRadius: 2,
           }}
         >
-          Find your next favorite book
-        </Typography>
-
-        <Typography sx={{ my: 2 }}>
-          Browse stories, discover new authors, and explore our collection.
-        </Typography>
-
-        <Button
-          variant="contained"
-          component={RouterLink}
-          to="/books"
-          sx={{
-            bgcolor: "#ffffff",
-            color: "#20566a",
-            "&:hover": { bgcolor: "#e8f3f5" },
-          }}
-        >
-          Browse books
-        </Button>
-      </Box>
-
-      <Typography variant="h5" sx={{ mb: 2 }}>
-        Featured books
-      </Typography>
-
-      {featured.length > 0 ? (
-        <Box
-          ref={featuredRef}
-          onScroll={handleFeaturedScroll}
-          sx={{
-            display: "flex",
-            gap: 2,
-            overflowX: "auto",
-            scrollBehavior: "smooth",
-            scrollSnapType: "x mandatory",
-            scrollbarWidth: "none",
-            "&::-webkit-scrollbar": {
-              display: "none",
-            },
-          }}
-        >
-          {featured.map((book) => (
-            <Box
-              key={book.id}
-              sx={{
-                flex: {
-                  xs: "0 0 100%",
-                  sm: "0 0 calc((100% - 16px) / 2)",
-                  md: "0 0 calc((100% - 32px) / 3)",
-                  lg: "0 0 calc((100% - 48px) / 4)",
-                },
-                minWidth: 0,
-                scrollSnapAlign: "start",
-              }}
+          <Stack spacing={2} sx={{ alignItems: "flex-start" }}>
+            <Typography variant={isMd ? "h3" : "h4"}>
+              <strong>Find your next favorite book</strong>
+            </Typography>
+            <Typography>
+              Browse stories, discover new authors, and explore our collection.
+            </Typography>
+            <Button
+              variant="contained"
+              component={RouterLink}
+              to="/books"
+              className="BookNest-heroButton"
             >
-              <BookCard book={book} />
-            </Box>
-          ))}
-        </Box>
-      ) : (
-        <Typography color="text.secondary">No featured books yet.</Typography>
-      )}
+              Browse books
+            </Button>
+          </Stack>
+        </Paper>
 
-      {lastFeaturedIndex > 0 && (
-        <Box
-          sx={{
-            display: "flex",
-            justifyContent: "center",
-            alignItems: "center",
-            gap: 2,
-            mt: 2.5,
-          }}
-        >
-          <IconButton
-            aria-label="Previous featured book"
-            disabled={currentFeaturedIndex === 0}
-            onClick={() => scrollFeatured(currentFeaturedIndex - 1)}
-            sx={{
-              border: "1px solid",
-              borderColor: "divider",
-              bgcolor: "background.paper",
-            }}
-          >
-            <ChevronLeftIcon />
-          </IconButton>
+        <Stack spacing={5}>
+          <Stack spacing={2}>
+            <Typography variant="h5">Featured books</Typography>
 
-          <Box sx={{ display: "flex", alignItems: "center", gap: 0.75 }}>
-            {Array.from({ length: lastFeaturedIndex + 1 }, (_, index) => (
-              <Box
-                key={index}
-                component="button"
-                type="button"
-                aria-label={`Show featured book ${index + 1}`}
-                aria-current={
-                  index === currentFeaturedIndex ? "step" : undefined
-                }
-                onClick={() => scrollFeatured(index)}
-                sx={{
-                  width: index === currentFeaturedIndex ? 22 : 9,
-                  height: 9,
-                  p: 0,
-                  border: 0,
-                  borderRadius: 5,
-                  bgcolor:
-                    index === currentFeaturedIndex
-                      ? "primary.main"
-                      : "action.disabledBackground",
-                  cursor: "pointer",
-                  transition: "width 0.2s ease",
-                }}
-              />
-            ))}
-          </Box>
+            {featured.length > 0 ? (
+              <FeaturedScroller
+                ref={featuredRef}
+                onScroll={handleFeaturedScroll}
+              >
+                {featured.map((book) => (
+                  <Box key={book.id} className="BookNest-featuredItem">
+                    <BookCard book={book} />
+                  </Box>
+                ))}
+              </FeaturedScroller>
+            ) : (
+              <Typography color="text.secondary">
+                No featured books yet.
+              </Typography>
+            )}
 
-          <IconButton
-            aria-label="Next featured book"
-            disabled={currentFeaturedIndex === lastFeaturedIndex}
-            onClick={() => scrollFeatured(currentFeaturedIndex + 1)}
-            sx={{
-              border: "1px solid",
-              borderColor: "divider",
-              bgcolor: "background.paper",
-            }}
-          >
-            <ChevronRightIcon />
-          </IconButton>
-        </Box>
-      )}
+            {lastFeaturedIndex > 0 && (
+              <Stack
+                direction="row"
+                spacing={2}
+                sx={{ alignItems: "center", justifyContent: "center" }}
+              >
+                <IconButton
+                  aria-label="Previous featured book"
+                  disabled={currentFeaturedIndex === 0}
+                  onClick={() => scrollFeatured(currentFeaturedIndex - 1)}
+                  className="BookNest-featuredNavButton"
+                >
+                  <ChevronLeftIcon />
+                </IconButton>
 
-      <Typography variant="h5" sx={{ mt: 5, mb: 2 }}>
-        Newest books
-      </Typography>
+                <Stack
+                  direction="row"
+                  spacing={0.75}
+                  sx={{ alignItems: "center" }}
+                >
+                  {Array.from({ length: lastFeaturedIndex + 1 }, (_, index) => (
+                    <FeaturedDot
+                      key={index}
+                      type="button"
+                      aria-label={`Show featured book ${index + 1}`}
+                      aria-current={
+                        index === currentFeaturedIndex ? "step" : undefined
+                      }
+                      onClick={() => scrollFeatured(index)}
+                      className={
+                        index === currentFeaturedIndex ? "is-active" : undefined
+                      }
+                    />
+                  ))}
+                </Stack>
 
-      <BookGrid books={newest} />
+                <IconButton
+                  aria-label="Next featured book"
+                  disabled={currentFeaturedIndex === lastFeaturedIndex}
+                  onClick={() => scrollFeatured(currentFeaturedIndex + 1)}
+                  className="BookNest-featuredNavButton"
+                >
+                  <ChevronRightIcon />
+                </IconButton>
+              </Stack>
+            )}
+          </Stack>
 
-      <Typography variant="h5" sx={{ mt: 5, mb: 2 }}>
-        Best rated books
-      </Typography>
+          <Stack spacing={2}>
+            <Typography variant="h5">Newest books</Typography>
+            <BookGrid books={newest} />
+          </Stack>
 
-      {bestRated.length > 0 ? (
-        <BookGrid books={bestRated} />
-      ) : (
-        <Typography color="text.secondary">No ratings yet.</Typography>
-      )}
+          <Stack spacing={2}>
+            <Typography variant="h5">Best rated books</Typography>
+            {bestRated.length > 0 ? (
+              <BookGrid books={bestRated} />
+            ) : (
+              <Typography color="text.secondary">No ratings yet.</Typography>
+            )}
+          </Stack>
+        </Stack>
+      </Stack>
     </Container>
   );
 }

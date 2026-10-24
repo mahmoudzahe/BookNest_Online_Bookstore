@@ -1,5 +1,5 @@
 import type { ReactNode } from "react";
-import { Alert, Box, CircularProgress, Typography } from "@mui/material";
+import { Stack, Typography } from "@mui/material";
 
 interface PageHeadingProps {
   title: string;
@@ -9,47 +9,22 @@ interface PageHeadingProps {
 
 export function PageHeading({ title, description, action }: PageHeadingProps) {
   return (
-    <Box
+    <Stack
+      direction={{ xs: "column", sm: "row" }}
+      spacing={2}
       sx={{
-        display: "flex",
         justifyContent: "space-between",
-        alignItems: "center",
-        flexWrap: "wrap",
-        gap: 2,
+        alignItems: { xs: "flex-start", sm: "center" },
         mb: 3,
       }}
     >
-      <Box>
-        <Typography variant="h4" sx={{ fontWeight: 800, mb: 0.5 }}>
+      <Stack spacing={0.5}>
+        <Typography variant="h4" className="BookNest-textWeight800">
           {title}
         </Typography>
         <Typography color="text.secondary">{description}</Typography>
-      </Box>
+      </Stack>
       {action}
-    </Box>
+    </Stack>
   );
 }
-
-export function LoadError({
-  error,
-  loading,
-}: {
-  error: string;
-  loading: boolean;
-}) {
-  if (loading) {
-    return (
-      <Box sx={{ display: "grid", placeItems: "center", py: 8 }}>
-        <CircularProgress />
-      </Box>
-    );
-  }
-
-  return error ? (
-    <Alert severity="error" sx={{ mb: 2 }}>
-      {error}
-    </Alert>
-  ) : null;
-}
-
-export const money = (value: number) => `$${value.toFixed(2)}`;

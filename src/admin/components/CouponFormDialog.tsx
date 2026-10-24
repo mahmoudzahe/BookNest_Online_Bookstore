@@ -6,6 +6,7 @@ import {
   DialogContent,
   DialogTitle,
   FormControlLabel,
+  Grid,
   Switch,
   TextField,
 } from "@mui/material";
@@ -43,33 +44,47 @@ export default function CouponFormDialog({
       fullWidth
     >
       <DialogTitle>{editing ? "Edit Coupon" : "Add Coupon"}</DialogTitle>
-      <DialogContent sx={{ display: "grid", gap: 2, pt: "12px !important" }}>
-        {error && <Alert severity="error">{error}</Alert>}
-        <TextField
-          label="Coupon Code"
-          value={form.code}
-          onChange={(event) =>
-            onChange("code", event.target.value.toUpperCase())
-          }
-        />
-        <TextField
-          label="Discount (%)"
-          type="number"
-          value={form.discountPercent}
-          onChange={(event) =>
-            onChange("discountPercent", Number(event.target.value))
-          }
-          slotProps={{ htmlInput: { min: 1, max: 100, step: 1 } }}
-        />
-        <FormControlLabel
-          label="Active"
-          control={
-            <Switch
-              checked={form.active}
-              onChange={(event) => onChange("active", event.target.checked)}
+      <DialogContent>
+        <Grid container spacing={2} sx={{ pt: 1 }}>
+          {error && (
+            <Grid size={12}>
+              <Alert severity="error">{error}</Alert>
+            </Grid>
+          )}
+          <Grid size={12}>
+            <TextField
+              fullWidth
+              label="Coupon Code"
+              value={form.code}
+              onChange={(event) =>
+                onChange("code", event.target.value.toUpperCase())
+              }
             />
-          }
-        />
+          </Grid>
+          <Grid size={12}>
+            <TextField
+              fullWidth
+              label="Discount (%)"
+              type="number"
+              value={form.discountPercent}
+              onChange={(event) =>
+                onChange("discountPercent", Number(event.target.value))
+              }
+              slotProps={{ htmlInput: { min: 1, max: 100, step: 1 } }}
+            />
+          </Grid>
+          <Grid size={12}>
+            <FormControlLabel
+              label="Active"
+              control={
+                <Switch
+                  checked={form.active}
+                  onChange={(event) => onChange("active", event.target.checked)}
+                />
+              }
+            />
+          </Grid>
+        </Grid>
       </DialogContent>
       <DialogActions sx={{ p: 2 }}>
         <Button disabled={saving} onClick={onClose}>
