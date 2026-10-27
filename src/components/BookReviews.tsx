@@ -1,5 +1,6 @@
 import {
   Alert,
+  Avatar,
   Box,
   Button,
   Dialog,
@@ -53,8 +54,12 @@ function BookReviews({ book, reviews, onReviewsChange }: Props) {
 
   return (
     <Stack spacing={3}>
-      <Stack spacing={1} sx={{ alignItems: "flex-start" }}>
-        <Typography variant="h5" sx={{ fontWeight: "bold" }}>
+      <Stack spacing={1.5} sx={{ alignItems: "flex-start" }}>
+        <Typography
+          component="h2"
+          variant="h4"
+          sx={{ fontFamily: "Georgia, serif", fontWeight: 700 }}
+        >
           Ratings & Reviews
         </Typography>
         {!user ? (
@@ -101,14 +106,33 @@ function BookReviews({ book, reviews, onReviewsChange }: Props) {
       {reviews.length === 0 && (
         <Typography color="text.secondary">No reviews yet.</Typography>
       )}
-      <Stack spacing={2} divider={<Divider flexItem />}>
+      <Stack spacing={2.5} divider={<Divider flexItem />}>
         {reviews.map((review) => (
-          <Stack key={review.id} spacing={1}>
-            <Rating size="small" value={review.rating} readOnly />
-            <Typography>{review.comment}</Typography>
-            <Typography variant="body2" color="text.secondary">
-              by {review.userName}
-            </Typography>
+          <Stack
+            key={review.id}
+            direction="row"
+            spacing={2}
+            sx={{ alignItems: "flex-start" }}
+          >
+            <Avatar
+              sx={{
+                bgcolor: "action.selected",
+                color: "text.primary",
+                width: 40,
+                height: 40,
+              }}
+            >
+              {review.userName.trim().charAt(0).toUpperCase() || "R"}
+            </Avatar>
+            <Stack spacing={0.75} sx={{ flex: 1, minWidth: 0 }}>
+              <Typography variant="subtitle2" sx={{ fontWeight: 700 }}>
+                {review.userName}
+              </Typography>
+              <Rating size="small" value={review.rating} readOnly />
+              <Typography sx={{ overflowWrap: "anywhere", lineHeight: 1.7 }}>
+                {review.comment}
+              </Typography>
+            </Stack>
           </Stack>
         ))}
       </Stack>

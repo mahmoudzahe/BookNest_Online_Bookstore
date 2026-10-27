@@ -11,11 +11,13 @@ import {
   DialogContent,
   DialogContentText,
   DialogTitle,
-  Divider,
+  Grid,
   Paper,
   Stack,
   Typography,
 } from "@mui/material";
+import ArrowBackRoundedIcon from "@mui/icons-material/ArrowBackRounded";
+import MenuBookOutlinedIcon from "@mui/icons-material/MenuBookOutlined";
 import { getBooks } from "../services/booksApi";
 import { Link as RouterLink, useParams } from "react-router-dom";
 import { useAuth } from "../auth/AuthContext";
@@ -38,11 +40,10 @@ function OrderDetails() {
 
     getBooks()
       .then((books) => {
-        if (active) {
+        if (active)
           setBookImages(
             Object.fromEntries(books.map((book) => [book.id, book.image])),
           );
-        }
       })
       .catch(() => {});
 
@@ -56,6 +57,7 @@ function OrderDetails() {
       .finally(() => {
         if (active) setLoading(false);
       });
+
     return () => {
       active = false;
     };
@@ -80,131 +82,233 @@ function OrderDetails() {
   }
 
   return (
-    <Container maxWidth="md" sx={{ py: 4 }}>
-      <Button component={RouterLink} to="/my-orders" sx={{ mb: 2 }}>
-        ← Back to My Orders
-      </Button>
-      <Typography variant="h4" sx={{ mb: 3 }}>
-        Order Details
-      </Typography>
-      {loading && <CircularProgress />}
-      {error && (
-        <Alert severity="error" sx={{ mb: 2 }}>
-          {error}
-        </Alert>
-      )}
-      {order && (
-        <Stack spacing={2}>
-          <Paper variant="outlined" sx={{ p: 3 }}>
-            <Stack
-              direction={{ xs: "column", sm: "row" }}
-              sx={{
-                alignItems: { sm: "center" },
-                justifyContent: "space-between",
-                gap: 1,
-              }}
-            >
-              <Box>
-                <Typography sx={{ fontWeight: 700 }}>
-                  Order #{order.id}
-                </Typography>
-                <Typography color="text.secondary" variant="body2">
-                  {new Date(order.createdAt).toLocaleString()}
-                </Typography>
-              </Box>
-              <Chip
-                label={order.status}
-                color={order.status === "delivered" ? "success" : "default"}
-              />
-            </Stack>
-            <Divider sx={{ my: 2 }} />
-            <Typography variant="h6" sx={{ mb: 1 }}>
-              Books
-            </Typography>
+    <Box
+      sx={{
+        bgcolor: (theme) =>
+          theme.palette.mode === "dark"
+            ? theme.palette.background.default
+            : theme.palette.background.paper,
+        minHeight: "74vh",
+      }}
+    >
+      <Container maxWidth="lg" sx={{ py: { xs: 4, md: 7 } }}>
+        <Stack spacing={3}>
+          <Button
+            component={RouterLink}
+            to="/my-orders"
+            variant="text"
+            startIcon={<ArrowBackRoundedIcon />}
+            sx={{ alignSelf: "flex-start", px: 0 }}
+          >
+            Back to my orders
+          </Button>
 
-            {order.items.map((item) => (
+          <Stack spacing={1}>
+            <Typography
+              component="h1"
+              variant="h4"
+              sx={{ fontFamily: "Georgia, serif", fontWeight: 700 }}
+            >
+              Order details
+            </Typography>
+            <Typography color="text.secondary">
+              Review your books, payment summary and delivery information.
+            </Typography>
+          </Stack>
+
+          {loading && <CircularProgress aria-label="Loading order" />}
+          {error && <Alert severity="error">{error}</Alert>}
+
+          {order && (
+            <Stack spacing={3}>
               <Stack
-                key={item.bookId}
-                direction="row"
+                direction={{ xs: "column", sm: "row" }}
+                spacing={1.5}
                 sx={{
-                  alignItems: "center",
+                  alignItems: { sm: "center" },
                   justifyContent: "space-between",
-                  gap: 2,
-                  mb: 2,
                 }}
               >
-                <Stack
-                  direction="row"
-                  spacing={2}
-                  sx={{ alignItems: "center" }}
-                >
-                  {bookImages[item.bookId] && (
-                    <Box
-                      component="img"
-                      src={bookImages[item.bookId]}
-                      alt={item.title}
-                      sx={{ width: 55, height: 75, objectFit: "contain" }}
-                    />
-                  )}
-                  <Typography>
-                    {item.title} × {item.quantity}
+                <Stack spacing={0.5}>
+                  <Typography
+                    variant="subtitle1"
+                    sx={{ fontWeight: 700, overflowWrap: "anywhere" }}
+                  >
+                    Order #{order.id}
+                  </Typography>
+                  <Typography variant="body2" color="text.secondary">
+                    Placed on {new Date(order.createdAt).toLocaleString()}
                   </Typography>
                 </Stack>
-                <Typography>
-                  ${(item.price * item.quantity).toFixed(2)}
-                </Typography>
+                <Chip
+                  label={order.status}
+                  color={
+                    order.status === "delivered"
+                      ? "success"
+                      : order.status === "cancelled"
+                        ? "default"
+                        : "primary"
+                  }
+                  sx={{ alignSelf: "flex-start", textTransform: "capitalize" }}
+                />
               </Stack>
-            ))}
 
-            <Divider sx={{ my: 2 }} />
-            <Stack direction="row" sx={{ justifyContent: "space-between" }}>
-              <Typography>Subtotal</Typography>
-              <Typography>${order.subtotal.toFixed(2)}</Typography>
+              <Grid container spacing={3}>
+                <Grid size={{ xs: 12, md: 8 }}>
+                  <Paper
+                    variant="outlined"
+                    sx={{
+                      p: { xs: 2.5, sm: 3 },
+                      borderRadius: 3,
+                      boxShadow: "none",
+                    }}
+                  >
+                    <Stack spacing={3}>
+                      <Typography variant="h6" sx={{ fontWeight: 700 }}>
+                        Books in this order
+                      </Typography>
+                      {order.items.map((item) => (
+                        <Stack
+                          key={item.bookId}
+                          direction="row"
+                          spacing={2}
+                          sx={{ alignItems: "center" }}
+                        >
+                          <Box
+                            sx={{
+                              width: 72,
+                              height: 98,
+                              flexShrink: 0,
+                              display: "flex",
+                              alignItems: "center",
+                              justifyContent: "center",
+                              bgcolor: "action.hover",
+                              borderRadius: 1.5,
+                            }}
+                          >
+                            {bookImages[item.bookId] ? (
+                              <Box
+                                component="img"
+                                src={bookImages[item.bookId]}
+                                alt={item.title}
+                                sx={{
+                                  maxWidth: "85%",
+                                  maxHeight: "88%",
+                                  objectFit: "contain",
+                                }}
+                              />
+                            ) : (
+                              <MenuBookOutlinedIcon color="disabled" />
+                            )}
+                          </Box>
+                          <Stack spacing={0.5} sx={{ flex: 1, minWidth: 0 }}>
+                            <Typography sx={{ fontWeight: 600 }}>
+                              {item.title}
+                            </Typography>
+                            <Typography variant="body2" color="text.secondary">
+                              ${item.price.toFixed(2)} each · Quantity:{" "}
+                              {item.quantity}
+                            </Typography>
+                          </Stack>
+                          <Typography
+                            sx={{ fontWeight: 600, whiteSpace: "nowrap" }}
+                          >
+                            ${(item.price * item.quantity).toFixed(2)}
+                          </Typography>
+                        </Stack>
+                      ))}
+                    </Stack>
+                  </Paper>
+                </Grid>
+
+                <Grid size={{ xs: 12, md: 4 }}>
+                  <Stack spacing={2.5}>
+                    <Paper
+                      variant="outlined"
+                      sx={{ p: 3, borderRadius: 3, boxShadow: "none" }}
+                    >
+                      <Stack spacing={2}>
+                        <Typography variant="h6" sx={{ fontWeight: 700 }}>
+                          Order summary
+                        </Typography>
+                        <Stack
+                          direction="row"
+                          sx={{ justifyContent: "space-between" }}
+                        >
+                          <Typography color="text.secondary">
+                            Subtotal
+                          </Typography>
+                          <Typography>${order.subtotal.toFixed(2)}</Typography>
+                        </Stack>
+                        <Stack
+                          direction="row"
+                          sx={{ justifyContent: "space-between" }}
+                        >
+                          <Typography color="text.secondary">
+                            Discount
+                          </Typography>
+                          <Typography>−${order.discount.toFixed(2)}</Typography>
+                        </Stack>
+                        <Stack
+                          direction="row"
+                          sx={{
+                            alignItems: "center",
+                            justifyContent: "space-between",
+                          }}
+                        >
+                          <Typography sx={{ fontWeight: 700 }}>
+                            Total
+                          </Typography>
+                          <Typography variant="h6" sx={{ fontWeight: 700 }}>
+                            ${order.total.toFixed(2)}
+                          </Typography>
+                        </Stack>
+                      </Stack>
+                    </Paper>
+
+                    <Paper
+                      variant="outlined"
+                      sx={{ p: 3, borderRadius: 3, boxShadow: "none" }}
+                    >
+                      <Stack spacing={1}>
+                        <Typography variant="h6" sx={{ fontWeight: 700 }}>
+                          Shipping information
+                        </Typography>
+                        <Typography>{order.shipping.fullName}</Typography>
+                        <Typography variant="body2" color="text.secondary">
+                          {order.shipping.phone}
+                        </Typography>
+                        <Typography
+                          variant="body2"
+                          color="text.secondary"
+                          sx={{ whiteSpace: "pre-wrap" }}
+                        >
+                          {order.shipping.address}
+                        </Typography>
+                      </Stack>
+                    </Paper>
+
+                    {order.status === "pending" && (
+                      <Button
+                        variant="outlined"
+                        color="error"
+                        onClick={() => setConfirmOpen(true)}
+                      >
+                        Cancel order
+                      </Button>
+                    )}
+                  </Stack>
+                </Grid>
+              </Grid>
             </Stack>
-            <Stack
-              direction="row"
-              sx={{ justifyContent: "space-between", mt: 1 }}
-            >
-              <Typography>Discount</Typography>
-              <Typography>−${order.discount.toFixed(2)}</Typography>
-            </Stack>
-            <Stack
-              direction="row"
-              sx={{ justifyContent: "space-between", mt: 1 }}
-            >
-              <Typography sx={{ fontWeight: 700 }}>Total</Typography>
-              <Typography sx={{ fontWeight: 700 }}>
-                ${order.total.toFixed(2)}
-              </Typography>
-            </Stack>
-          </Paper>
-          <Paper variant="outlined" sx={{ p: 3 }}>
-            <Typography variant="h6" sx={{ mb: 1 }}>
-              Shipping Information
-            </Typography>
-            <Typography>{order.shipping.fullName}</Typography>
-            <Typography>{order.shipping.phone}</Typography>
-            <Typography>{order.shipping.address}</Typography>
-          </Paper>
-          {order.status === "pending" && (
-            <Box>
-              <Button
-                variant="outlined"
-                color="error"
-                onClick={() => setConfirmOpen(true)}
-              >
-                Cancel Order
-              </Button>
-            </Box>
           )}
         </Stack>
-      )}
+      </Container>
+
       <Dialog
         open={confirmOpen}
         onClose={() => !cancelling && setConfirmOpen(false)}
-        slotProps={{
-          paper: { sx: { borderRadius: 3 } },
-        }}
+        slotProps={{ paper: { sx: { borderRadius: 3 } } }}
       >
         <DialogTitle>Cancel order?</DialogTitle>
         <DialogContent>
@@ -214,7 +318,7 @@ function OrderDetails() {
         </DialogContent>
         <DialogActions>
           <Button onClick={() => setConfirmOpen(false)} disabled={cancelling}>
-            Keep Order
+            Keep order
           </Button>
           <Button
             color="error"
@@ -222,11 +326,11 @@ function OrderDetails() {
             onClick={handleCancel}
             disabled={cancelling}
           >
-            {cancelling ? "Cancelling..." : "Cancel Order"}
+            {cancelling ? "Cancelling..." : "Cancel order"}
           </Button>
         </DialogActions>
       </Dialog>
-    </Container>
+    </Box>
   );
 }
 
