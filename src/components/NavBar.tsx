@@ -9,6 +9,7 @@ import {
   Container,
   Divider,
   IconButton,
+  InputAdornment,
   ListItemText,
   Menu,
   MenuItem,
@@ -18,6 +19,8 @@ import {
   Typography,
 } from "@mui/material";
 import ShoppingCartOutlinedIcon from "@mui/icons-material/ShoppingCartOutlined";
+import SearchOutlinedIcon from "@mui/icons-material/SearchOutlined";
+import ArrowForwardRoundedIcon from "@mui/icons-material/ArrowForwardRounded";
 import { alpha } from "@mui/material/styles";
 import DarkModeOutlinedIcon from "@mui/icons-material/DarkModeOutlined";
 import LightModeIcon from "@mui/icons-material/LightMode";
@@ -98,19 +101,23 @@ function NavBar() {
         zIndex: (theme) => theme.zIndex.appBar,
       }}
     >
-      <Container maxWidth="lg">
+      <Container
+        maxWidth={false}
+        sx={{ maxWidth: 1380, px: { xs: 2, sm: 3, lg: 4 } }}
+      >
         <Toolbar
           disableGutters
           sx={{
-            minHeight: 74,
-            py: { xs: 1, md: 0 },
-            gap: 1.5,
+            minHeight: 76,
+            py: { xs: 1.25, md: 0 },
+            gap: { xs: 1, md: 2 },
             flexWrap: "wrap",
           }}
         >
           <Stack
             component={RouterLink}
             to="/"
+            aria-label="BookNest home"
             direction="row"
             spacing={1}
             sx={{
@@ -123,7 +130,7 @@ function NavBar() {
               component="img"
               src={booknestLogo}
               alt="BookNest logo"
-              sx={{ width: 37, height: 37 }}
+              sx={{ width: 40, height: 40 }}
             />
             <Typography variant="h6" sx={{ fontWeight: 700 }}>
               BookNest
@@ -135,10 +142,6 @@ function NavBar() {
             spacing={{ xs: 0, sm: 0.5 }}
             sx={{ alignItems: "center" }}
           >
-            <Button component={RouterLink} to="/" sx={{ color: "inherit" }}>
-              Home
-            </Button>
-
             <Button
               component={RouterLink}
               to="/books"
@@ -184,30 +187,45 @@ function NavBar() {
             onSubmit={submitSearch}
             sx={{
               flexGrow: 1,
-              minWidth: { xs: "100%", sm: 165 },
+              minWidth: { xs: "100%", sm: 185 },
               order: { xs: 2, sm: 0 },
             }}
           >
             <TextField
               size="small"
               fullWidth
-              placeholder="Search books..."
+              placeholder="Search books or authors..."
               value={search}
               onChange={(event) => setSearch(event.target.value)}
               slotProps={{
                 htmlInput: { "aria-label": "Search books" },
+                input: {
+                  startAdornment: (
+                    <InputAdornment position="start">
+                      <SearchOutlinedIcon color="action" />
+                    </InputAdornment>
+                  ),
+                  endAdornment: (
+                    <InputAdornment position="end">
+                      <IconButton
+                        type="submit"
+                        aria-label="Submit search"
+                        size="small"
+                        color="primary"
+                      >
+                        <ArrowForwardRoundedIcon fontSize="small" />
+                      </IconButton>
+                    </InputAdornment>
+                  ),
+                },
               }}
               sx={{
                 "& .MuiOutlinedInput-root": {
                   bgcolor: "action.hover",
-                  borderRadius: 2,
+                  borderRadius: 6,
                 },
               }}
             />
-
-            <Button type="submit" variant="outlined">
-              Search
-            </Button>
           </Stack>
 
           <IconButton

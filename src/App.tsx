@@ -8,6 +8,8 @@ import Books from "./pages/Books";
 import BookDetails from "./pages/BookDetails";
 import Cart from "./pages/Cart";
 import Checkout from "./pages/Checkout";
+import Payment from "./pages/Payment";
+import { CheckoutFlowProvider } from "./checkout/CheckoutFlowContext";
 import OrderSuccess from "./pages/OrderSuccess";
 import Login from "./pages/Login";
 import Register from "./pages/Register";
@@ -29,7 +31,14 @@ function App() {
   const isAdminPage = pathname === "/admin" || pathname.startsWith("/admin/");
   const isAuthPage = pathname === "/login" || pathname === "/register";
   const isCheckoutPage = pathname === "/checkout";
-  const showStoreLayout = !isAdminPage && !isAuthPage && !isCheckoutPage;
+  const isPaymentPage = pathname === "/payment";
+  const isCartPage = pathname === "/cart";
+  const isOrderSuccessPage =
+    pathname === "/order-success" || pathname.startsWith("/order-success/");
+  const isWhiteCommercePage =
+    isCartPage || isCheckoutPage || isPaymentPage || isOrderSuccessPage;
+  const showStoreLayout =
+    !isAdminPage && !isAuthPage && !isCheckoutPage && !isPaymentPage;
 
   return (
     <Box
@@ -41,89 +50,111 @@ function App() {
     >
       {showStoreLayout && <NavBar />}
 
-      <Box component="main" sx={{ flex: 1 }}>
-        <Routes>
-          <Route element={<AdminGuard />}>
-            <Route path="/admin" element={<AdminLayout />}>
-              <Route index element={<AdminDashboard />} />
-              <Route path="books" element={<AdminBooks />} />
-              <Route path="categories" element={<AdminCategories />} />
-              <Route path="orders" element={<AdminOrders />} />
-              <Route path="users" element={<AdminUsers />} />
-              <Route path="coupons" element={<AdminCoupons />} />
+      <Box
+        component="main"
+        sx={{
+          flex: 1,
+          bgcolor: isWhiteCommercePage
+            ? (theme) =>
+                theme.palette.mode === "dark"
+                  ? theme.palette.background.default
+                  : theme.palette.background.paper
+            : undefined,
+        }}
+      >
+        <CheckoutFlowProvider>
+          <Routes>
+            <Route element={<AdminGuard />}>
+              <Route path="/admin" element={<AdminLayout />}>
+                <Route index element={<AdminDashboard />} />
+                <Route path="books" element={<AdminBooks />} />
+                <Route path="categories" element={<AdminCategories />} />
+                <Route path="orders" element={<AdminOrders />} />
+                <Route path="users" element={<AdminUsers />} />
+                <Route path="coupons" element={<AdminCoupons />} />
+              </Route>
             </Route>
-          </Route>
 
-          <Route path="/" element={<Home />} />
-          <Route path="/books" element={<Books />} />
-          <Route path="/books/:id" element={<BookDetails />} />
-          <Route path="/cart" element={<Cart />} />
-          <Route path="/login" element={<Login />} />
-          <Route path="/register" element={<Register />} />
+            <Route path="/" element={<Home />} />
+            <Route path="/books" element={<Books />} />
+            <Route path="/books/:id" element={<BookDetails />} />
+            <Route path="/cart" element={<Cart />} />
+            <Route path="/login" element={<Login />} />
+            <Route path="/register" element={<Register />} />
 
-          <Route
-            path="/checkout"
-            element={
-              <ProtectedRoute>
-                <Checkout />
-              </ProtectedRoute>
-            }
-          />
+            <Route
+              path="/checkout"
+              element={
+                <ProtectedRoute>
+                  <Checkout />
+                </ProtectedRoute>
+              }
+            />
 
-          <Route
-            path="/order-success/:id"
-            element={
-              <ProtectedRoute>
-                <OrderSuccess />
-              </ProtectedRoute>
-            }
-          />
+            <Route
+              path="/payment"
+              element={
+                <ProtectedRoute>
+                  <Payment />
+                </ProtectedRoute>
+              }
+            />
 
-          <Route
-            path="/profile"
-            element={
-              <ProtectedRoute>
-                <Profile />
-              </ProtectedRoute>
-            }
-          />
+            <Route
+              path="/order-success/:id"
+              element={
+                <ProtectedRoute>
+                  <OrderSuccess />
+                </ProtectedRoute>
+              }
+            />
 
-          <Route
-            path="/change-password"
-            element={
-              <ProtectedRoute>
-                <ChangePassword />
-              </ProtectedRoute>
-            }
-          />
+            <Route
+              path="/profile"
+              element={
+                <ProtectedRoute>
+                  <Profile />
+                </ProtectedRoute>
+              }
+            />
 
-          <Route
-            path="/my-orders"
-            element={
-              <ProtectedRoute>
-                <MyOrders />
-              </ProtectedRoute>
-            }
-          />
+            <Route
+              path="/change-password"
+              element={
+                <ProtectedRoute>
+                  <ChangePassword />
+                </ProtectedRoute>
+              }
+            />
 
-          <Route
-            path="/my-orders/:id"
-            element={
-              <ProtectedRoute>
-                <OrderDetails />
-              </ProtectedRoute>
-            }
-          />
+            <Route
+              path="/my-orders"
+              element={
+                <ProtectedRoute>
+                  <MyOrders />
+                </ProtectedRoute>
+              }
+            />
 
-          <Route
-            path="*"
-            element={
-              <Container sx={{ py: 5 }}>
-                <Typography variant="h5">Page not found</Typography>
-              </Container>
-            }
-          />
-        </Routes>
+            <Route
+              path="/my-orders/:id"
+              element={
+                <ProtectedRoute>
+                  <OrderDetails />
+                </ProtectedRoute>
+              }
+            />
+
+            <Route
+              path="*"
+              element={
+                <Container sx={{ py: 5 }}>
+                  <Typography variant="h5">Page not found</Typography>
+                </Container>
+              }
+            />
+          </Routes>
+        </CheckoutFlowProvider>
       </Box>
 
       {showStoreLayout && <Footer />}

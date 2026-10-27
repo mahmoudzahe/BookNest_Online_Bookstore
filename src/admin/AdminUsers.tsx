@@ -229,6 +229,11 @@ export default function AdminUsers() {
           variant="outlined"
           label={row.active ? "Active" : "Suspended"}
           color={row.active ? "success" : "warning"}
+          sx={{
+            borderWidth: 2,
+            borderColor: row.active ? "success.main" : "warning.main",
+            fontWeight: 700,
+          }}
         />
       ),
     },
@@ -266,6 +271,19 @@ export default function AdminUsers() {
                     color={row.active ? "warning" : "success"}
                     disabled={saving || isSelf || row.role === "admin"}
                     onClick={() => setChangingStatus(row)}
+                    sx={{
+                      borderWidth: 2,
+                      fontWeight: 700,
+                      "&:hover": {
+                        borderWidth: 2,
+                      },
+                      "&.Mui-disabled": {
+                        border: "2px solid",
+                        borderColor: "text.secondary",
+                        color: "text.secondary",
+                        backgroundColor: "action.hover",
+                      },
+                    }}
                   >
                     {row.active ? "Suspend" : "Activate"}
                   </Button>
