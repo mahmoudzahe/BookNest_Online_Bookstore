@@ -1,3 +1,5 @@
+"use client";
+
 import { orderColumns } from "./columns/orderColumns";
 import { Box, MenuItem, Paper, Tabs, Tab, TextField } from "@mui/material";
 import { DataGrid } from "@mui/x-data-grid";

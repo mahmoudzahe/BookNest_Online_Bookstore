@@ -1,8 +1,9 @@
 import { Box, Button, Paper, Stack, Typography } from "@mui/material";
 import { alpha } from "@mui/material/styles";
 import type { ReactNode } from "react";
-import { Link as RouterLink, useLocation } from "react-router-dom";
-import booknestLogo from "../assets/booknest-logo.svg";
+import { usePathname, useSearchParams } from "next/navigation";
+import RouterLink from "./NextLink";
+const booknestLogo = "/assets/booknest-logo.svg";
 
 interface AuthLayoutProps {
   title: string;
@@ -11,11 +12,12 @@ interface AuthLayoutProps {
 }
 
 function AuthLayout({ title, subtitle, children }: AuthLayoutProps) {
-  const { pathname, search } = useLocation();
+  const pathname = usePathname();
+  const searchParams = useSearchParams();
   const isRegisterPage = pathname === "/register";
   const otherPage = isRegisterPage ? "/login" : "/register";
   const hasCheckoutRedirect =
-    new URLSearchParams(search).get("redirect") === "/checkout";
+    searchParams?.get("redirect") === "/checkout";
   const otherPageLink = hasCheckoutRedirect
     ? `${otherPage}?redirect=%2Fcheckout`
     : otherPage;
@@ -72,7 +74,7 @@ function AuthLayout({ title, subtitle, children }: AuthLayoutProps) {
       >
         <Stack
           component={RouterLink}
-          to="/"
+          href="/"
           direction="row"
           spacing={1}
           sx={{
@@ -103,7 +105,7 @@ function AuthLayout({ title, subtitle, children }: AuthLayoutProps) {
           </Typography>
           <Button
             component={RouterLink}
-            to={otherPageLink}
+            href={otherPageLink}
             variant="outlined"
             sx={{
               color: "common.white",

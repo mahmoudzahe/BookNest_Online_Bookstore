@@ -332,7 +332,7 @@
       "description": "A gifted musician recounts the events that shaped his early life.",
       "categoryId": "2",
       "price": 21,
-      "stock": 7,
+      "stock": 6,
       "featured": true,
       "rating": 4.9,
       "image": "https://covers.openlibrary.org/b/isbn/9780756404741-M.jpg",
@@ -426,29 +426,6 @@
       "userId": "cXvhLY8tgKg",
       "items": [
         {
-          "bookId": "24",
-          "title": "The Name of the Wind",
-          "price": 21,
-          "quantity": 1
-        }
-      ],
-      "shipping": {
-        "fullName": "Mahmoud abd al qader",
-        "phone": "+1 (555) 247-6319",
-        "address": "Nablus"
-      },
-      "subtotal": 21,
-      "discount": 0,
-      "total": 21,
-      "couponCode": null,
-      "status": "shipped",
-      "createdAt": "2026-10-25T09:31:24.261Z",
-      "id": "cRfjvaUJyJE"
-    },
-    {
-      "userId": "cXvhLY8tgKg",
-      "items": [
-        {
           "bookId": "4",
           "title": "The Great Gatsby",
           "price": 11,
@@ -488,7 +465,7 @@
       "discount": 0,
       "total": 18,
       "couponCode": null,
-      "status": "pending",
+      "status": "delivered",
       "createdAt": "2026-10-25T18:18:06.098Z",
       "id": "eMfJnUWQ_7Q"
     },
@@ -512,9 +489,82 @@
       "total": 22,
       "couponCode": null,
       "paymentMethod": "card_demo",
-      "status": "pending",
+      "status": "cancelled",
       "createdAt": "2026-10-25T20:10:48.976Z",
-      "id": "zicFFtbqCrI"
+      "id": "zicFFtbqCrI",
+      "archived": true
+    },
+    {
+      "userId": "cXvhLY8tgKg",
+      "items": [
+        {
+          "bookId": "21",
+          "title": "The Midnight Library",
+          "price": 17.5,
+          "quantity": 1
+        }
+      ],
+      "shipping": {
+        "fullName": "jebreel",
+        "phone": "+1 (555) 247-6319",
+        "address": "Tullkarm"
+      },
+      "subtotal": 17.5,
+      "discount": 1.75,
+      "total": 15.75,
+      "couponCode": "SAVE10",
+      "paymentMethod": "card_demo",
+      "status": "delivered",
+      "createdAt": "2026-10-27T17:00:08.063Z",
+      "id": "T0lYfHUK34I"
+    },
+    {
+      "userId": "cXvhLY8tgKg",
+      "items": [
+        {
+          "bookId": "24",
+          "title": "The Name of the Wind",
+          "price": 21,
+          "quantity": 1
+        }
+      ],
+      "shipping": {
+        "fullName": "jebreel",
+        "phone": "+1 (555) 247-6319",
+        "address": "Nablus"
+      },
+      "subtotal": 21,
+      "discount": 2.1,
+      "total": 18.9,
+      "couponCode": "SAVE10",
+      "paymentMethod": "cash_on_delivery",
+      "status": "shipped",
+      "createdAt": "2026-10-27T17:37:29.844Z",
+      "id": "_aaunmbKevI"
+    },
+    {
+      "userId": "3JD2gixkK2M",
+      "items": [
+        {
+          "bookId": "4",
+          "title": "The Great Gatsby",
+          "price": 11,
+          "quantity": 1
+        }
+      ],
+      "shipping": {
+        "fullName": "jebreel",
+        "phone": "+1 (555) 247-6319",
+        "address": "dfsfsfds"
+      },
+      "subtotal": 11,
+      "discount": 1.1,
+      "total": 9.9,
+      "couponCode": "SAVE10",
+      "paymentMethod": "cash_on_delivery",
+      "status": "pending",
+      "createdAt": "2026-10-27T20:02:44.898Z",
+      "id": "8kLBu0ixeNY"
     }
   ],
   "users": [
@@ -527,7 +577,8 @@
       "role": "user",
       "passwordHash": "40a9a28432c62d0f6249314941b4e84b788403ac5d3568e4c9a5e40823cf68bb",
       "salt": "7f9727e6-c44a-4816-9966-3d313d455ee1",
-      "id": "cXvhLY8tgKg"
+      "id": "cXvhLY8tgKg",
+      "active": true
     },
     {
       "firstName": "mahmoud",
