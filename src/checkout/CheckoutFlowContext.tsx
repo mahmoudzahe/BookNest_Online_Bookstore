@@ -1,3 +1,5 @@
+"use client";
+
 import {
   createContext,
   useCallback,
@@ -6,7 +8,7 @@ import {
   useRef,
   useState,
 } from "react";
-import { useLocation } from "react-router-dom";
+import { usePathname } from "next/navigation";
 import type { ReactNode } from "react";
 import type { Coupon, OrderItem, ShippingInformation } from "../types/order";
 
@@ -33,7 +35,7 @@ const CheckoutFlowContext = createContext<CheckoutFlowContextValue | null>(
 
 export function CheckoutFlowProvider({ children }: { children: ReactNode }) {
   const [draft, setDraft] = useState<CheckoutDraft | null>(null);
-  const { pathname } = useLocation();
+  const pathname = usePathname();
   const previousPathname = useRef(pathname);
   const returningFromPayment =
     pathname === "/checkout" && previousPathname.current === "/payment";

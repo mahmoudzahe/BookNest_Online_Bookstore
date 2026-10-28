@@ -4,9 +4,11 @@
   "version": "0.0.0",
   "type": "module",
   "scripts": {
-    "dev": "vite",
-    "build": "tsc --noEmit -p tsconfig.app.json && vite build",
-    "preview": "vite preview"
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start",
+    "typecheck": "tsc --noEmit",
+    "api": "json-server db.json --port 3001"
   },
   "dependencies": {
     "@emotion/react": "^11.14.0",
@@ -19,15 +21,16 @@
     "react": "^19.1.1",
     "react-dom": "^19.1.1",
     "react-hook-form": "^7.90.0",
-    "react-router-dom": "^7.18.4",
-    "yup": "^1.7.1"
+    "yup": "^1.7.1",
+    "next": "^16.4.3",
+    "@mui/material-nextjs": "^9.5.0",
+    "@emotion/cache": "^11.14.0"
   },
   "devDependencies": {
     "@types/react": "^19.1.10",
     "@types/react-dom": "^19.1.7",
-    "@vitejs/plugin-react": "^5.0.2",
     "json-server": "^1.0.0-beta.15",
     "typescript": "~5.8.3",
-    "vite": "^7.1.4"
+    "@types/node": "^22.0.0"
   }
 }

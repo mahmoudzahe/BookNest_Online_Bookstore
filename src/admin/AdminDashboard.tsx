@@ -1,8 +1,10 @@
+"use client";
+
 import { useEffect, useState } from "react";
 import { Box, Chip, Grid, Paper, Stack, Typography } from "@mui/material";
 import { DataGrid } from "@mui/x-data-grid";
 import type { GridColDef } from "@mui/x-data-grid";
-import { Link as RouterLink } from "react-router-dom";
+import RouterLink from "../components/NextLink";
 import MenuBookOutlinedIcon from "@mui/icons-material/MenuBookOutlined";
 import ReceiptLongOutlinedIcon from "@mui/icons-material/ReceiptLongOutlined";
 import PeopleIcon from "@mui/icons-material/People";
@@ -166,7 +168,7 @@ export default function AdminDashboard() {
                 <Paper
                   className="BookNest-dashboardStat"
                   component={RouterLink}
-                  to={stat.link}
+                  href={stat.link}
                   variant="outlined"
                 >
                   <Stack spacing={1}>

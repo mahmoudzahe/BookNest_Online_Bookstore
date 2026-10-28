@@ -1,4 +1,6 @@
-import { ACCOUNT_MENU_WIDTH } from "../constants";
+"use client";
+
+import { ACCOUNT_MENU_WIDTH, NAVBAR_MIN_HEIGHT } from "../constants";
 import { useEffect, useState } from "react";
 import {
   AppBar,
@@ -24,7 +26,8 @@ import ArrowForwardRoundedIcon from "@mui/icons-material/ArrowForwardRounded";
 import { alpha } from "@mui/material/styles";
 import DarkModeOutlinedIcon from "@mui/icons-material/DarkModeOutlined";
 import LightModeIcon from "@mui/icons-material/LightMode";
-import { Link as RouterLink, useLocation, useNavigate } from "react-router-dom";
+import { usePathname, useRouter, useSearchParams } from "next/navigation";
+import RouterLink from "./NextLink";
 import type { FormEvent, MouseEvent } from "react";
 
 import { useAuth } from "../auth/AuthContext";
@@ -32,15 +35,16 @@ import { useThemeMode } from "../theme/ThemeModeContext";
 import { useCart } from "../cart/CartContext";
 import { getCategories } from "../services/booksApi";
 import type { Category } from "../types/book";
-import booknestLogo from "../assets/booknest-logo.svg";
+const booknestLogo = "/assets/booknest-logo.svg";
 
 function NavBar() {
   const { user, loading, logout } = useAuth();
   const { darkMode, toggleDarkMode } = useThemeMode();
   const { totalItems } = useCart();
 
-  const navigate = useNavigate();
-  const location = useLocation();
+  const router = useRouter();
+  const pathname = usePathname();
+  const searchParams = useSearchParams();
 
   const [search, setSearch] = useState("");
   const [categories, setCategories] = useState<Category[]>([]);
@@ -65,17 +69,17 @@ function NavBar() {
 
   useEffect(() => {
     setSearch(
-      location.pathname === "/books"
-        ? (new URLSearchParams(location.search).get("q") ?? "")
+      pathname === "/books"
+        ? (searchParams?.get("q") ?? "")
         : "",
     );
-  }, [location.pathname, location.search]);
+  }, [pathname, searchParams]);
 
   function submitSearch(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
 
     const q = search.trim();
-    navigate(q ? `/books?q=${encodeURIComponent(q)}` : "/books");
+    router.push(q ? `/books?q=${encodeURIComponent(q)}` : "/books");
   }
 
   function openCategories(event: MouseEvent<HTMLButtonElement>) {
@@ -85,7 +89,7 @@ function NavBar() {
   function handleLogout() {
     setUserAnchor(null);
     logout();
-    navigate("/");
+    router.push("/");
   }
 
   return (
@@ -108,7 +112,7 @@ function NavBar() {
         <Toolbar
           disableGutters
           sx={{
-            minHeight: 76,
+            minHeight: NAVBAR_MIN_HEIGHT,
             py: { xs: 1.25, md: 0 },
             gap: { xs: 1, md: 2 },
             flexWrap: "wrap",
@@ -116,7 +120,7 @@ function NavBar() {
         >
           <Stack
             component={RouterLink}
-            to="/"
+            href="/"
             aria-label="BookNest home"
             direction="row"
             spacing={1}
@@ -144,7 +148,7 @@ function NavBar() {
           >
             <Button
               component={RouterLink}
-              to="/books"
+              href="/books"
               sx={{ color: "inherit" }}
             >
               Books
@@ -161,7 +165,7 @@ function NavBar() {
             >
               <MenuItem
                 component={RouterLink}
-                to="/books"
+                href="/books"
                 onClick={() => setCategoryAnchor(null)}
               >
                 All books
@@ -171,7 +175,7 @@ function NavBar() {
                 <MenuItem
                   key={category.id}
                   component={RouterLink}
-                  to={`/books?category=${category.id}`}
+                  href={`/books?category=${category.id}`}
                   onClick={() => setCategoryAnchor(null)}
                 >
                   {category.name}
@@ -230,7 +234,7 @@ function NavBar() {
 
           <IconButton
             component={RouterLink}
-            to="/cart"
+            href="/cart"
             color="primary"
             aria-label={`Shopping cart with ${totalItems} items`}
           >
@@ -302,7 +306,7 @@ function NavBar() {
                     <>
                       <MenuItem
                         component={RouterLink}
-                        to="/admin"
+                        href="/admin"
                         onClick={() => setUserAnchor(null)}
                       >
                         <ListItemText>Admin Dashboard</ListItemText>
@@ -313,7 +317,7 @@ function NavBar() {
 
                   <MenuItem
                     component={RouterLink}
-                    to="/profile"
+                    href="/profile"
                     onClick={() => setUserAnchor(null)}
                   >
                     <ListItemText>My Profile</ListItemText>
@@ -321,7 +325,7 @@ function NavBar() {
 
                   <MenuItem
                     component={RouterLink}
-                    to="/my-orders"
+                    href="/my-orders"
                     onClick={() => setUserAnchor(null)}
                   >
                     <ListItemText>My Orders</ListItemText>
@@ -329,7 +333,7 @@ function NavBar() {
 
                   <MenuItem
                     component={RouterLink}
-                    to="/change-password"
+                    href="/change-password"
                     onClick={() => setUserAnchor(null)}
                   >
                     <ListItemText>Change Password</ListItemText>
@@ -342,13 +346,13 @@ function NavBar() {
               </>
             ) : (
               <Stack direction="row" spacing={1} sx={{ alignItems: "center" }}>
-                <Button component={RouterLink} to="/login" variant="outlined">
+                <Button component={RouterLink} href="/login" variant="outlined">
                   Log In
                 </Button>
 
                 <Button
                   component={RouterLink}
-                  to="/register"
+                  href="/register"
                   variant="contained"
                 >
                   Register

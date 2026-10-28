@@ -1,3 +1,5 @@
+"use client";
+
 import {
   ADMIN_PAGE_SIZE,
   ADMIN_PAGE_SIZE_OPTIONS,
