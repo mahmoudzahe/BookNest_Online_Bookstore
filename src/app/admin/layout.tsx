@@ -1,11 +1,11 @@
 import type { ReactNode } from "react";
-import AdminGuard from "@/admin/AdminGuard";
+import CaslGuard from "@/admin/CaslGuard";
 import AdminLayout from "@/admin/AdminLayout";
 
 export default function Layout({ children }: { children: ReactNode }) {
   return (
-    <AdminGuard>
+    <CaslGuard>
       <AdminLayout>{children}</AdminLayout>
-    </AdminGuard>
+    </CaslGuard>
   );
 }
