@@ -1,3 +1,4 @@
+import { useMemo } from "react";
 import {
   Box,
   Button,
@@ -13,6 +14,9 @@ import { alpha, styled } from "@mui/material/styles";
 import RouterLink from "./NextLink";
 import { useCart } from "../cart/CartContext";
 import type { Book } from "../types/book";
+import { useAuth } from "../auth/AuthContext";
+import { defineAbilityFor } from "../admin/ability";
+import BookCardAdminActions from "../admin/components/BookCardAdminActions";
 import {
   CART_ACTION_LABELS,
   LOW_STOCK_THRESHOLD,
@@ -21,6 +25,9 @@ import {
 
 interface BookCardProps {
   book: Book;
+  enableAdminActions?: boolean;
+  onBookUpdated?: (book: Book) => void;
+  onBookDeleted?: (bookId: string) => void;
 }
 
 const StoreBookCard = styled(Card)(({ theme }) => ({
@@ -45,8 +52,19 @@ const StoreBookCard = styled(Card)(({ theme }) => ({
   },
 }));
 
-function BookCard({ book }: BookCardProps) {
+function BookCard({
+  book,
+  enableAdminActions = false,
+  onBookUpdated,
+  onBookDeleted,
+}: BookCardProps) {
   const { items, addBook } = useCart();
+  const { user, loading: authLoading } = useAuth();
+  const ability = useMemo(() => defineAbilityFor(user), [user]);
+  const canEditBook = ability.can("update", "Book");
+  const canDeleteBook = ability.can("delete", "Book");
+  const showAdminActions = enableAdminActions && (canEditBook || canDeleteBook);
+  const canAddToCart = ability.can("addToCart", "Book");
   const quantity = items.find((item) => item.bookId === book.id)?.quantity ?? 0;
 
   return (
@@ -149,20 +167,34 @@ function BookCard({ book }: BookCardProps) {
               }
               variant={book.stock > LOW_STOCK_THRESHOLD ? "outlined" : "filled"}
             />
-            <Button
-              variant="contained"
-              size="small"
-              fullWidth
-              startIcon={<ShoppingCartOutlinedIcon fontSize="small" />}
-              disabled={book.stock <= 0 || quantity >= book.stock}
-              onClick={() => addBook(book)}
-            >
-              {book.stock <= 0
-                ? CART_ACTION_LABELS.soldOut
-                : quantity >= book.stock
-                  ? CART_ACTION_LABELS.maxAdded
-                  : CART_ACTION_LABELS.addToCart}
-            </Button>
+            {!authLoading &&
+              showAdminActions &&
+              onBookUpdated &&
+              onBookDeleted && (
+                <BookCardAdminActions
+                  book={book}
+                  canEdit={canEditBook}
+                  canDelete={canDeleteBook}
+                  onBookUpdated={onBookUpdated}
+                  onBookDeleted={onBookDeleted}
+                />
+              )}
+            {!authLoading && !showAdminActions && canAddToCart && (
+              <Button
+                variant="contained"
+                size="small"
+                fullWidth
+                startIcon={<ShoppingCartOutlinedIcon fontSize="small" />}
+                disabled={book.stock <= 0 || quantity >= book.stock}
+                onClick={() => addBook(book)}
+              >
+                {book.stock <= 0
+                  ? CART_ACTION_LABELS.soldOut
+                  : quantity >= book.stock
+                    ? CART_ACTION_LABELS.maxAdded
+                    : CART_ACTION_LABELS.addToCart}
+              </Button>
+            )}
           </Stack>
         </Stack>
       </Stack>
