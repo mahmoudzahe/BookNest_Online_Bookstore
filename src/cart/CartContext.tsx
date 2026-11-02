@@ -10,6 +10,7 @@ import {
 import type { ReactNode } from "react";
 import type { Book } from "../types/book";
 import type { CartContextValue, CartItem } from "../types/cart";
+import { cartSubject } from "./CartSubject";
 
 const STORAGE_KEY = "booknest-cart";
 
@@ -48,6 +49,10 @@ export function CartProvider({ children }: { children: ReactNode }) {
       localStorage.setItem(STORAGE_KEY, JSON.stringify(items));
     }
   }, [items, hydrated]);
+
+  useEffect(() => {
+    cartSubject.notify(items);
+  }, [items]);
 
   const addBook = (book: Book) => {
     setItems((current) => {

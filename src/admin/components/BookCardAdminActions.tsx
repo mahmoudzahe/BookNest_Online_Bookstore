@@ -1,7 +1,16 @@
 "use client";
 
 import { useState } from "react";
-import { Alert, Button, Stack } from "@mui/material";
+import {
+  Alert,
+  IconButton,
+  ListItemIcon,
+  ListItemText,
+  Menu,
+  MenuItem,
+  Snackbar,
+} from "@mui/material";
+import MoreVertIcon from "@mui/icons-material/MoreVert";
 import EditOutlinedIcon from "@mui/icons-material/EditOutlined";
 import DeleteOutlinedIcon from "@mui/icons-material/DeleteOutlined";
 import { useForm } from "react-hook-form";
@@ -42,6 +51,7 @@ export default function BookCardAdminActions({
   onBookUpdated,
   onBookDeleted,
 }: BookCardAdminActionsProps) {
+  const [menuAnchor, setMenuAnchor] = useState<HTMLElement | null>(null);
   const [categories, setCategories] = useState<Category[]>([]);
   const [formOpen, setFormOpen] = useState(false);
   const [confirmOpen, setConfirmOpen] = useState(false);
@@ -66,6 +76,10 @@ export default function BookCardAdminActions({
     Object.values(errors)
       .map((item) => item?.message)
       .find(Boolean) ?? "";
+
+  function closeMenu() {
+    setMenuAnchor(null);
+  }
 
   async function openEditForm() {
     setFormError("");
@@ -133,40 +147,71 @@ export default function BookCardAdminActions({
   }
 
   return (
-    <Stack spacing={0.75} sx={{ width: "100%" }}>
-      <Stack direction="row" spacing={1} sx={{ width: "100%" }}>
+    <>
+      {(canEdit || canDelete) && (
+        <IconButton
+          size="small"
+          aria-label={`More actions for ${book.title}`}
+          aria-haspopup="menu"
+          aria-expanded={Boolean(menuAnchor) ? "true" : undefined}
+          onClick={(event) => setMenuAnchor(event.currentTarget)}
+          disabled={loadingCategories || saving}
+          sx={{
+            flexShrink: 0,
+            alignSelf: "flex-start",
+            mt: -0.5,
+          }}
+        >
+          <MoreVertIcon fontSize="small" />
+        </IconButton>
+      )}
+
+      <Menu
+        anchorEl={menuAnchor}
+        open={Boolean(menuAnchor)}
+        onClose={closeMenu}
+        anchorOrigin={{ vertical: "bottom", horizontal: "right" }}
+        transformOrigin={{ vertical: "top", horizontal: "right" }}
+      >
         {canEdit && (
-          <Button
-            fullWidth
-            size="small"
-            variant="outlined"
-            startIcon={<EditOutlinedIcon fontSize="small" />}
-            onClick={() => void openEditForm()}
+          <MenuItem
+            onClick={() => {
+              closeMenu();
+              void openEditForm();
+            }}
             disabled={loadingCategories || saving}
           >
-            Edit
-          </Button>
+            <ListItemIcon>
+              <EditOutlinedIcon fontSize="small" />
+            </ListItemIcon>
+            <ListItemText>Edit</ListItemText>
+          </MenuItem>
         )}
         {canDelete && (
-          <Button
-            fullWidth
-            size="small"
-            color="error"
-            variant="outlined"
-            startIcon={<DeleteOutlinedIcon fontSize="small" />}
-            onClick={() => setConfirmOpen(true)}
+          <MenuItem
+            onClick={() => {
+              closeMenu();
+              setConfirmOpen(true);
+            }}
             disabled={saving}
           >
-            Delete
-          </Button>
+            <ListItemIcon>
+              <DeleteOutlinedIcon fontSize="small" color="error" />
+            </ListItemIcon>
+            <ListItemText sx={{ color: "error.main" }}>Delete</ListItemText>
+          </MenuItem>
         )}
-      </Stack>
+      </Menu>
 
-      {feedback && (
+      <Snackbar
+        open={Boolean(feedback)}
+        autoHideDuration={4000}
+        onClose={() => setFeedback("")}
+      >
         <Alert severity="error" onClose={() => setFeedback("")}>
           {feedback}
         </Alert>
-      )}
+      </Snackbar>
 
       <BookFormDialog
         open={formOpen}
@@ -190,6 +235,6 @@ export default function BookCardAdminActions({
         Are you sure you want to delete <strong>{book.title}</strong>? This
         cannot be undone.
       </ConfirmDialog>
-    </Stack>
+    </>
   );
 }

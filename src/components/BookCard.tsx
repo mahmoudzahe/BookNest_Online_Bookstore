@@ -108,23 +108,51 @@ function BookCard({
           sx={{ flex: 1, minWidth: 0, justifyContent: "space-between" }}
         >
           <Stack spacing={0.75}>
-            <Link
-              component={RouterLink}
-              href={`/books/${book.id}`}
-              variant="subtitle2"
-              color="text.primary"
-              underline="hover"
-              className="BookNest-textWeight700"
+            <Stack
+              direction="row"
+              spacing={0.5}
               sx={{
-                lineHeight: 1.35,
-                display: "-webkit-box",
-                WebkitLineClamp: 2,
-                WebkitBoxOrient: "vertical",
-                overflow: "hidden",
+                alignItems: "flex-start",
+                minWidth: 0,
+                "& .MuiIconButton-root": {
+                  width: 24,
+                  height: 24,
+                  p: 0,
+                },
               }}
             >
-              {book.title}
-            </Link>
+              <Link
+                component={RouterLink}
+                href={`/books/${book.id}`}
+                variant="subtitle2"
+                color="text.primary"
+                underline="hover"
+                className="BookNest-textWeight700"
+                sx={{
+                  flex: 1,
+                  minWidth: 0,
+                  lineHeight: 1.35,
+                  display: "-webkit-box",
+                  WebkitLineClamp: 2,
+                  WebkitBoxOrient: "vertical",
+                  overflow: "hidden",
+                }}
+              >
+                {book.title}
+              </Link>
+              {!authLoading &&
+                showAdminActions &&
+                onBookUpdated &&
+                onBookDeleted && (
+                  <BookCardAdminActions
+                    book={book}
+                    canEdit={canEditBook}
+                    canDelete={canDeleteBook}
+                    onBookUpdated={onBookUpdated}
+                    onBookDeleted={onBookDeleted}
+                  />
+                )}
+            </Stack>
             <Typography variant="caption" color="text.secondary" noWrap>
               {book.author}
             </Typography>
@@ -167,19 +195,7 @@ function BookCard({
               }
               variant={book.stock > LOW_STOCK_THRESHOLD ? "outlined" : "filled"}
             />
-            {!authLoading &&
-              showAdminActions &&
-              onBookUpdated &&
-              onBookDeleted && (
-                <BookCardAdminActions
-                  book={book}
-                  canEdit={canEditBook}
-                  canDelete={canDeleteBook}
-                  onBookUpdated={onBookUpdated}
-                  onBookDeleted={onBookDeleted}
-                />
-              )}
-            {!authLoading && !showAdminActions && canAddToCart && (
+            {!authLoading && canAddToCart && (
               <Button
                 variant="contained"
                 size="small"

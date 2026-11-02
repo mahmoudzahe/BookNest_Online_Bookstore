@@ -17,12 +17,12 @@ import {
 import ArrowBackRoundedIcon from "@mui/icons-material/ArrowBackRounded";
 import ShoppingCartOutlinedIcon from "@mui/icons-material/ShoppingCartOutlined";
 import { useParams, useRouter } from "next/navigation";
-import { useAuth } from "../auth/AuthContext";
-import { defineAbilityFor } from "../admin/ability";
-import BookCardAdminActions from "../admin/components/BookCardAdminActions";
 import RouterLink from "../components/NextLink";
 import { useCart } from "../cart/CartContext";
 import BookReviews from "../components/BookReviews";
+import BookCardAdminActions from "../admin/components/BookCardAdminActions";
+import { defineAbilityFor } from "../admin/ability";
+import { useAuth } from "../auth/AuthContext";
 import { getBook, getCategories, getReviews } from "../services/booksApi";
 import type { Book, BookReview, Category } from "../types/book";
 import {
@@ -33,18 +33,12 @@ import {
 
 function BookDetails() {
   const id = useParams<{ id: string }>()?.id;
-  const { items, addBook } = useCart();
   const router = useRouter();
-
+  const { items, addBook } = useCart();
   const { user, loading: authLoading } = useAuth();
-
   const ability = useMemo(() => defineAbilityFor(user), [user]);
-
   const canEditBook = ability.can("update", "Book");
   const canDeleteBook = ability.can("delete", "Book");
-  const canAddToCart = ability.can("addToCart", "Book");
-
-  const showAdminActions = canEditBook || canDeleteBook;
   const [book, setBook] = useState<Book | null>(null);
   const [reviews, setReviews] = useState<BookReview[]>([]);
   const [categories, setCategories] = useState<Category[]>([]);
@@ -151,9 +145,28 @@ function BookDetails() {
                     >
                       {book.title}
                     </Typography>
-                    <Typography color="text.secondary">
-                      by {book.author}
-                    </Typography>
+                    <Stack
+                      direction="row"
+                      spacing={1}
+                      sx={{
+                        alignItems: "center",
+                        justifyContent: "space-between",
+                        width: "100%",
+                      }}
+                    >
+                      <Typography color="text.secondary">
+                        by {book.author}
+                      </Typography>
+                      {!authLoading && (canEditBook || canDeleteBook) && (
+                        <BookCardAdminActions
+                          book={book}
+                          canEdit={canEditBook}
+                          canDelete={canDeleteBook}
+                          onBookUpdated={setBook}
+                          onBookDeleted={() => router.replace("/books")}
+                        />
+                      )}
+                    </Stack>
                     <Typography variant="body2" color="text.secondary">
                       Category:{" "}
                       {categories.find(
@@ -206,33 +219,20 @@ function BookDetails() {
                     />
                   </Stack>
 
-                  {!authLoading && showAdminActions ? (
-                    <BookCardAdminActions
-                      book={book}
-                      canEdit={canEditBook}
-                      canDelete={canDeleteBook}
-                      onBookUpdated={(updatedBook) => setBook(updatedBook)}
-                      onBookDeleted={() => router.replace("/books")}
-                    />
-                  ) : (
-                    !authLoading &&
-                    canAddToCart && (
-                      <Button
-                        variant="contained"
-                        size="large"
-                        startIcon={<ShoppingCartOutlinedIcon />}
-                        disabled={book.stock <= 0 || quantity >= book.stock}
-                        onClick={() => addBook(book)}
-                        sx={{ width: { xs: "100%", sm: 220 } }}
-                      >
-                        {book.stock <= 0
-                          ? CART_ACTION_LABELS.soldOut
-                          : quantity >= book.stock
-                            ? CART_ACTION_LABELS.maxAdded
-                            : CART_ACTION_LABELS.addToCart}
-                      </Button>
-                    )
-                  )}
+                  <Button
+                    variant="contained"
+                    size="large"
+                    startIcon={<ShoppingCartOutlinedIcon />}
+                    disabled={book.stock <= 0 || quantity >= book.stock}
+                    onClick={() => addBook(book)}
+                    sx={{ width: { xs: "100%", sm: 220 } }}
+                  >
+                    {book.stock <= 0
+                      ? CART_ACTION_LABELS.soldOut
+                      : quantity >= book.stock
+                        ? CART_ACTION_LABELS.maxAdded
+                        : CART_ACTION_LABELS.addToCart}
+                  </Button>
                 </Stack>
               </Grid>
             </Grid>

@@ -23,16 +23,25 @@ import DeleteIcon from "@mui/icons-material/Delete";
 import RemoveIcon from "@mui/icons-material/Remove";
 import RouterLink from "../components/NextLink";
 import { useCart } from "../cart/CartContext";
+import { cartSubject } from "../cart/CartSubject";
 import { getBooks } from "../services/booksApi";
 import type { Book } from "../types/book";
+import type { CartItem } from "../types/cart";
 import { CART_COVER_WIDTH, CART_COVER_HEIGHT } from "../constants";
 
 function Cart() {
-  const { items, setQuantity, removeBook, syncStock } = useCart();
+  const { setQuantity, removeBook, syncStock } = useCart();
+  const [observedItems, setObservedItems] = useState<CartItem[]>([]);
   const [books, setBooks] = useState<Book[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
   const [bookToDelete, setBookToDelete] = useState<Book | null>(null);
+
+  useEffect(() => {
+    return cartSubject.subscribe((items) => {
+      setObservedItems(items);
+    });
+  }, []);
 
   useEffect(() => {
     let active = true;
@@ -57,7 +66,7 @@ function Cart() {
     };
   }, [syncStock]);
 
-  const cartBooks = items.flatMap((item) => {
+  const cartBooks = observedItems.flatMap((item) => {
     const book = books.find((book) => book.id === item.bookId);
     return book ? [{ ...item, book }] : [];
   });
@@ -84,9 +93,11 @@ function Cart() {
       </Typography>
 
       {loading && <CircularProgress />}
-      {error && items.length > 0 && <Alert severity="error">{error}</Alert>}
+      {error && observedItems.length > 0 && (
+        <Alert severity="error">{error}</Alert>
+      )}
 
-      {!loading && items.length === 0 && (
+      {!loading && observedItems.length === 0 && (
         <Stack
           spacing={2}
           sx={{
