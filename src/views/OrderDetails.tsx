@@ -26,8 +26,10 @@ import RouterLink from "../components/NextLink";
 import { useAuth } from "../auth/AuthContext";
 import { cancelUserOrder, getUserOrder } from "../services/ordersApi";
 import type { Order } from "../types/order";
+import { T, useI18n } from "@/i18n/LocaleContext";
 
 function OrderDetails() {
+  const { t } = useI18n();
   const id = useParams<{ id: string }>()?.id;
   const { user } = useAuth();
   const [order, setOrder] = useState<Order | null>(null);
@@ -55,7 +57,7 @@ function OrderDetails() {
         if (active) setOrder(data);
       })
       .catch(() => {
-        if (active) setError("Order not found.");
+        if (active) setError(t("Order not found."));
       })
       .finally(() => {
         if (active) setLoading(false);
@@ -77,7 +79,7 @@ function OrderDetails() {
     } catch (err) {
       setConfirmOpen(false);
       setError(
-        err instanceof Error ? err.message : "Could not cancel your order.",
+        err instanceof Error ? err.message : t("Could not cancel your order."),
       );
     } finally {
       setCancelling(false);
@@ -100,10 +102,17 @@ function OrderDetails() {
             component={RouterLink}
             href="/my-orders"
             variant="text"
-            startIcon={<ArrowBackRoundedIcon />}
+            startIcon={
+              <ArrowBackRoundedIcon
+                sx={{
+                  transform: (theme) =>
+                    theme.direction === "rtl" ? "scaleX(-1)" : undefined,
+                }}
+              />
+            }
             sx={{ alignSelf: "flex-start", px: 0 }}
           >
-            Back to my orders
+            <T text="Back to my orders" />
           </Button>
 
           <Stack spacing={1}>
@@ -112,14 +121,14 @@ function OrderDetails() {
               variant="h4"
               sx={{ fontFamily: "Georgia, serif", fontWeight: 700 }}
             >
-              Order details
+              <T text="Order details" />
             </Typography>
             <Typography color="text.secondary">
-              Review your books, payment summary and delivery information.
+              <T text="Review your books, payment summary and delivery information." />
             </Typography>
           </Stack>
 
-          {loading && <CircularProgress aria-label="Loading order" />}
+          {loading && <CircularProgress aria-label={t("Loading order")} />}
           {error && <Alert severity="error">{error}</Alert>}
 
           {order && (
@@ -137,14 +146,16 @@ function OrderDetails() {
                     variant="subtitle1"
                     sx={{ fontWeight: 700, overflowWrap: "anywhere" }}
                   >
-                    Order #{order.id}
+                    <T text="Order #" />
+                    {order.id}
                   </Typography>
                   <Typography variant="body2" color="text.secondary">
-                    Placed on {new Date(order.createdAt).toLocaleString()}
+                    <T text="Placed on" />{" "}
+                    {new Date(order.createdAt).toLocaleString()}
                   </Typography>
                 </Stack>
                 <Chip
-                  label={order.status}
+                  label={t(order.status)}
                   color={
                     order.status === "delivered"
                       ? "success"
@@ -168,7 +179,7 @@ function OrderDetails() {
                   >
                     <Stack spacing={3}>
                       <Typography variant="h6" sx={{ fontWeight: 700 }}>
-                        Books in this order
+                        <T text="Books in this order" />
                       </Typography>
                       {order.items.map((item) => (
                         <Stack
@@ -209,8 +220,8 @@ function OrderDetails() {
                               {item.title}
                             </Typography>
                             <Typography variant="body2" color="text.secondary">
-                              ${item.price.toFixed(2)} each · Quantity:{" "}
-                              {item.quantity}
+                              ${item.price.toFixed(2)}{" "}
+                              <T text="each · Quantity:" /> {item.quantity}
                             </Typography>
                           </Stack>
                           <Typography
@@ -232,14 +243,14 @@ function OrderDetails() {
                     >
                       <Stack spacing={2}>
                         <Typography variant="h6" sx={{ fontWeight: 700 }}>
-                          Order summary
+                          <T text="Order summary" />
                         </Typography>
                         <Stack
                           direction="row"
                           sx={{ justifyContent: "space-between" }}
                         >
                           <Typography color="text.secondary">
-                            Subtotal
+                            <T text="Subtotal" />
                           </Typography>
                           <Typography>${order.subtotal.toFixed(2)}</Typography>
                         </Stack>
@@ -248,7 +259,7 @@ function OrderDetails() {
                           sx={{ justifyContent: "space-between" }}
                         >
                           <Typography color="text.secondary">
-                            Discount
+                            <T text="Discount" />
                           </Typography>
                           <Typography>−${order.discount.toFixed(2)}</Typography>
                         </Stack>
@@ -260,7 +271,7 @@ function OrderDetails() {
                           }}
                         >
                           <Typography sx={{ fontWeight: 700 }}>
-                            Total
+                            <T text="Total" />
                           </Typography>
                           <Typography variant="h6" sx={{ fontWeight: 700 }}>
                             ${order.total.toFixed(2)}
@@ -275,7 +286,7 @@ function OrderDetails() {
                     >
                       <Stack spacing={1}>
                         <Typography variant="h6" sx={{ fontWeight: 700 }}>
-                          Shipping information
+                          <T text="Shipping information" />
                         </Typography>
                         <Typography>{order.shipping.fullName}</Typography>
                         <Typography variant="body2" color="text.secondary">
@@ -297,7 +308,7 @@ function OrderDetails() {
                         color="error"
                         onClick={() => setConfirmOpen(true)}
                       >
-                        Cancel order
+                        <T text="Cancel order" />
                       </Button>
                     )}
                   </Stack>
@@ -313,15 +324,17 @@ function OrderDetails() {
         onClose={() => !cancelling && setConfirmOpen(false)}
         slotProps={{ paper: { sx: { borderRadius: 3 } } }}
       >
-        <DialogTitle>Cancel order?</DialogTitle>
+        <DialogTitle>
+          <T text="Cancel order?" />
+        </DialogTitle>
         <DialogContent>
           <DialogContentText>
-            Are you sure you want to cancel this pending order?
+            <T text="Are you sure you want to cancel this pending order?" />
           </DialogContentText>
         </DialogContent>
         <DialogActions>
           <Button onClick={() => setConfirmOpen(false)} disabled={cancelling}>
-            Keep order
+            <T text="Keep order" />
           </Button>
           <Button
             color="error"
@@ -329,7 +342,7 @@ function OrderDetails() {
             onClick={handleCancel}
             disabled={cancelling}
           >
-            {cancelling ? "Cancelling..." : "Cancel order"}
+            {cancelling ? t("Cancelling...") : t("Cancel order")}
           </Button>
         </DialogActions>
       </Dialog>

@@ -13,6 +13,7 @@ import {
   COUPON_MAX_DISCOUNT,
   DEFAULT_COUPON_DISCOUNT,
 } from "../constants";
+import { translateInBrowser } from "@/i18n/translation";
 
 const EMPTY_COUPON: CouponInput = {
   code: "",
@@ -41,7 +42,7 @@ export function useAdminCoupons() {
         if (active) setCoupons(items);
       })
       .catch(() => {
-        if (active) setError("Could not load coupons.");
+        if (active) setError(translateInBrowser("Could not load coupons."));
       })
       .finally(() => {
         if (active) setLoading(false);
@@ -74,14 +75,18 @@ export function useAdminCoupons() {
     const code = form.code.trim().toUpperCase();
     if (!COUPON_CODE_PATTERN.test(code))
       return setError(
-        "Code must be 3–20 characters: letters, numbers, - or _.",
+        translateInBrowser(
+          "Code must be 3–20 characters: letters, numbers, - or _.",
+        ),
       );
     if (
       !Number.isFinite(form.discountPercent) ||
       form.discountPercent < COUPON_MIN_DISCOUNT ||
       form.discountPercent > COUPON_MAX_DISCOUNT
     ) {
-      return setError("Discount must be between 1 and 100%.");
+      return setError(
+        translateInBrowser("Discount must be between 1 and 100%."),
+      );
     }
     if (
       coupons.some(
@@ -89,7 +94,7 @@ export function useAdminCoupons() {
           coupon.id !== editing?.id && coupon.code.toUpperCase() === code,
       )
     ) {
-      return setError("This coupon code already exists.");
+      return setError(translateInBrowser("This coupon code already exists."));
     }
     setSaving(true);
     setError("");
@@ -98,7 +103,7 @@ export function useAdminCoupons() {
       await load();
       setOpen(false);
     } catch {
-      setError("Could not save coupon.");
+      setError(translateInBrowser("Could not save coupon."));
     } finally {
       setSaving(false);
     }
@@ -110,7 +115,7 @@ export function useAdminCoupons() {
       await setCouponActive(coupon.id, !coupon.active);
       await load();
     } catch {
-      setError("Could not update coupon status.");
+      setError(translateInBrowser("Could not update coupon status."));
     }
   }
 
@@ -123,7 +128,7 @@ export function useAdminCoupons() {
       await load();
       setDeleting(null);
     } catch {
-      setError("Could not delete coupon.");
+      setError(translateInBrowser("Could not delete coupon."));
       setDeleting(null);
     } finally {
       setSaving(false);

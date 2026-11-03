@@ -23,8 +23,11 @@ import { useThemeMode } from "../theme/ThemeModeContext";
 
 import { ADMIN_SIDEBAR_WIDTH } from "./constants";
 import AdminSidebar from "./components/AdminSidebar";
+import LanguageToggle from "@/components/LanguageToggle";
+import { T, useI18n } from "@/i18n/LocaleContext";
 
 export default function AdminLayout({ children }: { children: ReactNode }) {
+  const { t } = useI18n();
   const [mobileOpen, setMobileOpen] = useState(false);
   const pathname = usePathname() ?? "";
   const { user, logout } = useAuth();
@@ -81,7 +84,7 @@ export default function AdminLayout({ children }: { children: ReactNode }) {
         >
           <Toolbar sx={{ gap: 1.5 }}>
             <IconButton
-              aria-label="Open admin navigation"
+              aria-label={t("Open admin navigation")}
               onClick={() => setMobileOpen(true)}
               sx={{ display: { md: "none" } }}
             >
@@ -89,17 +92,18 @@ export default function AdminLayout({ children }: { children: ReactNode }) {
             </IconButton>
             <Box sx={{ flexGrow: 1 }}>
               <Typography className="BookNest-textWeight700">
-                Admin Panel
+                <T text="Admin Panel" />
               </Typography>
               <Typography color="text.secondary" variant="caption">
-                Manage your bookstore
+                <T text="Manage your bookstore" />
               </Typography>
             </Box>
-            <Tooltip title={darkMode ? "Light mode" : "Dark mode"}>
+            <LanguageToggle />
+            <Tooltip title={darkMode ? t("Light mode") : t("Dark mode")}>
               <IconButton
                 onClick={toggleDarkMode}
                 color="primary"
-                aria-label="Toggle color mode"
+                aria-label={t("Toggle color mode")}
               >
                 {darkMode ? (
                   <LightModeOutlinedIcon />
@@ -116,7 +120,7 @@ export default function AdminLayout({ children }: { children: ReactNode }) {
               size="small"
               sx={{ display: { xs: "none", sm: "inline-flex" } }}
             >
-              Logout
+              <T text="Logout" />
             </Button>
           </Toolbar>
         </AppBar>

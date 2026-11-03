@@ -7,6 +7,7 @@ import {
 } from "../../services/adminApi";
 import type { Order } from "../../types/order";
 import type { AuthUser } from "../../types/user";
+import { translateInBrowser } from "@/i18n/translation";
 
 export function useAdminOrders() {
   const [orders, setOrders] = useState<Order[]>([]);
@@ -29,7 +30,7 @@ export function useAdminOrders() {
         setUsers(allUsers);
       })
       .catch(() => {
-        if (active) setError("Could not load orders.");
+        if (active) setError(translateInBrowser("Could not load orders."));
       })
       .finally(() => {
         if (active) setLoading(false);
@@ -69,7 +70,7 @@ export function useAdminOrders() {
       setOrders(await getAdminOrders());
       setSelected(null);
     } catch {
-      setError("Could not change the order status.");
+      setError(translateInBrowser("Could not change the order status."));
     } finally {
       setSaving(false);
     }
@@ -84,7 +85,7 @@ export function useAdminOrders() {
       setOrders(await getAdminOrders());
       setArchiving(null);
     } catch {
-      setError("Could not update order archive.");
+      setError(translateInBrowser("Could not update order archive."));
       setArchiving(null);
     } finally {
       setSaving(false);

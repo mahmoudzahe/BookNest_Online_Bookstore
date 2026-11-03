@@ -34,10 +34,21 @@ import { useAuth } from "../auth/AuthContext";
 import { useThemeMode } from "../theme/ThemeModeContext";
 import { cartSubject } from "../cart/CartSubject";
 import { getCategories } from "../services/booksApi";
+import LanguageToggle from "./LanguageToggle";
 import type { Category } from "../types/book";
+import { T, useI18n } from "@/i18n/LocaleContext";
 const booknestLogo = "/assets/booknest-logo.svg";
 
 function NavBar() {
+  const { t, locale } = useI18n();
+  const readableArabicNav =
+    locale === "ar"
+      ? {
+          fontFamily: '"Segoe UI", Arial, sans-serif',
+          fontSize: "0.95rem",
+          fontWeight: 400,
+        }
+      : {};
   const { user, loading, logout } = useAuth();
   const { darkMode, toggleDarkMode } = useThemeMode();
 
@@ -124,7 +135,7 @@ function NavBar() {
           <Stack
             component={RouterLink}
             href="/"
-            aria-label="BookNest home"
+            aria-label={t("BookNest home")}
             direction="row"
             spacing={1}
             sx={{
@@ -136,11 +147,11 @@ function NavBar() {
             <Box
               component="img"
               src={booknestLogo}
-              alt="BookNest logo"
+              alt={t("BookNest logo")}
               sx={{ width: 40, height: 40 }}
             />
             <Typography variant="h6" sx={{ fontWeight: 700 }}>
-              BookNest
+              <T text="BookNest" />
             </Typography>
           </Stack>
 
@@ -152,13 +163,16 @@ function NavBar() {
             <Button
               component={RouterLink}
               href="/books"
-              sx={{ color: "inherit" }}
+              sx={{ color: "inherit", ...readableArabicNav }}
             >
-              Books
+              <T text="Books" />
             </Button>
 
-            <Button onClick={openCategories} sx={{ color: "inherit" }}>
-              Categories
+            <Button
+              onClick={openCategories}
+              sx={{ color: "inherit", ...readableArabicNav }}
+            >
+              <T text="Categories" />
             </Button>
 
             <Menu
@@ -170,8 +184,9 @@ function NavBar() {
                 component={RouterLink}
                 href="/books"
                 onClick={() => setCategoryAnchor(null)}
+                sx={readableArabicNav}
               >
-                All books
+                <T text="All books" />
               </MenuItem>
 
               {categories.map((category) => (
@@ -180,8 +195,9 @@ function NavBar() {
                   component={RouterLink}
                   href={`/books?category=${category.id}`}
                   onClick={() => setCategoryAnchor(null)}
+                  sx={readableArabicNav}
                 >
-                  {category.name}
+                  {t(category.name)}
                 </MenuItem>
               ))}
             </Menu>
@@ -201,11 +217,11 @@ function NavBar() {
             <TextField
               size="small"
               fullWidth
-              placeholder="Search books or authors..."
+              placeholder={t("Search books or authors...")}
               value={search}
               onChange={(event) => setSearch(event.target.value)}
               slotProps={{
-                htmlInput: { "aria-label": "Search books" },
+                htmlInput: { "aria-label": t("Search books") },
                 input: {
                   startAdornment: (
                     <InputAdornment position="start">
@@ -216,11 +232,19 @@ function NavBar() {
                     <InputAdornment position="end">
                       <IconButton
                         type="submit"
-                        aria-label="Submit search"
+                        aria-label={t("Submit search")}
                         size="small"
                         color="primary"
                       >
-                        <ArrowForwardRoundedIcon fontSize="small" />
+                        <ArrowForwardRoundedIcon
+                          fontSize="small"
+                          sx={{
+                            transform: (theme) =>
+                              theme.direction === "rtl"
+                                ? "scaleX(-1)"
+                                : undefined,
+                          }}
+                        />
                       </IconButton>
                     </InputAdornment>
                   ),
@@ -235,11 +259,14 @@ function NavBar() {
             />
           </Stack>
 
+          <LanguageToggle />
           <IconButton
             component={RouterLink}
             href="/cart"
             color="primary"
-            aria-label={`Shopping cart with ${totalItems} items`}
+            aria-label={t("Shopping cart with {count} items", {
+              count: totalItems,
+            })}
           >
             <Badge badgeContent={totalItems} color="error">
               <ShoppingCartOutlinedIcon />
@@ -250,9 +277,9 @@ function NavBar() {
             onClick={toggleDarkMode}
             color="primary"
             aria-label={
-              darkMode ? "Switch to light mode" : "Switch to dark mode"
+              darkMode ? t("Switch to light mode") : t("Switch to dark mode")
             }
-            title={darkMode ? "Light mode" : "Dark mode"}
+            title={darkMode ? t("Light mode") : t("Dark mode")}
           >
             {darkMode ? <LightModeIcon /> : <DarkModeOutlinedIcon />}
           </IconButton>
@@ -262,7 +289,7 @@ function NavBar() {
               <>
                 <IconButton
                   onClick={(event) => setUserAnchor(event.currentTarget)}
-                  aria-label="Open account menu"
+                  aria-label={t("Open account menu")}
                   aria-controls={userAnchor ? "account-menu" : undefined}
                   aria-haspopup="true"
                 >
@@ -312,7 +339,9 @@ function NavBar() {
                         href="/admin"
                         onClick={() => setUserAnchor(null)}
                       >
-                        <ListItemText>Admin Dashboard</ListItemText>
+                        <ListItemText>
+                          <T text="Admin Dashboard" />
+                        </ListItemText>
                       </MenuItem>
                       <Divider />
                     </>
@@ -323,7 +352,9 @@ function NavBar() {
                     href="/profile"
                     onClick={() => setUserAnchor(null)}
                   >
-                    <ListItemText>My Profile</ListItemText>
+                    <ListItemText>
+                      <T text="My Profile" />
+                    </ListItemText>
                   </MenuItem>
 
                   <MenuItem
@@ -331,7 +362,9 @@ function NavBar() {
                     href="/my-orders"
                     onClick={() => setUserAnchor(null)}
                   >
-                    <ListItemText>My Orders</ListItemText>
+                    <ListItemText>
+                      <T text="My Orders" />
+                    </ListItemText>
                   </MenuItem>
 
                   <MenuItem
@@ -339,18 +372,22 @@ function NavBar() {
                     href="/change-password"
                     onClick={() => setUserAnchor(null)}
                   >
-                    <ListItemText>Change Password</ListItemText>
+                    <ListItemText>
+                      <T text="Change Password" />
+                    </ListItemText>
                   </MenuItem>
 
                   <Divider />
 
-                  <MenuItem onClick={handleLogout}>Log Out</MenuItem>
+                  <MenuItem onClick={handleLogout}>
+                    <T text="Log Out" />
+                  </MenuItem>
                 </Menu>
               </>
             ) : (
               <Stack direction="row" spacing={1} sx={{ alignItems: "center" }}>
                 <Button component={RouterLink} href="/login" variant="outlined">
-                  Log In
+                  <T text="Log In" />
                 </Button>
 
                 <Button
@@ -358,7 +395,7 @@ function NavBar() {
                   href="/register"
                   variant="contained"
                 >
-                  Register
+                  <T text="Register" />
                 </Button>
               </Stack>
             ))}

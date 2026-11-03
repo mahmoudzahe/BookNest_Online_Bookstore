@@ -22,6 +22,7 @@ import {
   BOOK_TABLE_COVER_WIDTH,
   BOOK_TABLE_COVER_HEIGHT,
 } from "../constants";
+import { useI18n } from "@/i18n/LocaleContext";
 
 interface BooksTableProps {
   books: Book[];
@@ -42,11 +43,12 @@ export default function BooksTable({
   onDelete,
   onToggleFeatured,
 }: BooksTableProps) {
+  const { t } = useI18n();
   const columns = useMemo<GridColDef<Book>[]>(
     () => [
       {
         field: "title",
-        headerName: "Book",
+        headerName: t("Book"),
         flex: 2,
         minWidth: 220,
         renderCell: ({ row }) => (
@@ -86,28 +88,32 @@ export default function BooksTable({
       },
       {
         field: "categoryId",
-        headerName: "Category",
+        headerName: t("Category"),
         flex: 1,
         minWidth: 140,
         valueGetter: (value) =>
-          categories.find((category) => category.id === value)?.name ?? "—",
+          t(categories.find((category) => category.id === value)?.name ?? "—"),
       },
       {
         field: "price",
-        headerName: "Price",
+        headerName: t("Price"),
         width: 110,
         type: "number",
         renderCell: ({ row }) => money(row.price),
       },
       {
         field: "stock",
-        headerName: "Stock",
+        headerName: t("Stock"),
         width: 135,
         type: "number",
         renderCell: ({ row }) => (
           <Chip
             size="small"
-            label={row.stock === 0 ? "Out of stock" : `${row.stock} left`}
+            label={
+              row.stock === 0
+                ? t("Out of stock")
+                : t("{count} left", { count: row.stock })
+            }
             color={
               row.stock === 0
                 ? "error"
@@ -120,7 +126,7 @@ export default function BooksTable({
       },
       {
         field: "featured",
-        headerName: "Featured",
+        headerName: t("Featured"),
         width: 110,
         type: "boolean",
         sortable: false,
@@ -131,7 +137,7 @@ export default function BooksTable({
             onChange={() => onToggleFeatured(row)}
             slotProps={{
               input: {
-                "aria-label": `Featured ${row.title}`,
+                "aria-label": t("Featured {title}", { title: row.title }),
               },
             }}
           />
@@ -139,27 +145,27 @@ export default function BooksTable({
       },
       {
         field: "actions",
-        headerName: "Actions",
+        headerName: t("Actions"),
         width: 110,
         sortable: false,
         filterable: false,
         renderCell: ({ row }) => (
           <Stack direction="row" sx={{ alignItems: "center", height: "100%" }}>
-            <Tooltip title="Edit">
+            <Tooltip title={t("Edit")}>
               <IconButton
                 size="small"
-                aria-label={`Edit ${row.title}`}
+                aria-label={t("Edit {title}", { title: row.title })}
                 onClick={() => onEdit(row)}
               >
                 <EditOutlinedIcon fontSize="small" />
               </IconButton>
             </Tooltip>
 
-            <Tooltip title="Delete">
+            <Tooltip title={t("Delete")}>
               <IconButton
                 size="small"
                 color="error"
-                aria-label={`Delete ${row.title}`}
+                aria-label={t("Delete {title}", { title: row.title })}
                 onClick={() => onDelete(row)}
               >
                 <DeleteOutlinedIcon fontSize="small" />
@@ -169,7 +175,7 @@ export default function BooksTable({
         ),
       },
     ],
-    [categories, onDelete, onEdit, onToggleFeatured],
+    [categories, onDelete, onEdit, onToggleFeatured, t],
   );
 
   return (

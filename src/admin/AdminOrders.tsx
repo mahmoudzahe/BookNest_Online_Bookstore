@@ -15,8 +15,10 @@ import {
   ORDER_STATUSES,
   adminTableHeight,
 } from "./constants";
+import { T, useI18n } from "@/i18n/LocaleContext";
 
 export default function AdminOrders() {
+  const { t } = useI18n();
   const {
     users,
     tab,
@@ -39,13 +41,13 @@ export default function AdminOrders() {
     updateStatus,
     updateArchive,
   } = useAdminOrders();
-  const columns = orderColumns(users, openOrder, setArchiving);
+  const columns = orderColumns(users, openOrder, setArchiving, t);
 
   return (
     <>
       <PageHeading
-        title="Orders"
-        description="Track customer purchases and update their status."
+        title={t("Orders")}
+        description={t("Track customer purchases and update their status.")}
       />
       <LoadError loading={loading} error={selected ? "" : error} />
       {!loading && (
@@ -55,21 +57,29 @@ export default function AdminOrders() {
             onChange={(_event, value: "active" | "archived") => setTab(value)}
             sx={{ mb: 2 }}
           >
-            <Tab label={`Active (${activeCount})`} value="active" />
-            <Tab label={`Archived (${archivedCount})`} value="archived" />
+            <Tab
+              label={t("Active ({count})", { count: activeCount })}
+              value="active"
+            />
+            <Tab
+              label={t("Archived ({count})", { count: archivedCount })}
+              value="archived"
+            />
           </Tabs>
           <TextField
             select
             size="small"
-            label="Order status"
+            label={t("Order status")}
             value={filter}
             onChange={(event) => setFilter(event.target.value)}
             sx={{ mb: 2, minWidth: 180 }}
           >
-            <MenuItem value="all">All Orders</MenuItem>
+            <MenuItem value="all">
+              <T text="All Orders" />
+            </MenuItem>
             {ORDER_STATUSES.map((item) => (
               <MenuItem key={item} value={item}>
-                {item}
+                {t(item)}
               </MenuItem>
             ))}
           </TextField>
@@ -108,14 +118,14 @@ export default function AdminOrders() {
       <ConfirmDialog
         open={Boolean(archiving)}
         busy={saving}
-        title={archiving?.archived ? "Restore Order?" : "Archive Order?"}
-        confirmLabel={archiving?.archived ? "Restore" : "Archive"}
+        title={archiving?.archived ? t("Restore Order?") : t("Archive Order?")}
+        confirmLabel={archiving?.archived ? t("Restore") : t("Archive")}
         onClose={() => setArchiving(null)}
         onConfirm={() => void updateArchive()}
       >
-        {archiving?.archived ? "Restore" : "Archive"} order{" "}
-        <strong>#{archiving?.id}</strong>? Its status and all order details will
-        be kept.
+        {archiving?.archived ? t("Restore") : t("Archive")} <T text="order" />{" "}
+        <strong>#{archiving?.id}</strong>
+        <T text="? Its status and all order details will be kept." />
       </ConfirmDialog>
     </>
   );

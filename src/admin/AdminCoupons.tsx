@@ -15,8 +15,10 @@ import {
   ADMIN_TABLE_ROW_HEIGHT,
   adminTableHeight,
 } from "./constants";
+import { T, useI18n } from "@/i18n/LocaleContext";
 
 export default function AdminCoupons() {
+  const { t } = useI18n();
   const {
     coupons,
     editing,
@@ -34,20 +36,20 @@ export default function AdminCoupons() {
     handleDelete,
     toggle,
   } = useAdminCoupons();
-  const columns = couponColumns(showForm, setDeleting, toggle);
+  const columns = couponColumns(showForm, setDeleting, toggle, t);
 
   return (
     <>
       <PageHeading
-        title="Coupons"
-        description="Create and manage checkout discount codes."
+        title={t("Coupons")}
+        description={t("Create and manage checkout discount codes.")}
         action={
           <Button
             variant="contained"
             startIcon={<AddIcon />}
             onClick={() => showForm()}
           >
-            Add Coupon
+            <T text="Add Coupon" />
           </Button>
         }
       />
@@ -84,12 +86,12 @@ export default function AdminCoupons() {
       />
       <ConfirmDialog
         open={Boolean(deleting)}
-        title="Delete Coupon?"
+        title={t("Delete Coupon?")}
         busy={saving}
         onClose={() => setDeleting(null)}
         onConfirm={() => void handleDelete()}
       >
-        Delete coupon <strong>{deleting?.code}</strong>?
+        <T text="Delete coupon" /> <strong>{deleting?.code}</strong>?
       </ConfirmDialog>
     </>
   );

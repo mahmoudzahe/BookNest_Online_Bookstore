@@ -8,6 +8,7 @@ import type { BookInput } from "../../services/adminApi";
 import type { Book, Category } from "../../types/book";
 import { ADMIN_PAGE_SIZE } from "../constants";
 import { bookSchema } from "../schemas/bookSchema";
+import { translateInBrowser } from "@/i18n/translation";
 
 const EMPTY_BOOK: BookInput = {
   title: "",
@@ -64,7 +65,10 @@ export function useAdminBooks() {
     let active = true;
     void load(() => active)
       .catch(() => {
-        if (active) setError("Could not load books. Check JSON Server.");
+        if (active)
+          setError(
+            translateInBrowser("Could not load books. Check JSON Server."),
+          );
       })
       .finally(() => {
         if (active) setLoading(false);
@@ -126,7 +130,9 @@ export function useAdminBooks() {
       await load();
       setOpen(false);
     } catch {
-      setError("Could not save the book. Please try again.");
+      setError(
+        translateInBrowser("Could not save the book. Please try again."),
+      );
     } finally {
       setSaving(false);
     }
@@ -141,7 +147,7 @@ export function useAdminBooks() {
       await load();
       setDeleting(null);
     } catch {
-      setError("Could not delete the book.");
+      setError(translateInBrowser("Could not delete the book."));
       setDeleting(null);
     } finally {
       setSaving(false);
@@ -154,7 +160,7 @@ export function useAdminBooks() {
       await setBookFeatured(book.id, !book.featured);
       await load();
     } catch {
-      setError("Could not update featured status.");
+      setError(translateInBrowser("Could not update featured status."));
     }
   }
 

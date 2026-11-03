@@ -36,6 +36,7 @@ import {
   paymentSchema,
 } from "../schemas/paymentSchema";
 import type { PaymentFormValues } from "../schemas/paymentSchema";
+import { T, useI18n } from "@/i18n/LocaleContext";
 
 const paymentInputProps = { autoComplete: "off" } as const;
 
@@ -52,6 +53,7 @@ function formatExpiry(value: string) {
 }
 
 function Payment() {
+  const { t } = useI18n();
   const router = useRouter();
   const { user } = useAuth();
   const { items, clearCart } = useCart();
@@ -78,16 +80,16 @@ function Payment() {
 
   const hasValidDraft = Boolean(
     draft &&
-    user?.id === draft.userId &&
-    draft.items.length > 0 &&
-    items.length === draft.items.length &&
-    draft.items.every((draftItem) =>
-      items.some(
-        (item) =>
-          item.bookId === draftItem.bookId &&
-          item.quantity === draftItem.quantity,
+      user?.id === draft.userId &&
+      draft.items.length > 0 &&
+      items.length === draft.items.length &&
+      draft.items.every((draftItem) =>
+        items.some(
+          (item) =>
+            item.bookId === draftItem.bookId &&
+            item.quantity === draftItem.quantity,
+        ),
       ),
-    ),
   );
 
   async function handleConfirm(values: PaymentFormValues) {
@@ -96,7 +98,9 @@ function Payment() {
 
     if (!draft || !user || !hasValidDraft) {
       setSubmitError(
-        "Your checkout information has changed. Return to Checkout and review your order.",
+        t(
+          "Your checkout information has changed. Return to Checkout and review your order.",
+        ),
       );
       return;
     }
@@ -109,7 +113,9 @@ function Payment() {
         const book = latestBooks.find((entry) => entry.id === item.bookId);
         if (!book || book.stock < item.quantity) {
           setSubmitError(
-            "An item is no longer available in that quantity. Return to Checkout to review your cart.",
+            t(
+              "An item is no longer available in that quantity. Return to Checkout to review your cart.",
+            ),
           );
           return;
         }
@@ -128,7 +134,9 @@ function Payment() {
       );
       if (latestSubtotal !== draft.subtotal) {
         setSubmitError(
-          "Book prices have changed. Return to Checkout to review your updated total.",
+          t(
+            "Book prices have changed. Return to Checkout to review your updated total.",
+          ),
         );
         return;
       }
@@ -142,7 +150,9 @@ function Payment() {
           latestCoupon.discountPercent !== draft.coupon.discountPercent)
       ) {
         setSubmitError(
-          "Your coupon has changed or expired. Return to Checkout to apply it again.",
+          t(
+            "Your coupon has changed or expired. Return to Checkout to apply it again.",
+          ),
         );
         return;
       }
@@ -158,7 +168,7 @@ function Payment() {
       );
       if (finalTotal !== draft.total) {
         setSubmitError(
-          "The order total has changed. Return to Checkout to review it.",
+          t("The order total has changed. Return to Checkout to review it."),
         );
         return;
       }
@@ -181,7 +191,9 @@ function Payment() {
       router.replace(`/order-success/${order.id}`);
     } catch {
       setSubmitError(
-        "Could not create your order. Please check the mock API and try again.",
+        t(
+          "Could not create your order. Please check the mock API and try again.",
+        ),
       );
     } finally {
       submittingRef.current = false;
@@ -194,12 +206,10 @@ function Payment() {
         <Stack spacing={3}>
           <CheckoutProgress step={2} />
           <Alert severity="info">
-            Your checkout details are missing or the cart has changed. Please
-            review your order again. Returning to this page after a refresh also
-            requires repeating Checkout.
+            <T text="Your checkout details are missing or the cart has changed. Please review your order again. Returning to this page after a refresh also requires repeating Checkout." />
           </Alert>
           <Button component={RouterLink} href="/checkout" variant="contained">
-            Return to Checkout
+            <T text="Return to Checkout" />
           </Button>
         </Stack>
       </Container>
@@ -215,16 +225,23 @@ function Payment() {
         <Button
           component={RouterLink}
           href="/checkout"
-          startIcon={<ArrowBackRoundedIcon />}
+          startIcon={
+            <ArrowBackRoundedIcon
+              sx={{
+                transform: (theme) =>
+                  theme.direction === "rtl" ? "scaleX(-1)" : undefined,
+              }}
+            />
+          }
           sx={{ alignSelf: "flex-start" }}
         >
-          Back to Checkout
+          <T text="Back to Checkout" />
         </Button>
         <Typography variant="h4" component="h1">
-          Payment
+          <T text="Payment" />
         </Typography>
         <Typography color="text.secondary">
-          Choose how you want to complete your order.
+          <T text="Choose how you want to complete your order." />
         </Typography>
       </Stack>
       <CheckoutProgress step={2} />
@@ -250,12 +267,17 @@ function Payment() {
               sx={{ p: { xs: 2.5, sm: 3.5 }, borderRadius: 3 }}
             >
               <Stack spacing={2.5}>
-                <Typography variant="h6">Payment Method</Typography>
+                <Typography variant="h6">
+                  <T text="Payment Method" />
+                </Typography>
                 <Controller
                   name="method"
                   control={control}
                   render={({ field }) => (
-                    <RadioGroup {...field} aria-label="Choose payment method">
+                    <RadioGroup
+                      {...field}
+                      aria-label={t("Choose payment method")}
+                    >
                       <FormControlLabel
                         value="cash_on_delivery"
                         control={<Radio />}
@@ -266,7 +288,9 @@ function Payment() {
                             sx={{ alignItems: "center" }}
                           >
                             <LocalShippingOutlinedIcon color="primary" />
-                            <Typography>Cash on Delivery</Typography>
+                            <Typography>
+                              <T text="Cash on Delivery" />
+                            </Typography>
                           </Stack>
                         }
                       />
@@ -280,7 +304,9 @@ function Payment() {
                             sx={{ alignItems: "center" }}
                           >
                             <CreditCardOutlinedIcon color="primary" />
-                            <Typography>Card Payment</Typography>
+                            <Typography>
+                              <T text="Card Payment" />
+                            </Typography>
                           </Stack>
                         }
                       />
@@ -294,7 +320,7 @@ function Payment() {
                       control={control}
                       render={({ field }) => (
                         <TextField
-                          label="Cardholder Name"
+                          label={t("Cardholder Name")}
                           fullWidth
                           value={field.value}
                           onChange={(event) =>
@@ -320,7 +346,7 @@ function Payment() {
                       control={control}
                       render={({ field }) => (
                         <TextField
-                          label="Card Number"
+                          label={t("Card Number")}
                           fullWidth
                           value={field.value}
                           onChange={(event) =>
@@ -348,7 +374,7 @@ function Payment() {
                           control={control}
                           render={({ field }) => (
                             <TextField
-                              label="Expiry Date"
+                              label={t("Expiry Date")}
                               fullWidth
                               value={field.value}
                               onChange={(event) =>
@@ -358,7 +384,7 @@ function Payment() {
                               inputRef={field.ref}
                               error={!!errors.expiry}
                               helperText={errors.expiry?.message}
-                              placeholder="MM/YY"
+                              placeholder={t("MM/YY")}
                               slotProps={{
                                 htmlInput: {
                                   ...paymentInputProps,
@@ -377,7 +403,7 @@ function Payment() {
                           control={control}
                           render={({ field }) => (
                             <TextField
-                              label="Security Code"
+                              label={t("Security Code")}
                               fullWidth
                               value={field.value}
                               onChange={(event) =>
@@ -413,7 +439,9 @@ function Payment() {
               sx={{ p: { xs: 2.5, sm: 3.5 }, borderRadius: 3 }}
             >
               <Stack spacing={1}>
-                <Typography variant="h6">Shipping To</Typography>
+                <Typography variant="h6">
+                  <T text="Shipping To" />
+                </Typography>
                 <Typography>{draft.shipping.fullName}</Typography>
                 <Typography color="text.secondary">
                   {draft.shipping.phone}
@@ -435,8 +463,10 @@ function Payment() {
             >
               <Typography variant="body2" color="text.secondary">
                 {draft.items.reduce((sum, item) => sum + item.quantity, 0)}{" "}
-                items
-                {draft.coupon ? ` · Coupon ${draft.coupon.code}` : ""}
+                <T text="items" />
+                {draft.coupon
+                  ? t(" · Coupon {code}", { code: draft.coupon.code })
+                  : ""}
               </Typography>
             </CheckoutOrderSummary>
             <Button
@@ -446,7 +476,7 @@ function Payment() {
               size="large"
               disabled={isSubmitting}
             >
-              {isSubmitting ? "Confirming Order..." : "Confirm Order"}
+              {isSubmitting ? t("Confirming Order...") : t("Confirm Order")}
             </Button>
           </Stack>
         </Grid>

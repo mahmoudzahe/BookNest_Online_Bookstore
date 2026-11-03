@@ -14,11 +14,13 @@ import type {
   ProfileData,
   RegisterData,
 } from "../types/user";
+import { useI18n } from "@/i18n/LocaleContext";
 
 const AuthContext = createContext<AuthContextValue | null>(null);
 const STORAGE_KEY = "booknest-user-id";
 
 export function AuthProvider({ children }: { children: ReactNode }) {
+  const { t } = useI18n();
   const [user, setUser] = useState<AuthUser | null>(null);
   const [loading, setLoading] = useState(true);
 
@@ -64,7 +66,6 @@ export function AuthProvider({ children }: { children: ReactNode }) {
           setUser(null);
         }
       } catch {
-        // Ignore temporary API errors.
       }
     };
 
@@ -92,7 +93,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   };
 
   const updateProfile = async (data: ProfileData) => {
-    if (!user) throw new Error("Please log in again.");
+    if (!user) throw new Error(t("Please log in again."));
     const updated = await updateUserProfile(user.id, data);
     setUser(updated);
   };

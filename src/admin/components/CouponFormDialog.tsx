@@ -11,6 +11,7 @@ import {
   TextField,
 } from "@mui/material";
 import type { CouponInput } from "../../services/adminApi";
+import { T, useI18n } from "@/i18n/LocaleContext";
 
 interface CouponFormDialogProps {
   open: boolean;
@@ -36,6 +37,7 @@ export default function CouponFormDialog({
   onClose,
   onSave,
 }: CouponFormDialogProps) {
+  const { t } = useI18n();
   return (
     <Dialog
       open={open}
@@ -43,7 +45,7 @@ export default function CouponFormDialog({
       maxWidth="xs"
       fullWidth
     >
-      <DialogTitle>{editing ? "Edit Coupon" : "Add Coupon"}</DialogTitle>
+      <DialogTitle>{editing ? t("Edit Coupon") : t("Add Coupon")}</DialogTitle>
       <DialogContent>
         <Grid container spacing={2} sx={{ pt: 1 }}>
           {error && (
@@ -54,7 +56,7 @@ export default function CouponFormDialog({
           <Grid size={12}>
             <TextField
               fullWidth
-              label="Coupon Code"
+              label={t("Coupon Code")}
               value={form.code}
               onChange={(event) =>
                 onChange("code", event.target.value.toUpperCase())
@@ -64,7 +66,7 @@ export default function CouponFormDialog({
           <Grid size={12}>
             <TextField
               fullWidth
-              label="Discount (%)"
+              label={t("Discount (%)")}
               type="number"
               value={form.discountPercent}
               onChange={(event) =>
@@ -75,7 +77,7 @@ export default function CouponFormDialog({
           </Grid>
           <Grid size={12}>
             <FormControlLabel
-              label="Active"
+              label={t("Active")}
               control={
                 <Switch
                   checked={form.active}
@@ -88,10 +90,10 @@ export default function CouponFormDialog({
       </DialogContent>
       <DialogActions sx={{ p: 2 }}>
         <Button disabled={saving} onClick={onClose}>
-          Cancel
+          <T text="Cancel" />
         </Button>
         <Button variant="contained" disabled={saving} onClick={onSave}>
-          {saving ? "Saving..." : "Save"}
+          {saving ? t("Saving...") : t("Save")}
         </Button>
       </DialogActions>
     </Dialog>

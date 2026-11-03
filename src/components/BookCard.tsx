@@ -22,6 +22,7 @@ import {
   LOW_STOCK_THRESHOLD,
   STOCK_LABELS,
 } from "../constants";
+import { useI18n } from "@/i18n/LocaleContext";
 
 interface BookCardProps {
   book: Book;
@@ -58,6 +59,7 @@ function BookCard({
   onBookUpdated,
   onBookDeleted,
 }: BookCardProps) {
+  const { t } = useI18n();
   const { items, addBook } = useCart();
   const { user, loading: authLoading } = useAuth();
   const ability = useMemo(() => defineAbilityFor(user), [user]);
@@ -77,7 +79,7 @@ function BookCard({
         <Stack
           component={RouterLink}
           href={`/books/${book.id}`}
-          aria-label={`View details for ${book.title}`}
+          aria-label={t("View details for {title}", { title: book.title })}
           sx={{
             width: { xs: 106, sm: 96, lg: 100 },
             flexShrink: 0,
@@ -168,7 +170,7 @@ function BookCard({
                 readOnly
               />
               <Typography variant="caption" color="text.secondary">
-                {book.rating > 0 ? book.rating.toFixed(1) : "No ratings"}
+                {book.rating > 0 ? book.rating.toFixed(1) : t("No ratings")}
               </Typography>
             </Stack>
           </Stack>
@@ -181,10 +183,10 @@ function BookCard({
               size="small"
               label={
                 book.stock <= 0
-                  ? STOCK_LABELS.outOfStock
+                  ? t(STOCK_LABELS.outOfStock)
                   : book.stock <= LOW_STOCK_THRESHOLD
-                    ? STOCK_LABELS.lowStock
-                    : STOCK_LABELS.available
+                    ? t(STOCK_LABELS.lowStock)
+                    : t(STOCK_LABELS.available)
               }
               color={
                 book.stock <= 0
@@ -205,10 +207,10 @@ function BookCard({
                 onClick={() => addBook(book)}
               >
                 {book.stock <= 0
-                  ? CART_ACTION_LABELS.soldOut
+                  ? t(CART_ACTION_LABELS.soldOut)
                   : quantity >= book.stock
-                    ? CART_ACTION_LABELS.maxAdded
-                    : CART_ACTION_LABELS.addToCart}
+                    ? t(CART_ACTION_LABELS.maxAdded)
+                    : t(CART_ACTION_LABELS.addToCart)}
               </Button>
             )}
           </Stack>
