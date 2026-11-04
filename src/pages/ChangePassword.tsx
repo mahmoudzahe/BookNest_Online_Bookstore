@@ -1,7 +1,6 @@
 import { useState } from "react";
 import {
   Alert,
-  Box,
   Button,
   Container,
   Grid,
@@ -17,6 +16,7 @@ import { passwordSchema } from "../schemas/authSchemas";
 import type { PasswordForm } from "../types/user";
 import { useAuth } from "../auth/AuthContext";
 import { changeUserPassword } from "../services/authApi";
+import { AccountPageSurface } from "./AccountStyles";
 
 function ChangePassword() {
   const { user } = useAuth();
@@ -45,23 +45,11 @@ function ChangePassword() {
   }
 
   return (
-    <Box
-      sx={{
-        bgcolor: (theme) =>
-          theme.palette.mode === "dark"
-            ? theme.palette.background.default
-            : theme.palette.background.paper,
-        minHeight: "74vh",
-      }}
-    >
+    <AccountPageSurface>
       <Container maxWidth="lg" sx={{ py: { xs: 4, md: 7 } }}>
         <Stack spacing={4}>
           <Stack spacing={1}>
-            <Typography
-              component="h1"
-              variant="h4"
-              sx={{ fontFamily: "Georgia, serif", fontWeight: 700 }}
-            >
+            <Typography component="h1" variant="h4" sx={{ fontWeight: 700 }}>
               Change password
             </Typography>
             <Typography color="text.secondary">
@@ -159,7 +147,7 @@ function ChangePassword() {
           </Grid>
         </Stack>
       </Container>
-    </Box>
+    </AccountPageSurface>
   );
 }
 

@@ -100,7 +100,6 @@ function SectionHeading({ title, description }: SectionHeadingProps) {
           component="h2"
           variant="h4"
           sx={{
-            fontFamily: "Georgia, serif",
             fontWeight: 700,
           }}
         >
@@ -303,7 +302,6 @@ function Home() {
                 <Typography
                   component="h1"
                   sx={{
-                    fontFamily: "Georgia, serif",
                     fontWeight: 700,
                     lineHeight: 1.08,
                     fontSize: {
@@ -544,7 +542,7 @@ function Home() {
                     id="about-booknest-title"
                     component="h2"
                     variant="h4"
-                    sx={{ fontFamily: "Georgia, serif", fontWeight: 700 }}
+                    sx={{ fontWeight: 700 }}
                   >
                     Made for the love of reading.
                   </Typography>
@@ -587,7 +585,6 @@ function Home() {
                   <Typography
                     component="p"
                     sx={{
-                      fontFamily: "Georgia, serif",
                       fontSize: { xs: "1.6rem", md: "2rem" },
                       lineHeight: 1.35,
                       fontWeight: 700,
@@ -640,7 +637,7 @@ function Home() {
                 id="why-booknest-title"
                 component="h2"
                 variant="h4"
-                sx={{ fontFamily: "Georgia, serif", fontWeight: 700 }}
+                sx={{ fontWeight: 700 }}
               >
                 Your next read, made easy.
               </Typography>

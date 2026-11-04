@@ -1,14 +1,8 @@
-import { Box, Grid, Stack, Typography } from "@mui/material";
+import { Grid, Stack, Typography } from "@mui/material";
 import readingLibrary from "../assets/library.webp";
 import readingReader from "../assets/reader.webp";
 import readingCoffee from "../assets/coffee.webp";
-
-const imageStyles = {
-  display: "block",
-  width: "100%",
-  objectFit: "cover",
-  borderRadius: 2,
-} as const;
+import { ReadingMomentImage } from "./ReadingMoments.styles";
 
 function ReadingMoments() {
   return (
@@ -22,7 +16,7 @@ function ReadingMoments() {
           id="reading-moments-title"
           component="h2"
           variant="h4"
-          sx={{ fontFamily: "Georgia, serif", fontWeight: 700 }}
+          sx={{ fontWeight: 700 }}
         >
           The joy of getting lost in a book.
         </Typography>
@@ -33,45 +27,30 @@ function ReadingMoments() {
 
       <Grid container spacing={2}>
         <Grid size={{ xs: 12, md: 7 }}>
-          <Box
-            component="img"
+          <ReadingMomentImage
             src={readingLibrary}
             alt="A cozy reading corner surrounded by bookshelves"
             loading="lazy"
-            sx={{
-              ...imageStyles,
-              height: { xs: 250, sm: 320, md: 392 },
-              objectPosition: "center 60%",
-            }}
+            className="reading-featured"
           />
         </Grid>
 
         <Grid size={{ xs: 12, md: 5 }}>
           <Grid container spacing={2}>
             <Grid size={{ xs: 6, md: 12 }}>
-              <Box
-                component="img"
+              <ReadingMomentImage
                 src={readingReader}
                 alt="A reader enjoying a book in a quiet room"
                 loading="lazy"
-                sx={{
-                  ...imageStyles,
-                  height: { xs: 160, sm: 210, md: 188 },
-                  objectPosition: "center 45%",
-                }}
+                className="reading-reader"
               />
             </Grid>
             <Grid size={{ xs: 6, md: 12 }}>
-              <Box
-                component="img"
+              <ReadingMomentImage
                 src={readingCoffee}
                 alt="An open book and coffee beside a rainy window"
                 loading="lazy"
-                sx={{
-                  ...imageStyles,
-                  height: { xs: 160, sm: 210, md: 188 },
-                  objectPosition: "center 65%",
-                }}
+                className="reading-coffee"
               />
             </Grid>
           </Grid>

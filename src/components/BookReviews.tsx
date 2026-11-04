@@ -55,11 +55,7 @@ function BookReviews({ book, reviews, onReviewsChange }: Props) {
   return (
     <Stack spacing={3}>
       <Stack spacing={1.5} sx={{ alignItems: "flex-start" }}>
-        <Typography
-          component="h2"
-          variant="h4"
-          sx={{ fontFamily: "Georgia, serif", fontWeight: 700 }}
-        >
+        <Typography component="h2" variant="h4" sx={{ fontWeight: 700 }}>
           Ratings & Reviews
         </Typography>
         {!user ? (

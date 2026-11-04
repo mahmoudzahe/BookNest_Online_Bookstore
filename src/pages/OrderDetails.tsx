@@ -23,6 +23,7 @@ import { Link as RouterLink, useParams } from "react-router-dom";
 import { useAuth } from "../auth/AuthContext";
 import { cancelUserOrder, getUserOrder } from "../services/ordersApi";
 import type { Order } from "../types/order";
+import { AccountPageSurface, LargeOrderBookCover } from "./AccountStyles";
 
 function OrderDetails() {
   const { id } = useParams<{ id: string }>();
@@ -82,15 +83,7 @@ function OrderDetails() {
   }
 
   return (
-    <Box
-      sx={{
-        bgcolor: (theme) =>
-          theme.palette.mode === "dark"
-            ? theme.palette.background.default
-            : theme.palette.background.paper,
-        minHeight: "74vh",
-      }}
-    >
+    <AccountPageSurface>
       <Container maxWidth="lg" sx={{ py: { xs: 4, md: 7 } }}>
         <Stack spacing={3}>
           <Button
@@ -104,11 +97,7 @@ function OrderDetails() {
           </Button>
 
           <Stack spacing={1}>
-            <Typography
-              component="h1"
-              variant="h4"
-              sx={{ fontFamily: "Georgia, serif", fontWeight: 700 }}
-            >
+            <Typography component="h1" variant="h4" sx={{ fontWeight: 700 }}>
               Order details
             </Typography>
             <Typography color="text.secondary">
@@ -174,18 +163,7 @@ function OrderDetails() {
                           spacing={2}
                           sx={{ alignItems: "center" }}
                         >
-                          <Box
-                            sx={{
-                              width: 72,
-                              height: 98,
-                              flexShrink: 0,
-                              display: "flex",
-                              alignItems: "center",
-                              justifyContent: "center",
-                              bgcolor: "action.hover",
-                              borderRadius: 1.5,
-                            }}
-                          >
+                          <LargeOrderBookCover>
                             {bookImages[item.bookId] ? (
                               <Box
                                 component="img"
@@ -200,7 +178,7 @@ function OrderDetails() {
                             ) : (
                               <MenuBookOutlinedIcon color="disabled" />
                             )}
-                          </Box>
+                          </LargeOrderBookCover>
                           <Stack spacing={0.5} sx={{ flex: 1, minWidth: 0 }}>
                             <Typography sx={{ fontWeight: 600 }}>
                               {item.title}
@@ -330,7 +308,7 @@ function OrderDetails() {
           </Button>
         </DialogActions>
       </Dialog>
-    </Box>
+    </AccountPageSurface>
   );
 }
 

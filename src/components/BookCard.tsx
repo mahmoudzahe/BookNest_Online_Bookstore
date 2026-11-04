@@ -1,7 +1,6 @@
 import {
   Box,
   Button,
-  Card,
   Chip,
   Link,
   Rating,
@@ -9,8 +8,8 @@ import {
   Typography,
 } from "@mui/material";
 import ShoppingCartOutlinedIcon from "@mui/icons-material/ShoppingCartOutlined";
-import { alpha, styled } from "@mui/material/styles";
 import { Link as RouterLink } from "react-router-dom";
+import { StoreBookCard, StoreBookCoverLink } from "./StyledComponents";
 import { useCart } from "../cart/CartContext";
 import type { Book } from "../types/book";
 import {
@@ -23,28 +22,6 @@ interface BookCardProps {
   book: Book;
 }
 
-const StoreBookCard = styled(Card)(({ theme }) => ({
-  height: "100%",
-  border: `1px solid ${alpha(theme.palette.text.primary, 0.09)}`,
-  borderRadius: theme.spacing(2.25),
-  boxShadow: `0 5px 22px ${alpha(theme.palette.common.black, theme.palette.mode === "dark" ? 0.13 : 0.035)}`,
-  transition: theme.transitions.create(
-    ["box-shadow", "transform", "border-color"],
-    {
-      duration: theme.transitions.duration.short,
-    },
-  ),
-  "&:hover": {
-    transform: "translateY(-3px)",
-    borderColor: alpha(theme.palette.primary.main, 0.32),
-    boxShadow: `0 12px 28px ${alpha(theme.palette.common.black, 0.1)}`,
-  },
-  "@media (prefers-reduced-motion: reduce)": {
-    transition: "none",
-    "&:hover": { transform: "none" },
-  },
-}));
-
 function BookCard({ book }: BookCardProps) {
   const { items, addBook } = useCart();
   const quantity = items.find((item) => item.bookId === book.id)?.quantity ?? 0;
@@ -56,20 +33,9 @@ function BookCard({ book }: BookCardProps) {
         spacing={1.75}
         sx={{ p: 1.5, height: "100%", minWidth: 0 }}
       >
-        <Stack
-          component={RouterLink}
+        <StoreBookCoverLink
           to={`/books/${book.id}`}
           aria-label={`View details for ${book.title}`}
-          sx={{
-            width: { xs: 106, sm: 96, lg: 100 },
-            flexShrink: 0,
-            alignItems: "center",
-            justifyContent: "center",
-            borderRadius: 1.5,
-            bgcolor: "action.hover",
-            px: 0.75,
-            py: 1,
-          }}
         >
           <Box
             component="img"
@@ -83,7 +49,7 @@ function BookCard({ book }: BookCardProps) {
               display: "block",
             }}
           />
-        </Stack>
+        </StoreBookCoverLink>
 
         <Stack
           spacing={1}
