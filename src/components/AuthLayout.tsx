@@ -1,5 +1,13 @@
-import { Box, Container, Paper, Typography } from "@mui/material";
+import { Box, Button, Stack, Typography } from "@mui/material";
 import type { ReactNode } from "react";
+import { Link as RouterLink, useLocation } from "react-router-dom";
+import booknestLogo from "../assets/booknest-logo.svg";
+import {
+  AuthFormPaper,
+  AuthPage,
+  AuthPageContent,
+  AuthPageHeader,
+} from "./AuthLayout.styles";
 
 interface AuthLayoutProps {
   title: string;
@@ -8,54 +16,78 @@ interface AuthLayoutProps {
 }
 
 function AuthLayout({ title, subtitle, children }: AuthLayoutProps) {
+  const { pathname, search } = useLocation();
+  const isRegisterPage = pathname === "/register";
+  const otherPage = isRegisterPage ? "/login" : "/register";
+  const hasCheckoutRedirect =
+    new URLSearchParams(search).get("redirect") === "/checkout";
+  const otherPageLink = hasCheckoutRedirect
+    ? `${otherPage}?redirect=%2Fcheckout`
+    : otherPage;
+
   return (
-    <Box
-      sx={{
-        minHeight: "calc(100vh - 74px)",
-        py: { xs: 5, sm: 8 },
-        px: 2,
-        display: "flex",
-        alignItems: "center",
-        justifyContent: "center",
-        bgcolor: "background.default",
-        backgroundImage: (theme) =>
-          theme.palette.mode === "dark"
-            ? "radial-gradient(circle at 10% 85%, #233c47 0, transparent 38%), radial-gradient(circle at 95% 10%, #203842 0, transparent 42%)"
-            : "radial-gradient(circle at 10% 85%, #c9ddec 0, transparent 38%), radial-gradient(circle at 95% 10%, #cddfea 0, transparent 42%)",
-      }}
-    >
-      <Container maxWidth="xs" disableGutters>
-        <Paper
-          variant="outlined"
+    <AuthPage>
+      <AuthPageHeader>
+        <Stack
+          component={RouterLink}
+          to="/"
+          direction="row"
+          spacing={1}
           sx={{
-            borderRadius: 4,
-            bgcolor: "background.paper",
-            borderColor: "divider",
-            boxShadow: "0 16px 45px rgba(24, 57, 88, 0.10)",
-            p: { xs: 3, sm: 4 },
+            alignItems: "center",
+            color: "common.white",
+            textDecoration: "none",
           }}
         >
-          <Typography
-            variant="h4"
-            sx={{
-              textAlign: "center",
-              fontWeight: 700,
-              color: "text.primary",
-              mb: 1,
-            }}
-          >
-            {title}
+          <Box
+            component="img"
+            src={booknestLogo}
+            alt=""
+            sx={{ width: 38, height: 38 }}
+          />
+          <Typography variant="h6" className="BookNest-textWeight700">
+            BookNest
           </Typography>
+        </Stack>
+
+        <Stack direction="row" spacing={1.5} sx={{ alignItems: "center" }}>
           <Typography
-            color="text.secondary"
-            sx={{ textAlign: "center", mb: 3 }}
+            variant="body2"
+            sx={{ color: "common.white", display: { xs: "none", sm: "block" } }}
           >
-            {subtitle}
+            {isRegisterPage
+              ? "Already have an account?"
+              : "Don't have an account?"}
           </Typography>
+          <Button
+            component={RouterLink}
+            to={otherPageLink}
+            variant="outlined"
+            className="BookNest-authSwitchButton"
+          >
+            {isRegisterPage ? "Log In" : "Sign Up"}
+          </Button>
+        </Stack>
+      </AuthPageHeader>
+
+      <AuthPageContent>
+        <AuthFormPaper elevation={6}>
+          <Stack spacing={1} sx={{ textAlign: "center", mb: 3 }}>
+            <Typography
+              component="h1"
+              variant="h4"
+              className="BookNest-textWeight700"
+            >
+              {title}
+            </Typography>
+            <Typography variant="body2" color="text.secondary">
+              {subtitle}
+            </Typography>
+          </Stack>
           {children}
-        </Paper>
-      </Container>
-    </Box>
+        </AuthFormPaper>
+      </AuthPageContent>
+    </AuthPage>
   );
 }
 

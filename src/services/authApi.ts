@@ -1,12 +1,10 @@
-import axios from "axios";
-import type { AuthUser, RegisterData, UserRecord } from "../types/user";
-
-const api = axios.create({ baseURL: "http://localhost:3001" });
-
-type ProfileData = Pick<
+import { api } from "./api";
+import type {
   AuthUser,
-  "firstName" | "lastName" | "phone" | "address"
->;
+  ProfileData,
+  RegisterData,
+  UserRecord,
+} from "../types/user";
 
 function publicUser(user: UserRecord): AuthUser {
   const {

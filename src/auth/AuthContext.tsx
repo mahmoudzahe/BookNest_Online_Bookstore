@@ -6,21 +6,12 @@ import {
   registerUser,
   updateUserProfile,
 } from "../services/authApi";
-import type { AuthUser, RegisterData } from "../types/user";
-
-type ProfileData = Pick<
+import type {
+  AuthContextValue,
   AuthUser,
-  "firstName" | "lastName" | "phone" | "address"
->;
-
-interface AuthContextValue {
-  user: AuthUser | null;
-  loading: boolean;
-  login: (email: string, password: string) => Promise<AuthUser>;
-  register: (data: RegisterData) => Promise<void>;
-  updateProfile: (data: ProfileData) => Promise<void>;
-  logout: () => void;
-}
+  ProfileData,
+  RegisterData,
+} from "../types/user";
 
 const AuthContext = createContext<AuthContextValue | null>(null);
 const STORAGE_KEY = "booknest-user-id";

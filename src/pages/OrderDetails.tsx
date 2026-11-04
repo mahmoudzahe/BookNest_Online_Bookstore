@@ -95,7 +95,7 @@ function OrderDetails() {
       )}
       {order && (
         <Stack spacing={2}>
-          <Paper variant="outlined" sx={{ p: 3, borderRadius: 3 }}>
+          <Paper variant="outlined" sx={{ p: 3 }}>
             <Stack
               direction={{ xs: "column", sm: "row" }}
               sx={{
@@ -178,7 +178,7 @@ function OrderDetails() {
               </Typography>
             </Stack>
           </Paper>
-          <Paper variant="outlined" sx={{ p: 3, borderRadius: 3 }}>
+          <Paper variant="outlined" sx={{ p: 3 }}>
             <Typography variant="h6" sx={{ mb: 1 }}>
               Shipping Information
             </Typography>
