@@ -16,8 +16,11 @@ import { useAuth } from "../auth/AuthContext";
 import { getOrder } from "../services/checkoutApi";
 import type { Order } from "../types/order";
 import CheckoutProgress from "../components/CheckoutProgress";
+import { T } from "@/i18n/LocaleContext";
+import { useI18n } from "@/i18n/LocaleContext";
 
 function OrderSuccess() {
+  const { t } = useI18n();
   const { user } = useAuth();
   const id = useParams<{ id: string }>()?.id;
 
@@ -27,7 +30,7 @@ function OrderSuccess() {
 
   useEffect(() => {
     if (!id) {
-      setError("Order not found.");
+      setError(t("Order not found."));
       setLoading(false);
       return;
     }
@@ -42,12 +45,12 @@ function OrderSuccess() {
           if (data.userId === user?.id) {
             setOrder(data);
           } else {
-            setError("Order not found.");
+            setError(t("Order not found."));
           }
         }
       } catch {
         if (active) {
-          setError("Could not load the order.");
+          setError(t("Could not load the order."));
         }
       } finally {
         if (active) {
@@ -86,27 +89,34 @@ function OrderSuccess() {
               sx={{ fontSize: 68 }}
             />
 
-            <Typography variant="h4">Order Placed Successfully!</Typography>
-
-            <Typography color="text.secondary">
-              Your order has been created successfully.
+            <Typography variant="h4">
+              <T text="Order Placed Successfully!" />
             </Typography>
 
-            <Typography>Order ID: {order.id}</Typography>
+            <Typography color="text.secondary">
+              <T text="Your order has been created successfully." />
+            </Typography>
 
-            <Typography>Status: {order.status}</Typography>
+            <Typography>
+              <T text="Order ID:" /> {order.id}
+            </Typography>
+
+            <Typography>
+              <T text="Status:" /> {t(order.status)}
+            </Typography>
 
             {order.paymentMethod && (
               <Typography>
-                Payment:{" "}
+                <T text="Payment:" />{" "}
                 {order.paymentMethod === "cash_on_delivery"
-                  ? "Cash on Delivery"
-                  : "Card Payment"}
+                  ? t("Cash on Delivery")
+                  : t("Card Payment")}
               </Typography>
             )}
 
             <Typography variant="h6">
-              Total: ${order.total.toFixed(2)}
+              <T text="Total: $" />
+              {order.total.toFixed(2)}
             </Typography>
 
             <Button
@@ -115,7 +125,7 @@ function OrderSuccess() {
               href="/books"
               sx={{ px: 3 }}
             >
-              Continue Shopping
+              <T text="Continue Shopping" />
             </Button>
           </Stack>
         </Stack>

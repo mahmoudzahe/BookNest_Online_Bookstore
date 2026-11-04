@@ -3,6 +3,8 @@ import { alpha } from "@mui/material/styles";
 import type { ReactNode } from "react";
 import { usePathname, useSearchParams } from "next/navigation";
 import RouterLink from "./NextLink";
+import { T } from "@/i18n/LocaleContext";
+import { useI18n } from "@/i18n/LocaleContext";
 const booknestLogo = "/assets/booknest-logo.svg";
 
 interface AuthLayoutProps {
@@ -12,12 +14,12 @@ interface AuthLayoutProps {
 }
 
 function AuthLayout({ title, subtitle, children }: AuthLayoutProps) {
+  const { t } = useI18n();
   const pathname = usePathname();
   const searchParams = useSearchParams();
   const isRegisterPage = pathname === "/register";
   const otherPage = isRegisterPage ? "/login" : "/register";
-  const hasCheckoutRedirect =
-    searchParams?.get("redirect") === "/checkout";
+  const hasCheckoutRedirect = searchParams?.get("redirect") === "/checkout";
   const otherPageLink = hasCheckoutRedirect
     ? `${otherPage}?redirect=%2Fcheckout`
     : otherPage;
@@ -90,7 +92,7 @@ function AuthLayout({ title, subtitle, children }: AuthLayoutProps) {
             sx={{ width: 38, height: 38 }}
           />
           <Typography variant="h6" className="BookNest-textWeight700">
-            BookNest
+            <T text="BookNest" />
           </Typography>
         </Stack>
 
@@ -100,8 +102,8 @@ function AuthLayout({ title, subtitle, children }: AuthLayoutProps) {
             sx={{ color: "common.white", display: { xs: "none", sm: "block" } }}
           >
             {isRegisterPage
-              ? "Already have an account?"
-              : "Don't have an account?"}
+              ? t("Already have an account?")
+              : t("Don't have an account?")}
           </Typography>
           <Button
             component={RouterLink}
@@ -116,7 +118,7 @@ function AuthLayout({ title, subtitle, children }: AuthLayoutProps) {
               },
             }}
           >
-            {isRegisterPage ? "Log In" : "Sign Up"}
+            {isRegisterPage ? t("Log In") : t("Sign Up")}
           </Button>
         </Stack>
       </Stack>

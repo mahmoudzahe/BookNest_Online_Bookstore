@@ -2,6 +2,7 @@ import { useState } from "react";
 import { deleteReview, getReviews } from "../services/booksApi";
 import type { Book, BookReview } from "../types/book";
 import type { AuthUser } from "../types/user";
+import { translateInBrowser } from "@/i18n/translation";
 
 type Params = {
   book: Book;
@@ -30,14 +31,18 @@ export function useReviewDeletion({
         (review) => String(review.id) === String(ownReview.id),
       );
       if (!match || match.userId !== user.id) {
-        setDeleteError("Review not found. Refresh the page.");
+        setDeleteError(
+          translateInBrowser("Review not found. Refresh the page."),
+        );
         return;
       }
       await deleteReview(ownReview.id);
       onReviewsChange(await getReviews(book.id));
       setConfirmDelete(false);
     } catch {
-      setDeleteError("Could not delete your review. Try again.");
+      setDeleteError(
+        translateInBrowser("Could not delete your review. Try again."),
+      );
     } finally {
       setDeleting(false);
     }

@@ -22,6 +22,7 @@ import { getCategories } from "../../services/booksApi";
 import { removeBook, saveBook } from "../../services/adminApi";
 import type { BookInput } from "../../services/adminApi";
 import type { Book, Category } from "../../types/book";
+import { T, useI18n } from "@/i18n/LocaleContext";
 
 interface BookCardAdminActionsProps {
   book: Book;
@@ -51,6 +52,7 @@ export default function BookCardAdminActions({
   onBookUpdated,
   onBookDeleted,
 }: BookCardAdminActionsProps) {
+  const { t } = useI18n();
   const [menuAnchor, setMenuAnchor] = useState<HTMLElement | null>(null);
   const [categories, setCategories] = useState<Category[]>([]);
   const [formOpen, setFormOpen] = useState(false);
@@ -95,7 +97,7 @@ export default function BookCardAdminActions({
       reset(toBookInput(book));
       setFormOpen(true);
     } catch {
-      setFeedback("Could not load categories. Please try again.");
+      setFeedback(t("Could not load categories. Please try again."));
     } finally {
       setLoadingCategories(false);
     }
@@ -124,7 +126,7 @@ export default function BookCardAdminActions({
       onBookUpdated({ ...book, ...updatedValues });
       setFormOpen(false);
     } catch {
-      setFormError("Could not save the book. Please try again.");
+      setFormError(t("Could not save the book. Please try again."));
     } finally {
       setSaving(false);
     }
@@ -139,7 +141,7 @@ export default function BookCardAdminActions({
       onBookDeleted(book.id);
       setConfirmOpen(false);
     } catch {
-      setFeedback("Could not delete the book. Please try again.");
+      setFeedback(t("Could not delete the book. Please try again."));
       setConfirmOpen(false);
     } finally {
       setSaving(false);
@@ -151,7 +153,7 @@ export default function BookCardAdminActions({
       {(canEdit || canDelete) && (
         <IconButton
           size="small"
-          aria-label={`More actions for ${book.title}`}
+          aria-label={t("More actions for {title}", { title: book.title })}
           aria-haspopup="menu"
           aria-expanded={Boolean(menuAnchor) ? "true" : undefined}
           onClick={(event) => setMenuAnchor(event.currentTarget)}
@@ -184,7 +186,9 @@ export default function BookCardAdminActions({
             <ListItemIcon>
               <EditOutlinedIcon fontSize="small" />
             </ListItemIcon>
-            <ListItemText>Edit</ListItemText>
+            <ListItemText>
+              <T text="Edit" />
+            </ListItemText>
           </MenuItem>
         )}
         {canDelete && (
@@ -198,7 +202,9 @@ export default function BookCardAdminActions({
             <ListItemIcon>
               <DeleteOutlinedIcon fontSize="small" color="error" />
             </ListItemIcon>
-            <ListItemText sx={{ color: "error.main" }}>Delete</ListItemText>
+            <ListItemText sx={{ color: "error.main" }}>
+              <T text="Delete" />
+            </ListItemText>
           </MenuItem>
         )}
       </Menu>
@@ -227,13 +233,14 @@ export default function BookCardAdminActions({
 
       <ConfirmDialog
         open={confirmOpen}
-        title="Delete Book?"
+        title={t("Delete Book?")}
         busy={saving}
         onClose={() => setConfirmOpen(false)}
         onConfirm={() => void confirmDelete()}
       >
-        Are you sure you want to delete <strong>{book.title}</strong>? This
-        cannot be undone.
+        <T text="Are you sure you want to delete" />{" "}
+        <strong>{book.title}</strong>
+        <T text="? This cannot be undone." />
       </ConfirmDialog>
     </>
   );

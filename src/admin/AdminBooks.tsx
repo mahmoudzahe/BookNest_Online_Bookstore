@@ -8,22 +8,26 @@ import BooksTable from "./components/BooksTable";
 import BookFormDialog from "./components/BookFormDialog";
 import ConfirmDialog from "./components/ConfirmDialog";
 import { useAdminBooks } from "./hooks/useAdminBooks";
+import { T, useI18n } from "@/i18n/LocaleContext";
 
 export default function AdminBooks() {
+  const { t } = useI18n();
   const admin = useAdminBooks();
 
   return (
     <>
       <PageHeading
-        title="Books"
-        description={`${admin.books.length} books in your catalog.`}
+        title={t("Books")}
+        description={t("{count} books in your catalog.", {
+          count: admin.books.length,
+        })}
         action={
           <Button
             variant="contained"
             startIcon={<AddIcon />}
             onClick={() => admin.showForm()}
           >
-            Add Book
+            <T text="Add Book" />
           </Button>
         }
       />
@@ -36,7 +40,7 @@ export default function AdminBooks() {
           <Stack sx={{ mb: 2 }}>
             <TextField
               size="small"
-              label="Search title or author"
+              label={t("Search title or author")}
               value={admin.query}
               onChange={(event) => admin.search(event.target.value)}
             />
@@ -65,13 +69,14 @@ export default function AdminBooks() {
       />
       <ConfirmDialog
         open={Boolean(admin.deleting)}
-        title="Delete Book?"
+        title={t("Delete Book?")}
         busy={admin.saving}
         onClose={() => admin.setDeleting(null)}
         onConfirm={() => void admin.handleDelete()}
       >
-        Are you sure you want to delete <strong>{admin.deleting?.title}</strong>
-        ? This cannot be undone.
+        <T text="Are you sure you want to delete" />{" "}
+        <strong>{admin.deleting?.title}</strong>
+        <T text="? This cannot be undone." />
       </ConfirmDialog>
     </>
   );

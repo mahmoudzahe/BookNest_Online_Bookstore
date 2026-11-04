@@ -30,8 +30,10 @@ import {
   STOCK_LABELS,
   CART_ACTION_LABELS,
 } from "../constants";
+import { T, useI18n } from "@/i18n/LocaleContext";
 
 function BookDetails() {
+  const { t } = useI18n();
   const id = useParams<{ id: string }>()?.id;
   const router = useRouter();
   const { items, addBook } = useCart();
@@ -47,7 +49,7 @@ function BookDetails() {
 
   useEffect(() => {
     if (!id) {
-      setError("Book not found.");
+      setError(t("Book not found."));
       setLoading(false);
       return;
     }
@@ -62,7 +64,8 @@ function BookDetails() {
         }
       })
       .catch(() => {
-        if (active) setError("Book not found or the mock API is unavailable.");
+        if (active)
+          setError(t("Book not found or the mock API is unavailable."));
       })
       .finally(() => {
         if (active) setLoading(false);
@@ -88,13 +91,20 @@ function BookDetails() {
         <Button
           component={RouterLink}
           href="/books"
-          startIcon={<ArrowBackRoundedIcon />}
+          startIcon={
+            <ArrowBackRoundedIcon
+              sx={{
+                transform: (theme) =>
+                  theme.direction === "rtl" ? "scaleX(-1)" : undefined,
+              }}
+            />
+          }
           sx={{ alignSelf: "flex-start", px: 0 }}
         >
-          Back to books
+          <T text="Back to books" />
         </Button>
 
-        {loading && <CircularProgress aria-label="Loading book details" />}
+        {loading && <CircularProgress aria-label={t("Loading book details")} />}
         {error && <Alert severity="error">{error}</Alert>}
 
         {book && !loading && !error && (
@@ -155,7 +165,7 @@ function BookDetails() {
                       }}
                     >
                       <Typography color="text.secondary">
-                        by {book.author}
+                        <T text="by" /> {book.author}
                       </Typography>
                       {!authLoading && (canEditBook || canDeleteBook) && (
                         <BookCardAdminActions
@@ -168,10 +178,12 @@ function BookDetails() {
                       )}
                     </Stack>
                     <Typography variant="body2" color="text.secondary">
-                      Category:{" "}
-                      {categories.find(
-                        (category) => category.id === book.categoryId,
-                      )?.name ?? "Unknown"}
+                      <T text="Category:" />{" "}
+                      {t(
+                        categories.find(
+                          (category) => category.id === book.categoryId,
+                        )?.name ?? "Unknown",
+                      )}
                     </Typography>
                   </Stack>
 
@@ -183,13 +195,16 @@ function BookDetails() {
                     <Rating value={averageRating} precision={0.5} readOnly />
                     <Typography variant="body2" color="text.secondary">
                       {reviews.length > 0
-                        ? `${averageRating.toFixed(1)} (${reviews.length} ${reviews.length === 1 ? "review" : "reviews"})`
-                        : "No ratings yet"}
+                        ? t("{rating} ({count} reviews)", {
+                            rating: averageRating.toFixed(1),
+                            count: reviews.length,
+                          })
+                        : t("No ratings yet")}
                     </Typography>
                   </Stack>
 
                   <Typography color="text.secondary" sx={{ lineHeight: 1.8 }}>
-                    {book.description}
+                    {t(book.description)}
                   </Typography>
 
                   <Stack spacing={1.5} sx={{ width: "100%" }}>
@@ -200,10 +215,10 @@ function BookDetails() {
                       size="small"
                       label={
                         book.stock <= 0
-                          ? STOCK_LABELS.outOfStock
+                          ? t(STOCK_LABELS.outOfStock)
                           : book.stock <= LOW_STOCK_THRESHOLD
-                            ? `${STOCK_LABELS.lowStock} · ${book.stock} left`
-                            : `${book.stock} in stock`
+                            ? `${t(STOCK_LABELS.lowStock)} · ${t("{count} left", { count: book.stock })}`
+                            : t("{count} in stock", { count: book.stock })
                       }
                       color={
                         book.stock <= 0
@@ -228,10 +243,10 @@ function BookDetails() {
                     sx={{ width: { xs: "100%", sm: 220 } }}
                   >
                     {book.stock <= 0
-                      ? CART_ACTION_LABELS.soldOut
+                      ? t(CART_ACTION_LABELS.soldOut)
                       : quantity >= book.stock
-                        ? CART_ACTION_LABELS.maxAdded
-                        : CART_ACTION_LABELS.addToCart}
+                        ? t(CART_ACTION_LABELS.maxAdded)
+                        : t(CART_ACTION_LABELS.addToCart)}
                   </Button>
                 </Stack>
               </Grid>

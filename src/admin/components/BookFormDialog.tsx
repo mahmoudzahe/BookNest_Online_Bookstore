@@ -24,6 +24,7 @@ import {
   BOOK_COVER_PREVIEW_HEIGHT,
 } from "../constants";
 import { prepareBookCover } from "../imageUtils";
+import { T, useI18n } from "@/i18n/LocaleContext";
 
 interface BookFormDialogProps {
   open: boolean;
@@ -48,6 +49,7 @@ export default function BookFormDialog({
   onSave,
   onClose,
 }: BookFormDialogProps) {
+  const { t } = useI18n();
   const [imageError, setImageError] = useState("");
 
   useEffect(() => {
@@ -64,7 +66,7 @@ export default function BookFormDialog({
       setImageError(
         error instanceof Error
           ? error.message
-          : "Could not read the image. Try another file.",
+          : t("Could not read the image. Try another file."),
       );
     }
   }
@@ -76,7 +78,7 @@ export default function BookFormDialog({
       fullWidth
       maxWidth="sm"
     >
-      <DialogTitle>{book ? "Edit Book" : "Add Book"}</DialogTitle>
+      <DialogTitle>{book ? t("Edit Book") : t("Add Book")}</DialogTitle>
       <DialogContent>
         <Grid container spacing={2} sx={{ pt: 1 }}>
           {error && (
@@ -87,7 +89,7 @@ export default function BookFormDialog({
           <Grid size={{ xs: 12, sm: 6 }}>
             <TextField
               fullWidth
-              label="Title"
+              label={t("Title")}
               value={form.title}
               onChange={(event) => onChange("title", event.target.value)}
               required
@@ -96,7 +98,7 @@ export default function BookFormDialog({
           <Grid size={{ xs: 12, sm: 6 }}>
             <TextField
               fullWidth
-              label="Author"
+              label={t("Author")}
               value={form.author}
               onChange={(event) => onChange("author", event.target.value)}
               required
@@ -106,15 +108,17 @@ export default function BookFormDialog({
             <TextField
               fullWidth
               select
-              label="Category"
+              label={t("Category")}
               value={form.categoryId}
               onChange={(event) => onChange("categoryId", event.target.value)}
               required
             >
-              <MenuItem value="">Select category</MenuItem>
+              <MenuItem value="">
+                <T text="Select category" />
+              </MenuItem>
               {categories.map((category) => (
                 <MenuItem key={category.id} value={category.id}>
-                  {category.name}
+                  {t(category.name)}
                 </MenuItem>
               ))}
             </TextField>
@@ -122,7 +126,7 @@ export default function BookFormDialog({
           <Grid size={{ xs: 12, sm: 6 }}>
             <TextField
               fullWidth
-              label="Price ($)"
+              label={t("Price ($)")}
               type="number"
               value={form.price}
               onChange={(event) =>
@@ -135,7 +139,7 @@ export default function BookFormDialog({
           <Grid size={{ xs: 12, sm: 6 }}>
             <TextField
               fullWidth
-              label="Stock"
+              label={t("Stock")}
               type="number"
               value={form.stock}
               onChange={(event) =>
@@ -148,7 +152,7 @@ export default function BookFormDialog({
           <Grid size={12}>
             <TextField
               fullWidth
-              label="Description"
+              label={t("Description")}
               value={form.description}
               onChange={(event) => onChange("description", event.target.value)}
               multiline
@@ -179,7 +183,7 @@ export default function BookFormDialog({
                 <Box
                   component="img"
                   src={form.image}
-                  alt="Book cover preview"
+                  alt={t("Book cover preview")}
                   sx={{
                     width: BOOK_COVER_PREVIEW_WIDTH,
                     height: BOOK_COVER_PREVIEW_HEIGHT,
@@ -189,7 +193,7 @@ export default function BookFormDialog({
               )}
               <Stack spacing={1} sx={{ alignItems: "center" }}>
                 <Typography variant="body2">
-                  Drag your book cover here, or choose an image
+                  <T text="Drag your book cover here, or choose an image" />
                 </Typography>
                 <Button
                   component="label"
@@ -197,7 +201,7 @@ export default function BookFormDialog({
                   size="small"
                   startIcon={<CloudUploadOutlinedIcon />}
                 >
-                  {form.image ? "Change Image" : "Choose Image"}
+                  {form.image ? t("Change Image") : t("Choose Image")}
                   <input
                     hidden
                     type="file"
@@ -209,7 +213,7 @@ export default function BookFormDialog({
                   />
                 </Button>
                 <Typography variant="caption" color="text.secondary">
-                  JPG, PNG or WebP · Max 5 MB
+                  <T text="JPG, PNG or WebP · Max 5 MB" />
                 </Typography>
               </Stack>
             </Stack>
@@ -222,7 +226,7 @@ export default function BookFormDialog({
 
           <Grid size={12}>
             <FormControlLabel
-              label="Featured book"
+              label={t("Featured book")}
               control={
                 <Switch
                   checked={form.featured}
@@ -237,10 +241,10 @@ export default function BookFormDialog({
       </DialogContent>
       <DialogActions sx={{ p: 2 }}>
         <Button onClick={onClose} disabled={saving}>
-          Cancel
+          <T text="Cancel" />
         </Button>
         <Button variant="contained" onClick={onSave} disabled={saving}>
-          {saving ? "Saving..." : "Save Book"}
+          {saving ? t("Saving...") : t("Save Book")}
         </Button>
       </DialogActions>
     </Dialog>

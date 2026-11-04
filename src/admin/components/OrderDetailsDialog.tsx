@@ -14,6 +14,7 @@ import {
 import type { Order } from "../../types/order";
 import { money } from "../formatters";
 import { ORDER_STATUSES } from "../constants";
+import { T, useI18n } from "@/i18n/LocaleContext";
 
 interface OrderDetailsDialogProps {
   order: Order | null;
@@ -34,6 +35,7 @@ export default function OrderDetailsDialog({
   onClose,
   onSave,
 }: OrderDetailsDialogProps) {
+  const { t } = useI18n();
   return (
     <Dialog
       open={Boolean(order)}
@@ -41,7 +43,10 @@ export default function OrderDetailsDialog({
       fullWidth
       maxWidth="sm"
     >
-      <DialogTitle>Order #{order?.id}</DialogTitle>
+      <DialogTitle>
+        <T text="Order #" />
+        {order?.id}
+      </DialogTitle>
       <DialogContent>
         <Grid container spacing={2} sx={{ pt: 1 }}>
           {error && (
@@ -53,7 +58,8 @@ export default function OrderDetailsDialog({
             <>
               <Grid size={12}>
                 <Typography variant="body2" color="text.secondary">
-                  Placed {new Date(order.createdAt).toLocaleString()}
+                  <T text="Placed" />{" "}
+                  {new Date(order.createdAt).toLocaleString()}
                 </Typography>
               </Grid>
               <Grid size={{ xs: 12, sm: 6 }}>
@@ -62,7 +68,7 @@ export default function OrderDetailsDialog({
                     variant="subtitle1"
                     className="BookNest-textWeight700"
                   >
-                    Shipping Information
+                    <T text="Shipping Information" />
                   </Typography>
                   <Typography>{order.shipping.fullName}</Typography>
                   <Typography>{order.shipping.phone}</Typography>
@@ -75,7 +81,7 @@ export default function OrderDetailsDialog({
                     variant="subtitle1"
                     className="BookNest-textWeight700"
                   >
-                    Items
+                    <T text="Items" />
                   </Typography>
                   {order.items.map((item, index) => (
                     <Stack
@@ -103,14 +109,18 @@ export default function OrderDetailsDialog({
                     direction="row"
                     sx={{ justifyContent: "space-between" }}
                   >
-                    <Typography>Subtotal</Typography>
+                    <Typography>
+                      <T text="Subtotal" />
+                    </Typography>
                     <Typography>{money(order.subtotal)}</Typography>
                   </Stack>
                   <Stack
                     direction="row"
                     sx={{ justifyContent: "space-between" }}
                   >
-                    <Typography>Discount</Typography>
+                    <Typography>
+                      <T text="Discount" />
+                    </Typography>
                     <Typography>−{money(order.discount)}</Typography>
                   </Stack>
                   <Stack
@@ -118,7 +128,7 @@ export default function OrderDetailsDialog({
                     sx={{ justifyContent: "space-between" }}
                   >
                     <Typography className="BookNest-textWeight700">
-                      Total
+                      <T text="Total" />
                     </Typography>
                     <Typography className="BookNest-textWeight700">
                       {money(order.total)}
@@ -130,7 +140,7 @@ export default function OrderDetailsDialog({
                 <TextField
                   select
                   fullWidth
-                  label="Order Status"
+                  label={t("Order Status")}
                   value={status}
                   onChange={(event) =>
                     onStatusChange(event.target.value as Order["status"])
@@ -138,7 +148,7 @@ export default function OrderDetailsDialog({
                 >
                   {ORDER_STATUSES.map((item) => (
                     <MenuItem key={item} value={item}>
-                      {item}
+                      {t(item)}
                     </MenuItem>
                   ))}
                 </TextField>
@@ -149,14 +159,14 @@ export default function OrderDetailsDialog({
       </DialogContent>
       <DialogActions sx={{ p: 2 }}>
         <Button disabled={saving} onClick={onClose}>
-          Close
+          <T text="Close" />
         </Button>
         <Button
           variant="contained"
           disabled={saving || status === order?.status}
           onClick={onSave}
         >
-          {saving ? "Saving..." : "Save Status"}
+          {saving ? t("Saving...") : t("Save Status")}
         </Button>
       </DialogActions>
     </Dialog>

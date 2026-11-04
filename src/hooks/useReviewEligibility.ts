@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { getUserOrders } from "../services/ordersApi";
+import { translateInBrowser } from "@/i18n/translation";
 
 export async function hasPurchasedBook(userId: string, bookId: string) {
   const orders = await getUserOrders(userId);
@@ -36,7 +37,7 @@ export function useReviewEligibility(
       .catch(() => {
         if (active) {
           setHasOrdered(false);
-          setError("Could not check your orders.");
+          setError(translateInBrowser("Could not check your orders."));
         }
       })
       .finally(() => {

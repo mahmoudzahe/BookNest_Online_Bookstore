@@ -3,6 +3,7 @@ import { addReview, getReviews, updateReview } from "../services/booksApi";
 import { hasPurchasedBook } from "./useReviewEligibility";
 import type { Book, BookReview } from "../types/book";
 import type { AuthUser } from "../types/user";
+import { translateInBrowser } from "@/i18n/translation";
 
 type Params = {
   book: Book;
@@ -37,7 +38,7 @@ export function useReviewEditor({
   async function submitReview() {
     if (!user || !hasOrdered || submitting) return;
     if (!rating || !comment.trim()) {
-      setError("Choose a rating and write a review.");
+      setError(translateInBrowser("Choose a rating and write a review."));
       return;
     }
     setSubmitting(true);
@@ -49,7 +50,9 @@ export function useReviewEditor({
       ]);
       if (!eligible) {
         onEligibilityLost();
-        setError("You can only review books you have ordered.");
+        setError(
+          translateInBrowser("You can only review books you have ordered."),
+        );
         return;
       }
       const existing = latestReviews.find(
@@ -57,13 +60,17 @@ export function useReviewEditor({
       );
       if (editing) {
         if (!existing || String(existing.id) !== String(editing.id)) {
-          setError("Your review could not be found. Refresh the page.");
+          setError(
+            translateInBrowser(
+              "Your review could not be found. Refresh the page.",
+            ),
+          );
           return;
         }
         await updateReview(editing.id, { rating, comment: comment.trim() });
       } else {
         if (existing) {
-          setError("You have already reviewed this book.");
+          setError(translateInBrowser("You have already reviewed this book."));
           return;
         }
         await addReview({
@@ -80,7 +87,7 @@ export function useReviewEditor({
       setComment("");
       setRating(0);
     } catch {
-      setError("Could not save your review. Try again.");
+      setError(translateInBrowser("Could not save your review. Try again."));
     } finally {
       setSubmitting(false);
     }

@@ -28,8 +28,11 @@ import { getBooks } from "../services/booksApi";
 import type { Book } from "../types/book";
 import type { CartItem } from "../types/cart";
 import { CART_COVER_WIDTH, CART_COVER_HEIGHT } from "../constants";
+import { T } from "@/i18n/LocaleContext";
+import { useI18n } from "@/i18n/LocaleContext";
 
 function Cart() {
+  const { t } = useI18n();
   const { setQuantity, removeBook, syncStock } = useCart();
   const [observedItems, setObservedItems] = useState<CartItem[]>([]);
   const [books, setBooks] = useState<Book[]>([]);
@@ -54,7 +57,8 @@ function Cart() {
           syncStock(data);
         }
       } catch {
-        if (active) setError("Could not load your cart. Check the mock API.");
+        if (active)
+          setError(t("Could not load your cart. Check the mock API."));
       } finally {
         if (active) setLoading(false);
       }
@@ -86,9 +90,9 @@ function Cart() {
       }}
     >
       <Typography variant="h5" sx={{ mb: { xs: 4, md: 5 } }}>
-        Cart{" "}
+        <T text="Cart" />{" "}
         {!loading && !error && totalItems > 0
-          ? ` (${totalItems} ${totalItems === 1 ? "item" : "items"})`
+          ? ` (${totalItems} ${totalItems === 1 ? t("item") : t("items")})`
           : ""}
       </Typography>
 
@@ -108,13 +112,13 @@ function Cart() {
           }}
         >
           <Typography variant="h5" sx={{ fontWeight: "bold" }}>
-            Your shopping cart is empty
+            <T text="Your shopping cart is empty" />
           </Typography>
           <Typography color="text.secondary">
-            You have no books in your cart yet.
+            <T text="You have no books in your cart yet." />
           </Typography>
           <Button component={RouterLink} href="/books" variant="outlined">
-            Continue Shopping
+            <T text="Continue Shopping" />
           </Button>
         </Stack>
       )}
@@ -163,7 +167,7 @@ function Cart() {
                         {book.author}
                       </Typography>
                       <Typography variant="body2" color="text.secondary">
-                        ${book.price.toFixed(2)} each
+                        ${book.price.toFixed(2)} <T text="each" />
                       </Typography>
 
                       <Stack
@@ -173,7 +177,9 @@ function Cart() {
                       >
                         <IconButton
                           size="small"
-                          aria-label={`Decrease quantity of ${book.title}`}
+                          aria-label={t("Decrease quantity of {title}", {
+                            title: book.title,
+                          })}
                           disabled={quantity <= 1}
                           onClick={() =>
                             setQuantity(book.id, quantity - 1, book.stock)
@@ -186,7 +192,9 @@ function Cart() {
                         </Typography>
                         <IconButton
                           size="small"
-                          aria-label={`Increase quantity of ${book.title}`}
+                          aria-label={t("Increase quantity of {title}", {
+                            title: book.title,
+                          })}
                           disabled={quantity >= book.stock}
                           onClick={() =>
                             setQuantity(book.id, quantity + 1, book.stock)
@@ -204,7 +212,9 @@ function Cart() {
                       <IconButton
                         size="small"
                         color="error"
-                        aria-label={`Remove ${book.title} from cart`}
+                        aria-label={t("Remove {title} from cart", {
+                          title: book.title,
+                        })}
                         onClick={() => setBookToDelete(book)}
                       >
                         <DeleteIcon fontSize="small" />
@@ -221,22 +231,24 @@ function Cart() {
 
           <Grid size={{ xs: 12, md: "auto" }} sx={{ width: { md: 340 } }}>
             <Stack spacing={2} sx={{ px: { xs: 0, md: 2 }, py: 1 }}>
-              <Typography variant="h6">Order Summary</Typography>
+              <Typography variant="h6">
+                <T text="Order Summary" />
+              </Typography>
               <Stack
                 direction="row"
                 spacing={1}
                 sx={{ justifyContent: "space-between" }}
               >
                 <Typography variant="body2" color="text.secondary">
-                  Discounts
+                  <T text="Discounts" />
                 </Typography>
                 <Typography variant="body2" color="text.secondary">
-                  Applied at checkout
+                  <T text="Applied at checkout" />
                 </Typography>
               </Stack>
               <Stack direction="row" sx={{ justifyContent: "space-between" }}>
                 <Typography variant="subtitle1" sx={{ fontWeight: "bold" }}>
-                  Subtotal
+                  <T text="Subtotal" />
                 </Typography>
                 <Typography variant="subtitle1" sx={{ fontWeight: "bold" }}>
                   ${total.toFixed(2)}
@@ -250,7 +262,7 @@ function Cart() {
                   fullWidth
                   size="large"
                 >
-                  Proceed to Checkout
+                  <T text="Proceed to Checkout" />
                 </Button>
                 <Button
                   component={RouterLink}
@@ -258,7 +270,7 @@ function Cart() {
                   variant="outlined"
                   fullWidth
                 >
-                  Continue Shopping
+                  <T text="Continue Shopping" />
                 </Button>
               </Stack>
             </Stack>
@@ -273,15 +285,19 @@ function Cart() {
         maxWidth="xs"
         aria-labelledby="remove-book-title"
       >
-        <DialogTitle id="remove-book-title">Remove book?</DialogTitle>
+        <DialogTitle id="remove-book-title">
+          <T text="Remove book?" />
+        </DialogTitle>
         <DialogContent>
           <DialogContentText>
-            Are you sure you want to remove {bookToDelete?.title} from your
-            cart?
+            <T text="Are you sure you want to remove" /> {bookToDelete?.title}{" "}
+            <T text="from your cart?" />
           </DialogContentText>
         </DialogContent>
         <DialogActions sx={{ p: 2 }}>
-          <Button onClick={() => setBookToDelete(null)}>Cancel</Button>
+          <Button onClick={() => setBookToDelete(null)}>
+            <T text="Cancel" />
+          </Button>
           <Button
             variant="contained"
             color="error"
@@ -290,7 +306,7 @@ function Cart() {
               setBookToDelete(null);
             }}
           >
-            Remove
+            <T text="Remove" />
           </Button>
         </DialogActions>
       </Dialog>

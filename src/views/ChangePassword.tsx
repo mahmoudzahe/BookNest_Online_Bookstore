@@ -19,8 +19,10 @@ import { passwordSchema } from "../schemas/authSchemas";
 import type { PasswordForm } from "../types/user";
 import { useAuth } from "../auth/AuthContext";
 import { changeUserPassword } from "../services/authApi";
+import { T, useI18n } from "@/i18n/LocaleContext";
 
 function ChangePassword() {
+  const { t } = useI18n();
   const { user } = useAuth();
   const [message, setMessage] = useState("");
   const [error, setError] = useState("");
@@ -38,10 +40,10 @@ function ChangePassword() {
     try {
       await changeUserPassword(user.id, data.currentPassword, data.newPassword);
       reset();
-      setMessage("Password changed successfully.");
+      setMessage(t("Password changed successfully."));
     } catch (err) {
       setError(
-        err instanceof Error ? err.message : "Could not change password.",
+        err instanceof Error ? err.message : t("Could not change password."),
       );
     }
   }
@@ -64,10 +66,10 @@ function ChangePassword() {
               variant="h4"
               sx={{ fontFamily: "Georgia, serif", fontWeight: 700 }}
             >
-              Change password
+              <T text="Change password" />
             </Typography>
             <Typography color="text.secondary">
-              Keep your BookNest account secure by updating your password.
+              <T text="Keep your BookNest account secure by updating your password." />
             </Typography>
           </Stack>
 
@@ -76,15 +78,14 @@ function ChangePassword() {
               <Stack spacing={1.5} sx={{ maxWidth: 340 }}>
                 <LockOutlinedIcon color="primary" sx={{ fontSize: 34 }} />
                 <Typography variant="h6" sx={{ fontWeight: 700 }}>
-                  Account security
+                  <T text="Account security" />
                 </Typography>
                 <Typography
                   variant="body2"
                   color="text.secondary"
                   sx={{ lineHeight: 1.8 }}
                 >
-                  Choose a password with at least 8 characters. Keep it private
-                  and avoid using the same password across accounts.
+                  <T text="Choose a password with at least 8 characters. Keep it private and avoid using the same password across accounts." />
                 </Typography>
               </Stack>
             </Grid>
@@ -105,10 +106,10 @@ function ChangePassword() {
                 >
                   <Stack spacing={0.5}>
                     <Typography variant="h6" sx={{ fontWeight: 700 }}>
-                      Update your password
+                      <T text="Update your password" />
                     </Typography>
                     <Typography variant="body2" color="text.secondary">
-                      Enter your current password, then choose a new one.
+                      <T text="Enter your current password, then choose a new one." />
                     </Typography>
                   </Stack>
 
@@ -116,7 +117,7 @@ function ChangePassword() {
                   {error && <Alert severity="error">{error}</Alert>}
 
                   <TextField
-                    label="Current password"
+                    label={t("Current password")}
                     type="password"
                     autoComplete="current-password"
                     fullWidth
@@ -125,7 +126,7 @@ function ChangePassword() {
                     helperText={errors.currentPassword?.message}
                   />
                   <TextField
-                    label="New password"
+                    label={t("New password")}
                     type="password"
                     autoComplete="new-password"
                     fullWidth
@@ -134,7 +135,7 @@ function ChangePassword() {
                     helperText={errors.newPassword?.message}
                   />
                   <TextField
-                    label="Confirm new password"
+                    label={t("Confirm new password")}
                     type="password"
                     autoComplete="new-password"
                     fullWidth
@@ -153,7 +154,7 @@ function ChangePassword() {
                       minWidth: 190,
                     }}
                   >
-                    {isSubmitting ? "Updating..." : "Update password"}
+                    {isSubmitting ? t("Updating...") : t("Update password")}
                   </Button>
                 </Stack>
               </Paper>

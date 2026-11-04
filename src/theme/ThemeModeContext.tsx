@@ -4,6 +4,7 @@ import { createContext, useContext, useEffect, useMemo, useState } from "react";
 import type { ReactNode } from "react";
 import { CssBaseline, ThemeProvider } from "@mui/material";
 import { makeTheme } from "./theme";
+import { useI18n } from "@/i18n/LocaleContext";
 
 const ThemeModeContext = createContext({
   darkMode: false,
@@ -11,6 +12,7 @@ const ThemeModeContext = createContext({
 });
 
 export function ThemeModeProvider({ children }: { children: ReactNode }) {
+  const { locale } = useI18n();
   const [darkMode, setDarkMode] = useState(false);
   const [hydrated, setHydrated] = useState(false);
 
@@ -19,8 +21,8 @@ export function ThemeModeProvider({ children }: { children: ReactNode }) {
     setHydrated(true);
   }, []);
   const theme = useMemo(
-    () => makeTheme(darkMode ? "dark" : "light"),
-    [darkMode],
+    () => makeTheme(darkMode ? "dark" : "light", locale),
+    [darkMode, locale],
   );
 
   useEffect(() => {

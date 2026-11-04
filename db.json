@@ -457,31 +457,6 @@
       "id": "eMfJnUWQ_7Q"
     },
     {
-      "userId": "3JD2gixkK2M",
-      "items": [
-        {
-          "bookId": "5",
-          "title": "Dune",
-          "price": 22,
-          "quantity": 1
-        }
-      ],
-      "shipping": {
-        "fullName": "jebreel",
-        "phone": "+1 (555) 247-6319",
-        "address": "Nablus"
-      },
-      "subtotal": 22,
-      "discount": 0,
-      "total": 22,
-      "couponCode": null,
-      "paymentMethod": "card_demo",
-      "status": "cancelled",
-      "createdAt": "2026-10-25T20:10:48.976Z",
-      "id": "zicFFtbqCrI",
-      "archived": true
-    },
-    {
       "userId": "cXvhLY8tgKg",
       "items": [
         {
@@ -528,30 +503,6 @@
       "status": "shipped",
       "createdAt": "2026-10-27T17:37:29.844Z",
       "id": "_aaunmbKevI"
-    },
-    {
-      "userId": "3JD2gixkK2M",
-      "items": [
-        {
-          "bookId": "4",
-          "title": "The Great Gatsby",
-          "price": 11,
-          "quantity": 1
-        }
-      ],
-      "shipping": {
-        "fullName": "jebreel",
-        "phone": "+1 (555) 247-6319",
-        "address": "dfsfsfds"
-      },
-      "subtotal": 11,
-      "discount": 1.1,
-      "total": 9.9,
-      "couponCode": "SAVE10",
-      "paymentMethod": "cash_on_delivery",
-      "status": "pending",
-      "createdAt": "2026-10-27T20:02:44.898Z",
-      "id": "8kLBu0ixeNY"
     }
   ],
   "users": [

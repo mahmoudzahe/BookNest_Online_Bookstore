@@ -28,8 +28,10 @@ import { findCoupon } from "../services/checkoutApi";
 import type { Book } from "../types/book";
 import type { Coupon, OrderItem, ShippingInformation } from "../types/order";
 import { shippingSchema } from "../schemas/shippingSchema";
+import { T, useI18n } from "@/i18n/LocaleContext";
 
 function Checkout() {
+  const { t } = useI18n();
   const router = useRouter();
   const { items, syncStock } = useCart();
   const { user } = useAuth();
@@ -79,7 +81,7 @@ function Checkout() {
       })
       .catch(() => {
         if (active)
-          setLoadError("Could not load checkout. Check the mock API.");
+          setLoadError(t("Could not load checkout. Check the mock API."));
       })
       .finally(() => {
         if (active) setLoading(false);
@@ -113,7 +115,7 @@ function Checkout() {
     setCouponError("");
     setAppliedCoupon(null);
     if (!couponInput.trim()) {
-      setCouponError("Enter a coupon code.");
+      setCouponError(t("Enter a coupon code."));
       return;
     }
 
@@ -121,12 +123,12 @@ function Checkout() {
     try {
       const coupon = await findCoupon(couponInput);
       if (!coupon) {
-        setCouponError("Invalid or inactive coupon.");
+        setCouponError(t("Invalid or inactive coupon."));
         return;
       }
       setAppliedCoupon(coupon);
     } catch {
-      setCouponError("Could not check the coupon. Try again.");
+      setCouponError(t("Could not check the coupon. Try again."));
     } finally {
       setCheckingCoupon(false);
     }
@@ -135,22 +137,24 @@ function Checkout() {
   async function handleContinue(shipping: ShippingInformation) {
     setSubmitError("");
     if (!user) {
-      setSubmitError("Please log in to continue.");
+      setSubmitError(t("Please log in to continue."));
       return;
     }
     if (couponInput.trim() && !appliedCoupon) {
       setCouponError(
-        "Apply a valid coupon or clear the coupon field to continue.",
+        t("Apply a valid coupon or clear the coupon field to continue."),
       );
       return;
     }
     if (items.length === 0 || orderItems.length !== items.length) {
-      setSubmitError("Your cart has changed. Review your cart and try again.");
+      setSubmitError(
+        t("Your cart has changed. Review your cart and try again."),
+      );
       return;
     }
     if (cartBooks.some(({ book, quantity }) => book.stock < quantity)) {
       setSubmitError(
-        "Some books are out of stock. Review your cart and try again.",
+        t("Some books are out of stock. Review your cart and try again."),
       );
       return;
     }
@@ -163,12 +167,14 @@ function Checkout() {
         ) {
           setAppliedCoupon(null);
           setCouponError(
-            "This coupon is no longer valid. Remove it or apply another one.",
+            t(
+              "This coupon is no longer valid. Remove it or apply another one.",
+            ),
           );
           return;
         }
       } catch {
-        setCouponError("Could not verify the coupon. Please try again.");
+        setCouponError(t("Could not verify the coupon. Please try again."));
         return;
       }
     }
@@ -204,10 +210,10 @@ function Checkout() {
       <Container maxWidth="lg" sx={{ py: 6 }}>
         <Stack spacing={2} sx={{ alignItems: "flex-start" }}>
           <Alert severity="info" sx={{ width: "100%" }}>
-            Your cart is empty.
+            <T text="Your cart is empty." />
           </Alert>
           <Button component={RouterLink} href="/books" variant="contained">
-            Browse books
+            <T text="Browse books" />
           </Button>
         </Stack>
       </Container>
@@ -223,17 +229,23 @@ function Checkout() {
         <Button
           component={RouterLink}
           href="/cart"
-          startIcon={<ArrowBackRoundedIcon />}
+          startIcon={
+            <ArrowBackRoundedIcon
+              sx={{
+                transform: (theme) =>
+                  theme.direction === "rtl" ? "scaleX(-1)" : undefined,
+              }}
+            />
+          }
           sx={{ alignSelf: "flex-start" }}
         >
-          Back to Cart
+          <T text="Back to Cart" />
         </Button>
         <Typography variant="h4" component="h1">
-          Checkout
+          <T text="Checkout" />
         </Typography>
         <Typography color="text.secondary">
-          Add your shipping details and review your order before choosing a
-          payment method.
+          <T text="Add your shipping details and review your order before choosing a payment method." />
         </Typography>
       </Stack>
       <CheckoutProgress step={1} />
@@ -258,13 +270,15 @@ function Checkout() {
           >
             <Stack spacing={3}>
               <Stack spacing={0.5}>
-                <Typography variant="h6">Shipping Information</Typography>
+                <Typography variant="h6">
+                  <T text="Shipping Information" />
+                </Typography>
                 <Typography variant="body2" color="text.secondary">
-                  Where should we deliver your books?
+                  <T text="Where should we deliver your books?" />
                 </Typography>
               </Stack>
               <TextField
-                label="Full Name"
+                label={t("Full Name")}
                 fullWidth
                 autoComplete="name"
                 {...register("fullName")}
@@ -272,7 +286,7 @@ function Checkout() {
                 helperText={errors.fullName?.message}
               />
               <TextField
-                label="Phone Number"
+                label={t("Phone Number")}
                 fullWidth
                 autoComplete="tel"
                 {...register("phone")}
@@ -280,7 +294,7 @@ function Checkout() {
                 helperText={errors.phone?.message}
               />
               <TextField
-                label="Shipping Address"
+                label={t("Shipping Address")}
                 fullWidth
                 multiline
                 minRows={3}
@@ -302,11 +316,13 @@ function Checkout() {
               total={total}
             >
               <Stack spacing={1.5}>
-                <Typography variant="subtitle2">Discount Coupon</Typography>
+                <Typography variant="subtitle2">
+                  <T text="Discount Coupon" />
+                </Typography>
                 <Stack direction="row" spacing={1}>
                   <TextField
                     size="small"
-                    label="Coupon code"
+                    label={t("Coupon code")}
                     value={couponInput}
                     onChange={(event) => {
                       setCouponInput(event.target.value.toUpperCase());
@@ -322,14 +338,15 @@ function Checkout() {
                     disabled={checkingCoupon || isSubmitting}
                     onClick={handleApplyCoupon}
                   >
-                    {checkingCoupon ? "Checking..." : "Apply"}
+                    {checkingCoupon ? t("Checking...") : t("Apply")}
                   </Button>
                 </Stack>
                 {couponError && <Alert severity="error">{couponError}</Alert>}
                 {appliedCoupon && (
                   <Alert severity="success">
-                    {appliedCoupon.code} applied (
-                    {appliedCoupon.discountPercent}% off).
+                    {appliedCoupon.code} <T text="applied (" />
+                    {appliedCoupon.discountPercent}
+                    <T text="% off)." />
                   </Alert>
                 )}
               </Stack>
@@ -341,7 +358,7 @@ function Checkout() {
               variant="contained"
               disabled={isSubmitting || checkingCoupon}
             >
-              Continue to Payment
+              <T text="Continue to Payment" />
             </Button>
             <Button
               component={RouterLink}
@@ -349,7 +366,7 @@ function Checkout() {
               fullWidth
               color="inherit"
             >
-              Continue Shopping
+              <T text="Continue Shopping" />
             </Button>
           </Stack>
         </Grid>

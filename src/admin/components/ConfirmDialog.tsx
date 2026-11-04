@@ -6,6 +6,8 @@ import {
   DialogContent,
   DialogTitle,
 } from "@mui/material";
+import { T } from "@/i18n/LocaleContext";
+import { useI18n } from "@/i18n/LocaleContext";
 
 interface ConfirmDialogProps {
   open: boolean;
@@ -30,6 +32,7 @@ export default function ConfirmDialog({
   busyLabel = "Deleting...",
   confirmColor = "error",
 }: ConfirmDialogProps) {
+  const { t } = useI18n();
   return (
     <Dialog
       open={open}
@@ -41,7 +44,7 @@ export default function ConfirmDialog({
       <DialogContent>{children}</DialogContent>
       <DialogActions sx={{ p: 2 }}>
         <Button onClick={onClose} disabled={busy}>
-          Cancel
+          <T text="Cancel" />
         </Button>
         <Button
           color={confirmColor}
@@ -49,7 +52,7 @@ export default function ConfirmDialog({
           onClick={onConfirm}
           disabled={busy}
         >
-          {busy ? busyLabel : confirmLabel}
+          {t(busy ? busyLabel : confirmLabel)}
         </Button>
       </DialogActions>
     </Dialog>

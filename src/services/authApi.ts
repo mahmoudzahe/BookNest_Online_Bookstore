@@ -5,6 +5,7 @@ import type {
   RegisterData,
   UserRecord,
 } from "../types/user";
+import { translateInBrowser } from "@/i18n/translation";
 
 function publicUser(user: UserRecord): AuthUser {
   const {
@@ -67,16 +68,20 @@ export async function loginUser(email: string, password: string) {
     !found ||
     (await hashPassword(password, found.salt)) !== found.passwordHash
   ) {
-    throw new Error("Invalid email or password.");
+    throw new Error(translateInBrowser("Invalid email or password."));
   }
   if (found.archived === true) {
     throw new Error(
-      "This account has been archived. Contact the administrator.",
+      translateInBrowser(
+        "This account has been archived. Contact the administrator.",
+      ),
     );
   }
   if (found.active === false) {
     throw new Error(
-      "Your account is suspended. Please contact the administrator.",
+      translateInBrowser(
+        "Your account is suspended. Please contact the administrator.",
+      ),
     );
   }
   return publicUser(found);
@@ -85,7 +90,9 @@ export async function loginUser(email: string, password: string) {
 export async function registerUser(data: RegisterData) {
   const email = data.email.trim().toLowerCase();
   if (await findByEmail(email))
-    throw new Error("An account with this email already exists.");
+    throw new Error(
+      translateInBrowser("An account with this email already exists."),
+    );
 
   const salt = crypto.randomUUID();
   const passwordHash = await hashPassword(data.password, salt);
@@ -128,7 +135,7 @@ export async function changeUserPassword(
   if (
     (await hashPassword(currentPassword, current.salt)) !== current.passwordHash
   ) {
-    throw new Error("Current password is incorrect.");
+    throw new Error(translateInBrowser("Current password is incorrect."));
   }
   const salt = crypto.randomUUID();
   const passwordHash = await hashPassword(newPassword, salt);

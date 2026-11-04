@@ -19,8 +19,10 @@ import { useAuth } from "../auth/AuthContext";
 import { getUserOrders } from "../services/ordersApi";
 import { getBooks } from "../services/booksApi";
 import type { Order } from "../types/order";
+import { T, useI18n } from "@/i18n/LocaleContext";
 
 function MyOrders() {
+  const { t } = useI18n();
   const { user } = useAuth();
   const [orders, setOrders] = useState<Order[]>([]);
   const [bookImages, setBookImages] = useState<Record<string, string>>({});
@@ -41,7 +43,7 @@ function MyOrders() {
         }
       })
       .catch(() => {
-        if (active) setError("Could not load your orders.");
+        if (active) setError(t("Could not load your orders."));
       })
       .finally(() => {
         if (active) setLoading(false);
@@ -70,14 +72,14 @@ function MyOrders() {
               variant="h4"
               sx={{ fontFamily: "Georgia, serif", fontWeight: 700 }}
             >
-              My orders
+              <T text="My orders" />
             </Typography>
             <Typography color="text.secondary">
-              View your purchases and track the status of each order.
+              <T text="View your purchases and track the status of each order." />
             </Typography>
           </Stack>
 
-          {loading && <CircularProgress aria-label="Loading orders" />}
+          {loading && <CircularProgress aria-label={t("Loading orders")} />}
           {error && <Alert severity="error">{error}</Alert>}
 
           {!loading && !error && orders.length === 0 && (
@@ -88,17 +90,17 @@ function MyOrders() {
               <Stack spacing={2} sx={{ alignItems: "center" }}>
                 <MenuBookOutlinedIcon color="primary" sx={{ fontSize: 40 }} />
                 <Typography variant="h6" sx={{ fontWeight: 700 }}>
-                  No orders yet
+                  <T text="No orders yet" />
                 </Typography>
                 <Typography color="text.secondary">
-                  Your books will show up here once you've placed an order.
+                  <T text="Your books will show up here once you've placed an order." />
                 </Typography>
                 <Button
                   component={RouterLink}
                   href="/books"
                   variant="contained"
                 >
-                  Explore books
+                  <T text="Explore books" />
                 </Button>
               </Stack>
             </Paper>
@@ -107,7 +109,7 @@ function MyOrders() {
           {!loading && !error && orders.length > 0 && (
             <Stack spacing={2.5}>
               <Typography variant="body2" color="text.secondary">
-                {orders.length} {orders.length === 1 ? "order" : "orders"}
+                {orders.length} {orders.length === 1 ? t("order") : "orders"}
               </Typography>
 
               {orders.map((order) => (
@@ -134,15 +136,16 @@ function MyOrders() {
                           variant="subtitle1"
                           sx={{ fontWeight: 700, overflowWrap: "anywhere" }}
                         >
-                          Order #{order.id}
+                          <T text="Order #" />
+                          {order.id}
                         </Typography>
                         <Typography variant="body2" color="text.secondary">
-                          Placed on{" "}
+                          <T text="Placed on" />{" "}
                           {new Date(order.createdAt).toLocaleDateString()}
                         </Typography>
                       </Stack>
                       <Chip
-                        label={order.status}
+                        label={t(order.status)}
                         color={
                           order.status === "delivered"
                             ? "success"
@@ -202,7 +205,7 @@ function MyOrders() {
                               {item.title}
                             </Typography>
                             <Typography variant="body2" color="text.secondary">
-                              Quantity: {item.quantity}
+                              <T text="Quantity:" /> {item.quantity}
                             </Typography>
                           </Stack>
                           <Typography
@@ -229,7 +232,7 @@ function MyOrders() {
                         sx={{ alignItems: "baseline" }}
                       >
                         <Typography variant="body2" color="text.secondary">
-                          Total
+                          <T text="Total" />
                         </Typography>
                         <Typography variant="h6" sx={{ fontWeight: 700 }}>
                           ${order.total.toFixed(2)}
@@ -239,10 +242,19 @@ function MyOrders() {
                         component={RouterLink}
                         href={`/my-orders/${order.id}`}
                         variant="outlined"
-                        endIcon={<ArrowForwardRoundedIcon />}
+                        endIcon={
+                          <ArrowForwardRoundedIcon
+                            sx={{
+                              transform: (theme) =>
+                                theme.direction === "rtl"
+                                  ? "scaleX(-1)"
+                                  : undefined,
+                            }}
+                          />
+                        }
                         sx={{ alignSelf: { xs: "stretch", sm: "flex-start" } }}
                       >
-                        View order details
+                        <T text="View order details" />
                       </Button>
                     </Stack>
                   </Stack>

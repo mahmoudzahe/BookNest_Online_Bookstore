@@ -16,6 +16,7 @@ import {
 import RouterLink from "./NextLink";
 import { useBookReviews } from "../hooks/useBookReviews";
 import type { Book, BookReview } from "../types/book";
+import { T, useI18n } from "@/i18n/LocaleContext";
 
 type Props = {
   book: Book;
@@ -24,6 +25,7 @@ type Props = {
 };
 
 function BookReviews({ book, reviews, onReviewsChange }: Props) {
+  const { t } = useI18n();
   const { user, ownReview, eligibility, editor, deletion } = useBookReviews({
     book,
     reviews,
@@ -60,15 +62,15 @@ function BookReviews({ book, reviews, onReviewsChange }: Props) {
           variant="h4"
           sx={{ fontFamily: "Georgia, serif", fontWeight: 700 }}
         >
-          Ratings & Reviews
+          <T text="Ratings & Reviews" />
         </Typography>
         {!user ? (
           <Button component={RouterLink} href="/login" variant="outlined">
-            Log in to write a review
+            <T text="Log in to write a review" />
           </Button>
         ) : checking ? (
           <Typography color="text.secondary">
-            Checking your orders...
+            <T text="Checking your orders..." />
           </Typography>
         ) : ownReview ? (
           <Stack direction="row" spacing={1}>
@@ -77,7 +79,7 @@ function BookReviews({ book, reviews, onReviewsChange }: Props) {
               disabled={!hasOrdered}
               onClick={() => openEditor(ownReview)}
             >
-              Edit your Review
+              <T text="Edit your Review" />
             </Button>
             <Button
               variant="outlined"
@@ -87,16 +89,16 @@ function BookReviews({ book, reviews, onReviewsChange }: Props) {
                 setConfirmDelete(true);
               }}
             >
-              Delete Review
+              <T text="Delete Review" />
             </Button>
           </Stack>
         ) : !hasOrdered ? (
           <Typography color="text.secondary">
-            You can only review books you have ordered.
+            <T text="You can only review books you have ordered." />
           </Typography>
         ) : (
           <Button variant="contained" onClick={() => openEditor()}>
-            Write a Review
+            <T text="Write a Review" />
           </Button>
         )}
       </Stack>
@@ -104,7 +106,9 @@ function BookReviews({ book, reviews, onReviewsChange }: Props) {
         <Alert severity="warning">{eligibility.error}</Alert>
       )}
       {reviews.length === 0 && (
-        <Typography color="text.secondary">No reviews yet.</Typography>
+        <Typography color="text.secondary">
+          <T text="No reviews yet." />
+        </Typography>
       )}
       <Stack spacing={2.5} divider={<Divider flexItem />}>
         {reviews.map((review) => (
@@ -145,7 +149,7 @@ function BookReviews({ book, reviews, onReviewsChange }: Props) {
         slotProps={{ paper: { sx: { borderRadius: 3 } } }}
       >
         <DialogTitle>
-          {editing ? "Edit your Review" : "Review this Book"}
+          {editing ? t("Edit your Review") : t("Review this Book")}
         </DialogTitle>
         <DialogContent>
           <Stack
@@ -161,14 +165,16 @@ function BookReviews({ book, reviews, onReviewsChange }: Props) {
             />
             <Typography sx={{ fontWeight: "bold" }}>{book.title}</Typography>
           </Stack>
-          <Typography sx={{ mb: 1 }}>Overall Rating</Typography>
+          <Typography sx={{ mb: 1 }}>
+            <T text="Overall Rating" />
+          </Typography>
           <Rating
             value={rating}
             onChange={(_, value) => setRating(value)}
             sx={{ mb: 2 }}
           />
           <TextField
-            label="Your review"
+            label={t("Your review")}
             multiline
             rows={4}
             fullWidth
@@ -183,7 +189,7 @@ function BookReviews({ book, reviews, onReviewsChange }: Props) {
         </DialogContent>
         <DialogActions sx={{ p: 2 }}>
           <Button disabled={submitting} onClick={() => setOpen(false)}>
-            Cancel
+            <T text="Cancel" />
           </Button>
           <Button
             variant="contained"
@@ -191,10 +197,10 @@ function BookReviews({ book, reviews, onReviewsChange }: Props) {
             onClick={submitReview}
           >
             {submitting
-              ? "Saving..."
+              ? t("Saving...")
               : editing
-                ? "Update Review"
-                : "Submit Review"}
+                ? t("Update Review")
+                : t("Submit Review")}
           </Button>
         </DialogActions>
       </Dialog>
@@ -205,10 +211,12 @@ function BookReviews({ book, reviews, onReviewsChange }: Props) {
         maxWidth="xs"
         fullWidth
       >
-        <DialogTitle>Delete your Review?</DialogTitle>
+        <DialogTitle>
+          <T text="Delete your Review?" />
+        </DialogTitle>
         <DialogContent>
           <Typography>
-            Are you sure you want to delete your rating and review?
+            <T text="Are you sure you want to delete your rating and review?" />
           </Typography>
           {deleteError && (
             <Alert severity="error" sx={{ mt: 2 }}>
@@ -218,7 +226,7 @@ function BookReviews({ book, reviews, onReviewsChange }: Props) {
         </DialogContent>
         <DialogActions sx={{ p: 2 }}>
           <Button disabled={deleting} onClick={() => setConfirmDelete(false)}>
-            Cancel
+            <T text="Cancel" />
           </Button>
           <Button
             color="error"
@@ -226,7 +234,7 @@ function BookReviews({ book, reviews, onReviewsChange }: Props) {
             disabled={deleting}
             onClick={removeReview}
           >
-            {deleting ? "Deleting..." : "Delete Review"}
+            {deleting ? t("Deleting...") : t("Delete Review")}
           </Button>
         </DialogActions>
       </Dialog>

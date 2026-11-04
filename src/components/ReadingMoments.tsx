@@ -1,4 +1,5 @@
 import { Box, Grid, Stack, Typography } from "@mui/material";
+import { T, useI18n } from "@/i18n/LocaleContext";
 const readingLibrary = "/assets/library.webp";
 const readingReader = "/assets/reader.webp";
 const readingCoffee = "/assets/coffee.webp";
@@ -11,6 +12,7 @@ const imageStyles = {
 } as const;
 
 function ReadingMoments() {
+  const { t } = useI18n();
   return (
     <Stack
       component="section"
@@ -24,10 +26,10 @@ function ReadingMoments() {
           variant="h4"
           sx={{ fontFamily: "Georgia, serif", fontWeight: 700 }}
         >
-          The joy of getting lost in a book.
+          <T text="The joy of getting lost in a book." />
         </Typography>
         <Typography variant="body2" color="text.secondary">
-          Quiet corners, warm drinks, and stories worth slowing down for.
+          <T text="Quiet corners, warm drinks, and stories worth slowing down for." />
         </Typography>
       </Stack>
 
@@ -36,7 +38,7 @@ function ReadingMoments() {
           <Box
             component="img"
             src={readingLibrary}
-            alt="A cozy reading corner surrounded by bookshelves"
+            alt={t("A cozy reading corner surrounded by bookshelves")}
             loading="lazy"
             sx={{
               ...imageStyles,
@@ -52,7 +54,7 @@ function ReadingMoments() {
               <Box
                 component="img"
                 src={readingReader}
-                alt="A reader enjoying a book in a quiet room"
+                alt={t("A reader enjoying a book in a quiet room")}
                 loading="lazy"
                 sx={{
                   ...imageStyles,
@@ -65,7 +67,7 @@ function ReadingMoments() {
               <Box
                 component="img"
                 src={readingCoffee}
-                alt="An open book and coffee beside a rainy window"
+                alt={t("An open book and coffee beside a rainy window")}
                 loading="lazy"
                 sx={{
                   ...imageStyles,

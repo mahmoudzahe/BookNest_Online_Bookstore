@@ -1,5 +1,6 @@
 import * as yup from "yup";
 import type { PaymentMethod } from "../types/order";
+import { translateInBrowser } from "@/i18n/translation";
 
 export const CARD_NUMBER_DIGITS = 16;
 export const CVC_MAX_DIGITS = 4;
@@ -20,9 +21,12 @@ export const paymentSchema = yup.object({
       then: (schema) =>
         schema
           .trim()
-          .required("Cardholder name is required")
-          .min(2, "Enter a valid cardholder name")
-          .matches(namePattern, "Use letters only for the cardholder name"),
+          .required(translateInBrowser("Cardholder name is required"))
+          .min(2, translateInBrowser("Enter a valid cardholder name"))
+          .matches(
+            namePattern,
+            translateInBrowser("Use letters only for the cardholder name"),
+          ),
       otherwise: (schema) => schema,
     }),
   cardNumber: yup
@@ -32,10 +36,10 @@ export const paymentSchema = yup.object({
       is: "card_demo",
       then: (schema) =>
         schema
-          .required("Card number is required")
+          .required(translateInBrowser("Card number is required"))
           .test(
             "card-number",
-            "Card number must contain exactly 16 digits",
+            translateInBrowser("Card number must contain exactly 16 digits"),
             (value) => {
               const digits = (value ?? "").replace(/\s/g, "");
               return (
@@ -52,11 +56,11 @@ export const paymentSchema = yup.object({
       is: "card_demo",
       then: (schema) =>
         schema
-          .required("Expiry date is required")
+          .required(translateInBrowser("Expiry date is required"))
           .matches(expiryPattern, "Use a valid date in MM/YY format")
           .test(
             "not-expired",
-            "Card expiry date cannot be in the past",
+            translateInBrowser("Card expiry date cannot be in the past"),
             (value) => {
               const match = expiryPattern.exec(value ?? "");
               if (!match) return true;
@@ -78,8 +82,11 @@ export const paymentSchema = yup.object({
       is: "card_demo",
       then: (schema) =>
         schema
-          .required("Security code is required")
-          .matches(/^\d{3,4}$/, "Security code must be 3 or 4 digits"),
+          .required(translateInBrowser("Security code is required"))
+          .matches(
+            /^\d{3,4}$/,
+            translateInBrowser("Security code must be 3 or 4 digits"),
+          ),
       otherwise: (schema) => schema,
     }),
 });
