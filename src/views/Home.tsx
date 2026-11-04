@@ -174,6 +174,20 @@ function Home() {
     };
   }, []);
 
+  function handleBookUpdated(updatedBook: Book) {
+    setBooks((currentBooks) =>
+      currentBooks.map((book) =>
+        book.id === updatedBook.id ? updatedBook : book,
+      ),
+    );
+  }
+
+  function handleBookDeleted(bookId: string) {
+    setBooks((currentBooks) =>
+      currentBooks.filter((book) => book.id !== bookId),
+    );
+  }
+
   const featured = books.filter((book) => book.featured);
 
   const heroBooks = (featured.length ? featured : books).slice(0, 4);
@@ -454,7 +468,12 @@ function Home() {
                       lg: 3,
                     }}
                   >
-                    <BookCard book={book} />
+                    <BookCard
+                      book={book}
+                      enableAdminActions
+                      onBookUpdated={handleBookUpdated}
+                      onBookDeleted={handleBookDeleted}
+                    />
                   </Grid>
                 ))}
               </FeaturedScroller>
@@ -610,7 +629,12 @@ function Home() {
               title="New on the shelf"
               description="Recently added books, ready to discover."
             />
-            <BookGrid books={newest} />
+            <BookGrid
+              books={newest}
+              enableAdminActions
+              onBookUpdated={handleBookUpdated}
+              onBookDeleted={handleBookDeleted}
+            />
           </Stack>
 
           <ReadingMoments />
@@ -622,7 +646,12 @@ function Home() {
             />
 
             {bestRated.length > 0 ? (
-              <BookGrid books={bestRated} />
+              <BookGrid
+                books={bestRated}
+                enableAdminActions
+                onBookUpdated={handleBookUpdated}
+                onBookDeleted={handleBookDeleted}
+              />
             ) : (
               <Typography color="text.secondary">No ratings yet.</Typography>
             )}
