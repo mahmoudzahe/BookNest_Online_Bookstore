@@ -9,7 +9,6 @@ import { useEffect, useState } from "react";
 import {
   Avatar,
   Box,
-  Button,
   Chip,
   IconButton,
   MenuItem,
@@ -37,6 +36,7 @@ import type { Order } from "../types/order";
 import { PageHeading } from "./AdminCommon";
 import LoadError from "./components/LoadError";
 import ConfirmDialog from "./components/ConfirmDialog";
+import { AccountStatusButton } from "./AdminUsers.styles";
 
 type UserRow = AuthUser & { orderCount: number };
 
@@ -229,6 +229,11 @@ export default function AdminUsers() {
           variant="outlined"
           label={row.active ? "Active" : "Suspended"}
           color={row.active ? "success" : "warning"}
+          sx={{
+            borderWidth: 2,
+            borderColor: row.active ? "success.main" : "warning.main",
+            fontWeight: 700,
+          }}
         />
       ),
     },
@@ -260,7 +265,7 @@ export default function AdminUsers() {
                 }
               >
                 <span>
-                  <Button
+                  <AccountStatusButton
                     size="small"
                     variant="outlined"
                     color={row.active ? "warning" : "success"}
@@ -268,7 +273,7 @@ export default function AdminUsers() {
                     onClick={() => setChangingStatus(row)}
                   >
                     {row.active ? "Suspend" : "Activate"}
-                  </Button>
+                  </AccountStatusButton>
                 </span>
               </Tooltip>
             )}

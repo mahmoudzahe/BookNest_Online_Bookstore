@@ -1,22 +1,21 @@
 import {
   Box,
   Button,
-  Card,
-  CardActions,
-  CardContent,
   Chip,
   Link,
   Rating,
   Stack,
   Typography,
 } from "@mui/material";
+import ShoppingCartOutlinedIcon from "@mui/icons-material/ShoppingCartOutlined";
 import { Link as RouterLink } from "react-router-dom";
+import { StoreBookCard, StoreBookCoverLink } from "./StyledComponents";
 import { useCart } from "../cart/CartContext";
 import type { Book } from "../types/book";
 import {
+  CART_ACTION_LABELS,
   LOW_STOCK_THRESHOLD,
   STOCK_LABELS,
-  CART_ACTION_LABELS,
 } from "../constants";
 
 interface BookCardProps {
@@ -25,99 +24,115 @@ interface BookCardProps {
 
 function BookCard({ book }: BookCardProps) {
   const { items, addBook } = useCart();
-
   const quantity = items.find((item) => item.bookId === book.id)?.quantity ?? 0;
 
   return (
-    <Card
-      variant="outlined"
-      sx={{ height: "100%", display: "flex", flexDirection: "column" }}
-    >
-      <Box
-        component={RouterLink}
-        to={`/books/${book.id}`}
-        aria-label={`View details for ${book.title}`}
-        sx={{ display: "block", p: 2, pb: 0 }}
+    <StoreBookCard variant="outlined">
+      <Stack
+        direction="row"
+        spacing={1.75}
+        sx={{ p: 1.5, height: "100%", minWidth: 0 }}
       >
-        <Box
-          component="img"
-          src={book.image}
-          alt={book.title}
-          sx={{
-            width: "100%",
-            height: 210,
-            objectFit: "contain",
-            display: "block",
-          }}
-        />
-      </Box>
-
-      <CardContent sx={{ flexGrow: 1, textAlign: "center" }}>
-        <Link
-          component={RouterLink}
+        <StoreBookCoverLink
           to={`/books/${book.id}`}
-          variant="subtitle1"
-          color="text.primary"
-          underline="hover"
-          sx={{ fontWeight: "bold" }}
+          aria-label={`View details for ${book.title}`}
         >
-          {book.title}
-        </Link>
+          <Box
+            component="img"
+            src={book.image}
+            alt={book.title}
+            loading="lazy"
+            sx={{
+              width: "100%",
+              height: 154,
+              objectFit: "contain",
+              display: "block",
+            }}
+          />
+        </StoreBookCoverLink>
 
-        <Stack spacing={1} sx={{ alignItems: "center" }}>
-          <Typography variant="body2" color="text.secondary">
-            {book.author}
-          </Typography>
-          <Stack
-            direction="row"
-            spacing={1}
-            sx={{ alignItems: "center", justifyContent: "center" }}
-          >
-            <Rating value={book.rating} precision={0.5} size="small" readOnly />
-            <Typography variant="body2">
-              {book.rating > 0 ? book.rating.toFixed(1) : "No Ratings"}
+        <Stack
+          spacing={1}
+          sx={{ flex: 1, minWidth: 0, justifyContent: "space-between" }}
+        >
+          <Stack spacing={0.75}>
+            <Link
+              component={RouterLink}
+              to={`/books/${book.id}`}
+              variant="subtitle2"
+              color="text.primary"
+              underline="hover"
+              className="BookNest-textWeight700"
+              sx={{
+                lineHeight: 1.35,
+                display: "-webkit-box",
+                WebkitLineClamp: 2,
+                WebkitBoxOrient: "vertical",
+                overflow: "hidden",
+              }}
+            >
+              {book.title}
+            </Link>
+            <Typography variant="caption" color="text.secondary" noWrap>
+              {book.author}
             </Typography>
+            <Stack
+              direction="row"
+              spacing={0.5}
+              sx={{ alignItems: "center", flexWrap: "wrap" }}
+            >
+              <Rating
+                value={book.rating}
+                precision={0.5}
+                size="small"
+                readOnly
+              />
+              <Typography variant="caption" color="text.secondary">
+                {book.rating > 0 ? book.rating.toFixed(1) : "No ratings"}
+              </Typography>
+            </Stack>
           </Stack>
 
-          <Typography variant="body1" sx={{ fontWeight: "bold" }}>
-            ${book.price.toFixed(2)}
-          </Typography>
-
-          <Chip
-            size="small"
-            label={
-              book.stock === 0
-                ? STOCK_LABELS.outOfStock
-                : book.stock <= LOW_STOCK_THRESHOLD
-                  ? STOCK_LABELS.lowStock
-                  : STOCK_LABELS.available
-            }
-            color={
-              book.stock === 0
-                ? "error"
-                : book.stock <= LOW_STOCK_THRESHOLD
-                  ? "warning"
-                  : "success"
-            }
-          />
+          <Stack spacing={0.75} sx={{ alignItems: "flex-start" }}>
+            <Typography variant="subtitle1" className="BookNest-textWeight700">
+              ${book.price.toFixed(2)}
+            </Typography>
+            <Chip
+              size="small"
+              label={
+                book.stock <= 0
+                  ? STOCK_LABELS.outOfStock
+                  : book.stock <= LOW_STOCK_THRESHOLD
+                    ? STOCK_LABELS.lowStock
+                    : STOCK_LABELS.available
+              }
+              color={
+                book.stock <= 0
+                  ? "error"
+                  : book.stock <= LOW_STOCK_THRESHOLD
+                    ? "warning"
+                    : "success"
+              }
+              variant={book.stock > LOW_STOCK_THRESHOLD ? "outlined" : "filled"}
+            />
+            <Button
+              variant="contained"
+              size="small"
+              fullWidth
+              startIcon={<ShoppingCartOutlinedIcon fontSize="small" />}
+              disabled={book.stock <= 0 || quantity >= book.stock}
+              onClick={() => addBook(book)}
+            >
+              {book.stock <= 0
+                ? CART_ACTION_LABELS.soldOut
+                : quantity >= book.stock
+                  ? CART_ACTION_LABELS.maxAdded
+                  : CART_ACTION_LABELS.addToCart}
+            </Button>
+          </Stack>
         </Stack>
-      </CardContent>
-
-      <CardActions sx={{ p: 2, pt: 0 }}>
-        <Button
-          variant="contained"
-          fullWidth
-          disabled={book.stock <= 0 || quantity >= book.stock}
-          onClick={() => addBook(book)}
-        >
-          {book.stock <= 0
-            ? CART_ACTION_LABELS.soldOut
-            : quantity >= book.stock
-              ? CART_ACTION_LABELS.maxAdded
-              : CART_ACTION_LABELS.addToCart}
-        </Button>
-      </CardActions>
-    </Card>
+      </Stack>
+    </StoreBookCard>
   );
 }
 

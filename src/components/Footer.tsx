@@ -39,13 +39,16 @@ function Footer() {
             ? theme.palette.background.paper
             : theme.palette.primary.dark,
         ),
-        pt: 6,
+        pt: { xs: 5, md: 6 },
         pb: 3,
       })}
     >
-      <Container maxWidth="lg">
-        <Grid container columns={{ xs: 1, md: 11 }} spacing={{ xs: 5, md: 8 }}>
-          <Grid size={{ xs: 1, md: 5 }}>
+      <Container
+        maxWidth={false}
+        sx={{ maxWidth: 1380, px: { xs: 2, sm: 3, lg: 4 } }}
+      >
+        <Grid container spacing={{ xs: 4, md: 6 }}>
+          <Grid size={{ xs: 12, md: 5 }}>
             <Stack spacing={2}>
               <Stack
                 direction="row"
@@ -62,20 +65,21 @@ function Footer() {
                   BookNest
                 </Typography>
               </Stack>
-              <Typography sx={{ maxWidth: 350, opacity: 0.8 }}>
+              <Typography
+                sx={{ maxWidth: 340, opacity: 0.82, lineHeight: 1.8 }}
+              >
                 Discover amazing books, explore new stories, and find your next
                 favorite read.
               </Typography>
             </Stack>
           </Grid>
-          <Grid size={{ xs: 1, md: 6 }}>
+          <Grid size={{ xs: 12, md: 7 }}>
             <Stack spacing={2}>
-              <Typography variant="h5" className="BookNest-textWeight700">
-                Get Our Deals In Your Inbox
+              <Typography variant="h6" className="BookNest-textWeight700">
+                A little bookish inspiration
               </Typography>
               <Typography sx={{ opacity: 0.8 }}>
-                Stay updated with new arrivals, book offers, and
-                recommendations.
+                Hear about new arrivals, favorite reads, and upcoming offers.
               </Typography>
               <Stack
                 component="form"
@@ -110,7 +114,7 @@ function Footer() {
             </Stack>
           </Grid>
         </Grid>
-        <Divider sx={{ borderColor: "currentColor", opacity: 0.3, my: 4 }} />
+        <Divider sx={{ borderColor: "currentColor", opacity: 0.16, my: 4 }} />
         <Stack
           direction={{ xs: "column", sm: "row" }}
           spacing={2}
