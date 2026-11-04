@@ -1,6 +1,7 @@
 import { Box, Container, Typography } from "@mui/material";
-import { Route, Routes } from "react-router-dom";
+import { Route, Routes, useLocation } from "react-router-dom";
 import NavBar from "./components/NavBar";
+import Footer from "./components/Footer";
 import ProtectedRoute from "./components/ProtectedRoute";
 import Home from "./pages/Home";
 import Books from "./pages/Books";
@@ -14,19 +15,49 @@ import Profile from "./pages/Profile";
 import ChangePassword from "./pages/ChangePassword";
 import MyOrders from "./pages/MyOrders";
 import OrderDetails from "./pages/OrderDetails";
+import AdminGuard from "./admin/AdminGuard";
+import AdminLayout from "./admin/AdminLayout";
+import AdminDashboard from "./admin/AdminDashboard";
+import AdminBooks from "./admin/AdminBooks";
+import AdminCategories from "./admin/AdminCategories";
+import AdminOrders from "./admin/AdminOrders";
+import AdminUsers from "./admin/AdminUsers";
+import AdminCoupons from "./admin/AdminCoupons";
 
 function App() {
+  const pathname = useLocation().pathname;
+  const isAdminPage = pathname === "/admin" || pathname.startsWith("/admin/");
+
   return (
-    <>
-      <NavBar />
-      <Box component="main">
+    <Box
+      sx={{
+        minHeight: "100vh",
+        display: "flex",
+        flexDirection: "column",
+      }}
+    >
+      {!isAdminPage && <NavBar />}
+
+      <Box component="main" sx={{ flex: 1 }}>
         <Routes>
+          <Route element={<AdminGuard />}>
+            <Route path="/admin" element={<AdminLayout />}>
+              <Route index element={<AdminDashboard />} />
+              <Route path="books" element={<AdminBooks />} />
+              <Route path="categories" element={<AdminCategories />} />
+              <Route path="orders" element={<AdminOrders />} />
+              <Route path="users" element={<AdminUsers />} />
+              <Route path="coupons" element={<AdminCoupons />} />
+            </Route>
+          </Route>
+
           <Route path="/" element={<Home />} />
           <Route path="/books" element={<Books />} />
           <Route path="/books/:id" element={<BookDetails />} />
           <Route path="/cart" element={<Cart />} />
           <Route path="/login" element={<Login />} />
           <Route path="/register" element={<Register />} />
+
           <Route
             path="/checkout"
             element={
@@ -35,6 +66,7 @@ function App() {
               </ProtectedRoute>
             }
           />
+
           <Route
             path="/order-success/:id"
             element={
@@ -43,6 +75,7 @@ function App() {
               </ProtectedRoute>
             }
           />
+
           <Route
             path="/profile"
             element={
@@ -51,6 +84,7 @@ function App() {
               </ProtectedRoute>
             }
           />
+
           <Route
             path="/change-password"
             element={
@@ -59,6 +93,7 @@ function App() {
               </ProtectedRoute>
             }
           />
+
           <Route
             path="/my-orders"
             element={
@@ -67,6 +102,7 @@ function App() {
               </ProtectedRoute>
             }
           />
+
           <Route
             path="/my-orders/:id"
             element={
@@ -75,6 +111,7 @@ function App() {
               </ProtectedRoute>
             }
           />
+
           <Route
             path="*"
             element={
@@ -85,7 +122,9 @@ function App() {
           />
         </Routes>
       </Box>
-    </>
+
+      {!isAdminPage && <Footer />}
+    </Box>
   );
 }
 

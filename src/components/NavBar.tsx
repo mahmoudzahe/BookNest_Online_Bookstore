@@ -1,3 +1,4 @@
+import { ACCOUNT_MENU_WIDTH } from "../constants";
 import { useEffect, useState } from "react";
 import {
   AppBar,
@@ -11,28 +12,32 @@ import {
   ListItemText,
   Menu,
   MenuItem,
+  Stack,
   TextField,
   Toolbar,
   Typography,
 } from "@mui/material";
 import ShoppingCartOutlinedIcon from "@mui/icons-material/ShoppingCartOutlined";
+import DarkModeOutlinedIcon from "@mui/icons-material/DarkModeOutlined";
+import LightModeIcon from "@mui/icons-material/LightMode";
 import { Link as RouterLink, useLocation, useNavigate } from "react-router-dom";
 import type { FormEvent, MouseEvent } from "react";
+
 import { useAuth } from "../auth/AuthContext";
 import { useThemeMode } from "../theme/ThemeModeContext";
 import { useCart } from "../cart/CartContext";
 import { getCategories } from "../services/booksApi";
 import type { Category } from "../types/book";
 import booknestLogo from "../assets/booknest-logo.svg";
-import DarkModeOutlinedIcon from "@mui/icons-material/DarkModeOutlined";
-import LightModeIcon from "@mui/icons-material/LightMode";
 
 function NavBar() {
   const { user, loading, logout } = useAuth();
   const { darkMode, toggleDarkMode } = useThemeMode();
   const { totalItems } = useCart();
+
   const navigate = useNavigate();
   const location = useLocation();
+
   const [search, setSearch] = useState("");
   const [categories, setCategories] = useState<Category[]>([]);
   const [categoryAnchor, setCategoryAnchor] = useState<HTMLElement | null>(
@@ -42,11 +47,13 @@ function NavBar() {
 
   useEffect(() => {
     let active = true;
+
     getCategories()
       .then((data) => {
         if (active) setCategories(data);
       })
       .catch(() => {});
+
     return () => {
       active = false;
     };
@@ -62,6 +69,7 @@ function NavBar() {
 
   function submitSearch(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
+
     const q = search.trim();
     navigate(q ? `/books?q=${encodeURIComponent(q)}` : "/books");
   }
@@ -78,13 +86,15 @@ function NavBar() {
 
   return (
     <AppBar
-      position="static"
+      position="sticky"
       elevation={0}
       sx={{
         bgcolor: "background.paper",
         color: "text.primary",
         borderBottom: "1px solid",
         borderColor: "divider",
+        top: 0,
+        zIndex: (theme) => theme.zIndex.appBar,
       }}
     >
       <Container maxWidth="lg">
@@ -97,13 +107,13 @@ function NavBar() {
             flexWrap: "wrap",
           }}
         >
-          <Box
+          <Stack
             component={RouterLink}
             to="/"
+            direction="row"
+            spacing={1}
             sx={{
-              display: "flex",
               alignItems: "center",
-              gap: 1,
               textDecoration: "none",
               color: "inherit",
             }}
@@ -114,29 +124,20 @@ function NavBar() {
               alt="BookNest logo"
               sx={{ width: 37, height: 37 }}
             />
-            <Typography
-              variant="h6"
-              sx={{
-                fontFamily: "'Segoe UI', Arial, sans-serif",
-                fontWeight: 700,
-                fontSize: "1.3rem",
-                letterSpacing: "-0.3px",
-              }}
-            >
+            <Typography variant="h6" sx={{ fontWeight: 700 }}>
               BookNest
             </Typography>
-          </Box>
+          </Stack>
 
-          <Box
-            sx={{
-              display: "flex",
-              alignItems: "center",
-              gap: { xs: 0, sm: 0.5 },
-            }}
+          <Stack
+            direction="row"
+            spacing={{ xs: 0, sm: 0.5 }}
+            sx={{ alignItems: "center" }}
           >
             <Button component={RouterLink} to="/" sx={{ color: "inherit" }}>
               Home
             </Button>
+
             <Button
               component={RouterLink}
               to="/books"
@@ -144,9 +145,11 @@ function NavBar() {
             >
               Books
             </Button>
+
             <Button onClick={openCategories} sx={{ color: "inherit" }}>
               Categories
             </Button>
+
             <Menu
               anchorEl={categoryAnchor}
               open={Boolean(categoryAnchor)}
@@ -159,6 +162,7 @@ function NavBar() {
               >
                 All books
               </MenuItem>
+
               {categories.map((category) => (
                 <MenuItem
                   key={category.id}
@@ -170,14 +174,14 @@ function NavBar() {
                 </MenuItem>
               ))}
             </Menu>
-          </Box>
+          </Stack>
 
-          <Box
+          <Stack
             component="form"
+            direction="row"
+            spacing={0.5}
             onSubmit={submitSearch}
             sx={{
-              display: "flex",
-              gap: 0.5,
               flexGrow: 1,
               minWidth: { xs: "100%", sm: 165 },
               order: { xs: 2, sm: 0 },
@@ -189,7 +193,9 @@ function NavBar() {
               placeholder="Search books..."
               value={search}
               onChange={(event) => setSearch(event.target.value)}
-              slotProps={{ htmlInput: { "aria-label": "Search books" } }}
+              slotProps={{
+                htmlInput: { "aria-label": "Search books" },
+              }}
               sx={{
                 "& .MuiOutlinedInput-root": {
                   bgcolor: "action.hover",
@@ -197,10 +203,11 @@ function NavBar() {
                 },
               }}
             />
-            <Button type="submit" variant="outlined" sx={{ borderRadius: 2 }}>
+
+            <Button type="submit" variant="outlined">
               Search
             </Button>
-          </Box>
+          </Stack>
 
           <IconButton
             component={RouterLink}
@@ -244,24 +251,47 @@ function NavBar() {
                     {user.firstName.charAt(0).toUpperCase()}
                   </Avatar>
                 </IconButton>
+
                 <Menu
                   id="account-menu"
                   anchorEl={userAnchor}
                   open={Boolean(userAnchor)}
                   onClose={() => setUserAnchor(null)}
                   slotProps={{
-                    paper: { sx: { width: 245, borderRadius: 3, mt: 1 } },
+                    paper: {
+                      sx: {
+                        width: ACCOUNT_MENU_WIDTH,
+                        borderRadius: 3,
+                        mt: 1,
+                      },
+                    },
                   }}
                 >
                   <Box sx={{ px: 2, py: 1 }}>
                     <Typography sx={{ fontWeight: 700 }}>
                       {user.firstName} {user.lastName}
                     </Typography>
+
                     <Typography variant="body2" color="text.secondary" noWrap>
                       {user.email}
                     </Typography>
                   </Box>
+
                   <Divider />
+
+                  {user.role === "admin" && (
+                    <>
+                      <MenuItem
+                        component={RouterLink}
+                        to="/admin"
+                        onClick={() => setUserAnchor(null)}
+                      >
+                        <ListItemText>Admin Dashboard</ListItemText>
+                      </MenuItem>
+                      <Divider />
+                    </>
+                  )}
+
                   <MenuItem
                     component={RouterLink}
                     to="/profile"
@@ -269,6 +299,7 @@ function NavBar() {
                   >
                     <ListItemText>My Profile</ListItemText>
                   </MenuItem>
+
                   <MenuItem
                     component={RouterLink}
                     to="/my-orders"
@@ -276,6 +307,7 @@ function NavBar() {
                   >
                     <ListItemText>My Orders</ListItemText>
                   </MenuItem>
+
                   <MenuItem
                     component={RouterLink}
                     to="/change-password"
@@ -283,29 +315,26 @@ function NavBar() {
                   >
                     <ListItemText>Change Password</ListItemText>
                   </MenuItem>
+
                   <Divider />
+
                   <MenuItem onClick={handleLogout}>Log Out</MenuItem>
                 </Menu>
               </>
             ) : (
-              <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
-                <Button
-                  component={RouterLink}
-                  to="/login"
-                  variant="outlined"
-                  sx={{ borderRadius: 2 }}
-                >
+              <Stack direction="row" spacing={1} sx={{ alignItems: "center" }}>
+                <Button component={RouterLink} to="/login" variant="outlined">
                   Log In
                 </Button>
+
                 <Button
                   component={RouterLink}
                   to="/register"
                   variant="contained"
-                  sx={{ borderRadius: 2 }}
                 >
                   Register
                 </Button>
-              </Box>
+              </Stack>
             ))}
         </Toolbar>
       </Container>

@@ -1,14 +1,22 @@
 import { createContext, useContext, useEffect, useState } from "react";
 import type { ReactNode } from "react";
-import { getCurrentUser, loginUser, registerUser, updateUserProfile } from "../services/authApi";
+import {
+  getCurrentUser,
+  loginUser,
+  registerUser,
+  updateUserProfile,
+} from "../services/authApi";
 import type { AuthUser, RegisterData } from "../types/user";
 
-type ProfileData = Pick<AuthUser, "firstName" | "lastName" | "phone" | "address">;
+type ProfileData = Pick<
+  AuthUser,
+  "firstName" | "lastName" | "phone" | "address"
+>;
 
 interface AuthContextValue {
   user: AuthUser | null;
   loading: boolean;
-  login: (email: string, password: string) => Promise<void>;
+  login: (email: string, password: string) => Promise<AuthUser>;
   register: (data: RegisterData) => Promise<void>;
   updateProfile: (data: ProfileData) => Promise<void>;
   logout: () => void;
@@ -22,23 +30,66 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    let active = true;
+    let mounted = true;
     const id = localStorage.getItem(STORAGE_KEY);
+
     if (!id) {
       setLoading(false);
       return;
     }
+
     getCurrentUser(id)
-      .then((data) => { if (active) setUser(data); })
-      .catch(() => { if (active) localStorage.removeItem(STORAGE_KEY); })
-      .finally(() => { if (active) setLoading(false); });
-    return () => { active = false; };
+      .then((account) => {
+        if (!mounted) return;
+        if (account.active && !account.archived) {
+          setUser(account);
+        } else {
+          localStorage.removeItem(STORAGE_KEY);
+        }
+      })
+      .catch(() => {
+        if (mounted) localStorage.removeItem(STORAGE_KEY);
+      })
+      .finally(() => {
+        if (mounted) setLoading(false);
+      });
+
+    return () => {
+      mounted = false;
+    };
   }, []);
+
+  useEffect(() => {
+    if (!user) return;
+
+    let mounted = true;
+    const checkAccount = async () => {
+      try {
+        const account = await getCurrentUser(user.id);
+        if (mounted && (!account.active || account.archived)) {
+          localStorage.removeItem(STORAGE_KEY);
+          setUser(null);
+        }
+      } catch {
+        // Ignore temporary API errors.
+      }
+    };
+
+    window.addEventListener("focus", checkAccount);
+    const interval = window.setInterval(checkAccount, 30000);
+
+    return () => {
+      mounted = false;
+      window.removeEventListener("focus", checkAccount);
+      window.clearInterval(interval);
+    };
+  }, [user?.id]);
 
   const login = async (email: string, password: string) => {
     const account = await loginUser(email, password);
     localStorage.setItem(STORAGE_KEY, account.id);
     setUser(account);
+    return account;
   };
 
   const register = async (data: RegisterData) => {
@@ -59,7 +110,9 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   };
 
   return (
-    <AuthContext.Provider value={{ user, loading, login, register, updateProfile, logout }}>
+    <AuthContext.Provider
+      value={{ user, loading, login, register, updateProfile, logout }}
+    >
       {children}
     </AuthContext.Provider>
   );
