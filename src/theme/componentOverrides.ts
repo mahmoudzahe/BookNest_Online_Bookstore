@@ -1,5 +1,5 @@
 import type { PaletteMode } from "@mui/material";
-import type { Components, Theme } from "@mui/material/styles";
+import { alpha, type Components, type Theme } from "@mui/material/styles";
 import type {} from "@mui/x-data-grid/themeAugmentation";
 import { ADMIN_SIDEBAR_WIDTH } from "../admin/constants";
 
@@ -16,8 +16,16 @@ export function createComponentOverrides(mode: PaletteMode): Components<Theme> {
     },
     MuiButton: {
       styleOverrides: {
-        root: {
+        root: ({ theme }) => ({
           borderRadius: 20,
+          "&.BookNest-authSwitchButton": {
+            color: theme.palette.common.white,
+            borderColor: alpha(theme.palette.common.white, 0.65),
+            "&:hover": {
+              borderColor: theme.palette.common.white,
+              backgroundColor: alpha(theme.palette.common.white, 0.12),
+            },
+          },
           "&.BookNest-footerSubscribeButton": {
             backgroundColor: mode === "dark" ? "#81c8d6" : "#b3d9e1",
             color: "#132B35",
@@ -33,7 +41,7 @@ export function createComponentOverrides(mode: PaletteMode): Components<Theme> {
             color: "#20566a",
             "&:hover": { backgroundColor: "#e8f3f5" },
           },
-        },
+        }),
       },
     },
     MuiPaper: {

@@ -25,6 +25,7 @@ import { Link as RouterLink } from "react-router-dom";
 import BookCard from "../components/BookCard";
 import BookGrid from "../components/BookGrid";
 import ReadingMoments from "../components/ReadingMoments";
+import { FeaturedDot, FeaturedScroller } from "./StyledComponents";
 import { getBooks } from "../services/booksApi";
 import type { Book } from "../types/book";
 
@@ -46,37 +47,6 @@ const Hero = styled(Paper)(({ theme }) => ({
     borderRadius: "50%",
     border: `36px solid ${alpha(theme.palette.primary.main, 0.055)}`,
     pointerEvents: "none",
-  },
-}));
-
-const FeaturedScroller = styled(Grid)({
-  overflowX: "auto",
-  scrollBehavior: "smooth",
-  scrollSnapType: "x mandatory",
-  scrollbarWidth: "none",
-  paddingBottom: 6,
-  "&::-webkit-scrollbar": {
-    display: "none",
-  },
-  "& > .MuiGrid-root": {
-    flexShrink: 0,
-    minWidth: 0,
-    scrollSnapAlign: "start",
-  },
-});
-
-const FeaturedDot = styled("button")(({ theme }) => ({
-  width: theme.spacing(1),
-  height: theme.spacing(1),
-  padding: 0,
-  border: 0,
-  borderRadius: theme.shape.borderRadius,
-  backgroundColor: theme.palette.action.disabledBackground,
-  cursor: "pointer",
-  transition: "width 0.2s ease",
-  "&.is-active": {
-    width: theme.spacing(3),
-    backgroundColor: theme.palette.primary.main,
   },
 }));
 
