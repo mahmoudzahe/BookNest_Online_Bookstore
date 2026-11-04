@@ -10,11 +10,9 @@ import {
   DialogContent,
   DialogContentText,
   DialogTitle,
-  Divider,
   Grid,
   IconButton,
   Link,
-  Paper,
   Stack,
   Typography,
 } from "@mui/material";
@@ -68,9 +66,16 @@ function Cart() {
   const totalItems = cartBooks.reduce((sum, item) => sum + item.quantity, 0);
 
   return (
-    <Container maxWidth="lg" sx={{ py: 4 }}>
-      <Typography variant="h4" sx={{ mb: 3 }}>
-        Shopping Cart
+    <Container
+      maxWidth="lg"
+      sx={{
+        minHeight: { xs: "68vh", md: "72vh" },
+        pt: { xs: 4, md: 6 },
+        pb: { xs: 8, md: 10 },
+      }}
+    >
+      <Typography variant="h5" sx={{ mb: { xs: 4, md: 5 } }}>
+        Cart{" "}
         {!loading && !error && totalItems > 0
           ? ` (${totalItems} ${totalItems === 1 ? "item" : "items"})`
           : ""}
@@ -104,11 +109,8 @@ function Cart() {
       {!loading && !error && cartBooks.length > 0 && (
         <Grid container spacing={3} sx={{ alignItems: "flex-start" }}>
           <Grid size={{ xs: 12, md: "grow" }} sx={{ minWidth: 0 }}>
-            <Paper
-              variant="outlined"
-              sx={{ p: { xs: 2, sm: 3 }, borderRadius: 1 }}
-            >
-              <Stack spacing={2} divider={<Divider flexItem />}>
+            <Stack sx={{ py: 1 }}>
+              <Stack spacing={3}>
                 {cartBooks.map(({ book, quantity }) => (
                   <Stack
                     key={book.id}
@@ -201,32 +203,25 @@ function Cart() {
                   </Stack>
                 ))}
               </Stack>
-            </Paper>
+            </Stack>
           </Grid>
 
           <Grid size={{ xs: 12, md: "auto" }} sx={{ width: { md: 340 } }}>
-            <Paper
-              variant="outlined"
-              sx={{ p: 3, bgcolor: "background.paper" }}
-            >
-              <Typography variant="h6" sx={{ mb: 2 }}>
-                Order Summary
-              </Typography>
+            <Stack spacing={2} sx={{ px: { xs: 0, md: 2 }, py: 1 }}>
+              <Typography variant="h6">Order Summary</Typography>
               <Stack
                 direction="row"
                 spacing={1}
-                sx={{ justifyContent: "space-between", mb: 2 }}
+                sx={{ justifyContent: "space-between" }}
               >
                 <Typography variant="body2" color="text.secondary">
                   Discounts
                 </Typography>
-                <Typography variant="body2">Applied at checkout</Typography>
+                <Typography variant="body2" color="text.secondary">
+                  Applied at checkout
+                </Typography>
               </Stack>
-              <Divider sx={{ mb: 2 }} />
-              <Stack
-                direction="row"
-                sx={{ justifyContent: "space-between", mb: 3 }}
-              >
+              <Stack direction="row" sx={{ justifyContent: "space-between" }}>
                 <Typography variant="subtitle1" sx={{ fontWeight: "bold" }}>
                   Subtotal
                 </Typography>
@@ -253,7 +248,7 @@ function Cart() {
                   Continue Shopping
                 </Button>
               </Stack>
-            </Paper>
+            </Stack>
           </Grid>
         </Grid>
       )}

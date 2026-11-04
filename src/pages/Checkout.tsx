@@ -1,25 +1,28 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import {
   Alert,
   Button,
   CircularProgress,
   Container,
-  Divider,
   Grid,
   Paper,
   Stack,
   TextField,
   Typography,
 } from "@mui/material";
-import { useAuth } from "../auth/AuthContext";
+import ArrowBackRoundedIcon from "@mui/icons-material/ArrowBackRounded";
 import { Link as RouterLink, useNavigate } from "react-router-dom";
 import { useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 import * as yup from "yup";
 
+import { useAuth } from "../auth/AuthContext";
 import { useCart } from "../cart/CartContext";
+import { useCheckoutFlow } from "../checkout/CheckoutFlowContext";
+import CheckoutOrderSummary from "../components/CheckoutOrderSummary";
+import CheckoutProgress from "../components/CheckoutProgress";
 import { getBooks } from "../services/booksApi";
-import { createOrder, findCoupon } from "../services/checkoutApi";
+import { findCoupon } from "../services/checkoutApi";
 import type { Book } from "../types/book";
 import type { Coupon, OrderItem, ShippingInformation } from "../types/order";
 
@@ -29,13 +32,11 @@ const shippingSchema: yup.ObjectSchema<ShippingInformation> = yup.object({
     .trim()
     .required("Full name is required")
     .min(2, "Enter a valid name"),
-
   phone: yup
     .string()
     .trim()
     .required("Phone number is required")
     .matches(/^[0-9+()\s-]{7,20}$/, "Enter a valid phone number"),
-
   address: yup
     .string()
     .trim()
@@ -45,16 +46,23 @@ const shippingSchema: yup.ObjectSchema<ShippingInformation> = yup.object({
 
 function Checkout() {
   const navigate = useNavigate();
-  const { items, clearCart, syncStock } = useCart();
+  const { items, syncStock } = useCart();
   const { user } = useAuth();
+  const { draft, saveDraft, clearDraft, returningFromPayment } =
+    useCheckoutFlow();
+  const preserveDraft = useRef(returningFromPayment).current;
+  const savedDraft = preserveDraft && draft?.userId === user?.id ? draft : null;
 
   const [books, setBooks] = useState<Book[]>([]);
   const [loading, setLoading] = useState(true);
   const [loadError, setLoadError] = useState("");
   const [submitError, setSubmitError] = useState("");
-
-  const [couponInput, setCouponInput] = useState("");
-  const [appliedCoupon, setAppliedCoupon] = useState<Coupon | null>(null);
+  const [couponInput, setCouponInput] = useState(
+    savedDraft?.coupon?.code ?? "",
+  );
+  const [appliedCoupon, setAppliedCoupon] = useState<Coupon | null>(
+    savedDraft?.coupon ?? null,
+  );
   const [couponError, setCouponError] = useState("");
   const [checkingCoupon, setCheckingCoupon] = useState(false);
 
@@ -64,7 +72,7 @@ function Checkout() {
     formState: { errors, isSubmitting },
   } = useForm<ShippingInformation>({
     resolver: yupResolver(shippingSchema),
-    defaultValues: {
+    defaultValues: savedDraft?.shipping ?? {
       fullName: "",
       phone: "",
       address: "",
@@ -72,67 +80,65 @@ function Checkout() {
   });
 
   useEffect(() => {
+    if (!preserveDraft) clearDraft();
+  }, [preserveDraft, clearDraft]);
+
+  useEffect(() => {
     let active = true;
-
-    async function loadBooks() {
-      try {
-        const data = await getBooks();
-
+    getBooks()
+      .then((data) => {
         if (active) {
           setBooks(data);
           syncStock(data);
         }
-      } catch {
-        if (active) {
+      })
+      .catch(() => {
+        if (active)
           setLoadError("Could not load checkout. Check the mock API.");
-        }
-      } finally {
+      })
+      .finally(() => {
         if (active) setLoading(false);
-      }
-    }
-
-    void loadBooks();
-
+      });
     return () => {
       active = false;
     };
   }, [syncStock]);
 
   const cartBooks = items.flatMap((item) => {
-    const book = books.find((book) => book.id === item.bookId);
+    const book = books.find((entry) => entry.id === item.bookId);
     return book ? [{ book, quantity: item.quantity }] : [];
   });
-
-  const subtotal = cartBooks.reduce(
-    (sum, item) => sum + item.book.price * item.quantity,
-    0,
+  const orderItems: OrderItem[] = cartBooks.map(({ book, quantity }) => ({
+    bookId: book.id,
+    title: book.title,
+    price: book.price,
+    quantity,
+  }));
+  const subtotal = Number(
+    orderItems
+      .reduce((sum, item) => sum + item.price * item.quantity, 0)
+      .toFixed(2),
   );
-
   const discount = Number(
     (subtotal * ((appliedCoupon?.discountPercent ?? 0) / 100)).toFixed(2),
   );
-
   const total = Math.max(0, Number((subtotal - discount).toFixed(2)));
 
   async function handleApplyCoupon() {
     setCouponError("");
     setAppliedCoupon(null);
-
     if (!couponInput.trim()) {
       setCouponError("Enter a coupon code.");
       return;
     }
 
     setCheckingCoupon(true);
-
     try {
       const coupon = await findCoupon(couponInput);
-
       if (!coupon) {
         setCouponError("Invalid or inactive coupon.");
         return;
       }
-
       setAppliedCoupon(coupon);
     } catch {
       setCouponError("Could not check the coupon. Try again.");
@@ -141,146 +147,111 @@ function Checkout() {
     }
   }
 
-  async function handlePlaceOrder(shipping: ShippingInformation) {
+  async function handleContinue(shipping: ShippingInformation) {
     setSubmitError("");
-
     if (!user) {
-      setSubmitError("Please log in to place an order.");
+      setSubmitError("Please log in to continue.");
       return;
     }
-
     if (couponInput.trim() && !appliedCoupon) {
       setCouponError(
-        "Please apply a valid coupon or clear the coupon field before placing your order.",
+        "Apply a valid coupon or clear the coupon field to continue.",
       );
       return;
     }
-
-    if (items.length === 0) {
-      setSubmitError("Your cart is empty.");
+    if (items.length === 0 || orderItems.length !== items.length) {
+      setSubmitError("Your cart has changed. Review your cart and try again.");
       return;
     }
-
-    try {
-      const latestBooks = await getBooks();
-      const orderItems: OrderItem[] = [];
-
-      for (const item of items) {
-        const book = latestBooks.find((book) => book.id === item.bookId);
-
-        if (!book || book.stock < item.quantity) {
-          syncStock(latestBooks);
-          setBooks(latestBooks);
-          setSubmitError(
-            "Some items are no longer available in the selected quantities. Review your cart and try again.",
+    if (cartBooks.some(({ book, quantity }) => book.stock < quantity)) {
+      setSubmitError(
+        "Some books are out of stock. Review your cart and try again.",
+      );
+      return;
+    }
+    if (appliedCoupon) {
+      try {
+        const latestCoupon = await findCoupon(appliedCoupon.code);
+        if (
+          !latestCoupon ||
+          latestCoupon.discountPercent !== appliedCoupon.discountPercent
+        ) {
+          setAppliedCoupon(null);
+          setCouponError(
+            "This coupon is no longer valid. Remove it or apply another one.",
           );
           return;
         }
-
-        orderItems.push({
-          bookId: book.id,
-          title: book.title,
-          price: book.price,
-          quantity: item.quantity,
-        });
-      }
-
-      const latestSubtotal = Number(
-        orderItems
-          .reduce((sum, item) => sum + item.price * item.quantity, 0)
-          .toFixed(2),
-      );
-
-      if (latestSubtotal !== Number(subtotal.toFixed(2))) {
-        setBooks(latestBooks);
-        setSubmitError(
-          "Book prices have changed. Review the updated total and try again.",
-        );
+      } catch {
+        setCouponError("Could not verify the coupon. Please try again.");
         return;
       }
-
-      const checkedCoupon = appliedCoupon
-        ? await findCoupon(appliedCoupon.code)
-        : null;
-
-      if (
-        appliedCoupon &&
-        (!checkedCoupon ||
-          checkedCoupon.discountPercent !== appliedCoupon.discountPercent)
-      ) {
-        setAppliedCoupon(null);
-        setSubmitError(
-          "The coupon has changed or is no longer valid. Apply it again.",
-        );
-        return;
-      }
-
-      const finalDiscount = Number(
-        (
-          latestSubtotal *
-          ((checkedCoupon?.discountPercent ?? 0) / 100)
-        ).toFixed(2),
-      );
-
-      const finalTotal = Math.max(
-        0,
-        Number((latestSubtotal - finalDiscount).toFixed(2)),
-      );
-
-      const order = await createOrder({
-        userId: user.id,
-        items: orderItems,
-        shipping,
-        subtotal: latestSubtotal,
-        discount: finalDiscount,
-        total: finalTotal,
-        couponCode: checkedCoupon?.code ?? null,
-        status: "pending",
-        createdAt: new Date().toISOString(),
-      });
-
-      clearCart();
-      navigate(`/order-success/${order.id}`, { replace: true });
-    } catch {
-      setSubmitError("Could not place your order. Please try again.");
     }
+
+    saveDraft({
+      userId: user.id,
+      shipping,
+      items: orderItems,
+      coupon: appliedCoupon,
+      subtotal,
+      discount,
+      total,
+    });
+    navigate("/payment");
   }
 
   if (loading) {
     return (
-      <Container sx={{ py: 5 }}>
+      <Container sx={{ py: 8 }}>
         <CircularProgress />
       </Container>
     );
   }
-
   if (loadError) {
     return (
-      <Container maxWidth="lg" sx={{ py: 4 }}>
+      <Container maxWidth="lg" sx={{ py: 6 }}>
         <Alert severity="error">{loadError}</Alert>
       </Container>
     );
   }
-
   if (cartBooks.length === 0) {
     return (
-      <Container maxWidth="lg" sx={{ py: 4 }}>
-        <Alert severity="info" sx={{ mb: 2 }}>
-          Your cart is empty.
-        </Alert>
-
-        <Button component={RouterLink} to="/books" variant="contained">
-          Browse books
-        </Button>
+      <Container maxWidth="lg" sx={{ py: 6 }}>
+        <Stack spacing={2} sx={{ alignItems: "flex-start" }}>
+          <Alert severity="info" sx={{ width: "100%" }}>
+            Your cart is empty.
+          </Alert>
+          <Button component={RouterLink} to="/books" variant="contained">
+            Browse books
+          </Button>
+        </Stack>
       </Container>
     );
   }
 
   return (
-    <Container maxWidth="lg" sx={{ py: 4 }}>
-      <Typography variant="h4" sx={{ mb: 3 }}>
-        Checkout
-      </Typography>
+    <Container
+      maxWidth="lg"
+      sx={{ pt: { xs: 5, md: 8 }, pb: { xs: 9, md: 12 } }}
+    >
+      <Stack spacing={2} sx={{ mb: 4 }}>
+        <Button
+          component={RouterLink}
+          to="/cart"
+          startIcon={<ArrowBackRoundedIcon />}
+          sx={{ alignSelf: "flex-start" }}
+        >
+          Back to Cart
+        </Button>
+        <Typography variant="h4" component="h1">
+          Checkout
+        </Typography>
+        <Typography color="text.secondary">
+          Add your shipping details and review your order before choosing a
+          payment method.
+        </Typography>
+      </Stack>
+      <CheckoutProgress step={1} />
 
       {submitError && (
         <Alert severity="error" sx={{ mb: 3 }}>
@@ -291,46 +262,44 @@ function Checkout() {
       <Grid
         container
         component="form"
-        onSubmit={handleSubmit(handlePlaceOrder)}
-        spacing={3}
+        onSubmit={handleSubmit(handleContinue)}
+        spacing={3.5}
         sx={{ alignItems: "flex-start" }}
       >
-        <Grid size={{ xs: 12, md: "grow" }} sx={{ minWidth: 0 }}>
+        <Grid size={{ xs: 12, md: 7 }}>
           <Paper
             variant="outlined"
-            sx={{
-              p: 3,
-              "& .MuiOutlinedInput-root": {
-                borderRadius: 2,
-              },
-            }}
+            sx={{ p: { xs: 2.5, sm: 3.5 }, borderRadius: 3 }}
           >
-            <Typography variant="h6" sx={{ mb: 3 }}>
-              Shipping Information
-            </Typography>
-
-            <Stack spacing={2}>
+            <Stack spacing={3}>
+              <Stack spacing={0.5}>
+                <Typography variant="h6">Shipping Information</Typography>
+                <Typography variant="body2" color="text.secondary">
+                  Where should we deliver your books?
+                </Typography>
+              </Stack>
               <TextField
                 label="Full Name"
                 fullWidth
+                autoComplete="name"
                 {...register("fullName")}
                 error={!!errors.fullName}
                 helperText={errors.fullName?.message}
               />
-
               <TextField
                 label="Phone Number"
                 fullWidth
+                autoComplete="tel"
                 {...register("phone")}
                 error={!!errors.phone}
                 helperText={errors.phone?.message}
               />
-
               <TextField
                 label="Shipping Address"
                 fullWidth
                 multiline
-                rows={3}
+                minRows={3}
+                autoComplete="street-address"
                 {...register("address")}
                 error={!!errors.address}
                 helperText={errors.address?.message}
@@ -339,131 +308,65 @@ function Checkout() {
           </Paper>
         </Grid>
 
-        <Grid size={{ xs: 12, md: "auto" }} sx={{ width: { md: 340 } }}>
-          <Paper
-            variant="outlined"
-            sx={{
-              p: 3,
-              bgcolor: "background.paper",
-            }}
-          >
-            <Typography variant="h6" sx={{ mb: 2 }}>
-              Order Summary
-            </Typography>
-
-            <Stack spacing={1}>
-              {cartBooks.map(({ book, quantity }) => (
-                <Stack
-                  key={book.id}
-                  direction="row"
-                  spacing={2}
-                  sx={{ justifyContent: "space-between" }}
-                >
-                  <Typography variant="body2">
-                    {book.title} × {quantity}
-                  </Typography>
-
-                  <Typography variant="body2">
-                    ${(book.price * quantity).toFixed(2)}
-                  </Typography>
+        <Grid size={{ xs: 12, md: 5 }}>
+          <Stack spacing={2.5}>
+            <CheckoutOrderSummary
+              items={orderItems}
+              subtotal={subtotal}
+              discount={discount}
+              total={total}
+            >
+              <Stack spacing={1.5}>
+                <Typography variant="subtitle2">Discount Coupon</Typography>
+                <Stack direction="row" spacing={1}>
+                  <TextField
+                    size="small"
+                    label="Coupon code"
+                    value={couponInput}
+                    onChange={(event) => {
+                      setCouponInput(event.target.value.toUpperCase());
+                      setAppliedCoupon(null);
+                      setCouponError("");
+                    }}
+                    disabled={checkingCoupon || isSubmitting}
+                    fullWidth
+                  />
+                  <Button
+                    type="button"
+                    variant="outlined"
+                    disabled={checkingCoupon || isSubmitting}
+                    onClick={handleApplyCoupon}
+                  >
+                    {checkingCoupon ? "Checking..." : "Apply"}
+                  </Button>
                 </Stack>
-              ))}
-            </Stack>
-
-            <Divider sx={{ my: 2 }} />
-
-            <Typography sx={{ mb: 1 }}>Discount Coupon</Typography>
-
-            <Stack direction="row" spacing={1}>
-              <TextField
-                size="small"
-                placeholder="Coupon code"
-                value={couponInput}
-                onChange={(event) => {
-                  setCouponInput(event.target.value.toUpperCase());
-                  setAppliedCoupon(null);
-                  setCouponError("");
-                }}
-                fullWidth
-                sx={{
-                  "& .MuiOutlinedInput-root": {
-                    borderRadius: 2,
-                  },
-                }}
-              />
-
-              <Button
-                type="button"
-                variant="outlined"
-                disabled={checkingCoupon || isSubmitting}
-                onClick={handleApplyCoupon}
-              >
-                {checkingCoupon ? "Checking..." : "Apply"}
-              </Button>
-            </Stack>
-
-            {couponError && (
-              <Alert severity="error" sx={{ mt: 2 }}>
-                {couponError}
-              </Alert>
-            )}
-
-            {appliedCoupon && (
-              <Alert severity="success" sx={{ mt: 2 }}>
-                {appliedCoupon.code} applied ({appliedCoupon.discountPercent}%
-                off).
-              </Alert>
-            )}
-
-            <Divider sx={{ my: 2 }} />
-
-            <Stack spacing={1.5}>
-              <Stack direction="row" sx={{ justifyContent: "space-between" }}>
-                <Typography>Subtotal</Typography>
-
-                <Typography>${subtotal.toFixed(2)}</Typography>
+                {couponError && <Alert severity="error">{couponError}</Alert>}
+                {appliedCoupon && (
+                  <Alert severity="success">
+                    {appliedCoupon.code} applied (
+                    {appliedCoupon.discountPercent}% off).
+                  </Alert>
+                )}
               </Stack>
-
-              {appliedCoupon && (
-                <Stack direction="row" sx={{ justifyContent: "space-between" }}>
-                  <Typography>Discount</Typography>
-
-                  <Typography color="success.main">
-                    -${discount.toFixed(2)}
-                  </Typography>
-                </Stack>
-              )}
-
-              <Divider />
-
-              <Stack direction="row" sx={{ justifyContent: "space-between" }}>
-                <Typography variant="h6">Total</Typography>
-
-                <Typography variant="h6">${total.toFixed(2)}</Typography>
-              </Stack>
-            </Stack>
-
+            </CheckoutOrderSummary>
             <Button
               type="submit"
-              variant="contained"
-              fullWidth
               size="large"
+              fullWidth
+              variant="contained"
               disabled={isSubmitting || checkingCoupon}
-              sx={{ mt: 3 }}
             >
-              {isSubmitting ? "Placing Order..." : "Place Order"}
+              Continue to Payment
             </Button>
-
             <Button
               component={RouterLink}
-              to="/cart"
+              to="/books"
               fullWidth
-              disabled={isSubmitting}
-              sx={{ mt: 1 }}
+              color="inherit"
             >
-              Back to Cart
+              Continue Shopping
             </Button>
-          </Paper>
+          </Stack>
         </Grid>
       </Grid>
     </Container>

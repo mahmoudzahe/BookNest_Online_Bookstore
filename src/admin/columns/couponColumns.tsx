@@ -28,6 +28,11 @@ export function couponColumns(
           size="small"
           label={row.active ? "Active" : "Inactive"}
           color={row.active ? "success" : "default"}
+          sx={{
+            border: "2px solid",
+            borderColor: row.active ? "success.dark" : "text.secondary",
+            fontWeight: 700,
+          }}
         />
       ),
     },

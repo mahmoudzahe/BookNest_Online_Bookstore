@@ -18,6 +18,8 @@ export interface OrderItem {
   quantity: number;
 }
 
+export type PaymentMethod = "cash_on_delivery" | "card_demo";
+
 export interface Order {
   id: string;
   userId: string | null;
@@ -27,6 +29,7 @@ export interface Order {
   discount: number;
   total: number;
   couponCode: string | null;
+  paymentMethod?: PaymentMethod;
   status: "pending" | "shipped" | "delivered" | "cancelled";
   createdAt: string;
   archived?: boolean;

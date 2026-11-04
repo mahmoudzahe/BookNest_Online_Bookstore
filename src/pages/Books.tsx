@@ -98,10 +98,27 @@ function Books() {
   );
 
   return (
-    <Container maxWidth="lg" sx={{ py: 4 }}>
+    <Container
+      maxWidth={false}
+      sx={{ maxWidth: 1380, py: 5, px: { xs: 2, sm: 3, lg: 4 } }}
+    >
       <Stack spacing={3}>
-        <Typography variant="h4">All books</Typography>
-        <Paper variant="outlined" sx={{ p: 2, borderRadius: 1 }}>
+        <Stack spacing={0.5}>
+          <Typography
+            variant="h3"
+            component="h1"
+            sx={{ fontFamily: "Georgia, serif", fontWeight: 700 }}
+          >
+            Explore our books
+          </Typography>
+          <Typography color="text.secondary">
+            Find your next great read from our collection.
+          </Typography>
+        </Stack>
+        <Paper
+          variant="outlined"
+          sx={{ p: { xs: 2, sm: 2.5 }, borderRadius: 3 }}
+        >
           <Grid container columns={{ xs: 1, sm: 2, md: 5 }} spacing={2}>
             <Grid size={1}>
               <TextField
