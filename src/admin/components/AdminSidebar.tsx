@@ -10,8 +10,8 @@ import {
 } from "@mui/material";
 import StorefrontOutlinedIcon from "@mui/icons-material/StorefrontOutlined";
 import LogoutOutlinedIcon from "@mui/icons-material/LogoutOutlined";
-import { Link as RouterLink } from "react-router-dom";
-import booknestLogo from "../../assets/booknest-logo.svg";
+import RouterLink from "../../components/NextLink";
+const booknestLogo = "/assets/booknest-logo.svg";
 import { adminNavigation } from "../navigation";
 
 interface AdminSidebarProps {
@@ -29,7 +29,7 @@ export default function AdminSidebar({
     <Stack sx={{ height: "100%" }}>
       <Stack
         component={RouterLink}
-        to="/admin"
+        href="/admin"
         onClick={onNavigate}
         direction="row"
         spacing={1.5}
@@ -72,7 +72,7 @@ export default function AdminSidebar({
           <ListItemButton
             key={link.path}
             component={RouterLink}
-            to={link.path}
+            href={link.path}
             selected={pathname === link.path}
             onClick={onNavigate}
             className="BookNest-adminNavItem"
@@ -97,7 +97,7 @@ export default function AdminSidebar({
       <List sx={{ px: 1.5, pb: 2 }}>
         <ListItemButton
           component={RouterLink}
-          to="/"
+          href="/"
           onClick={onNavigate}
           sx={{ borderRadius: 2 }}
         >

@@ -12,8 +12,8 @@ import {
   TextField,
   Typography,
 } from "@mui/material";
-import { Link as RouterLink } from "react-router-dom";
-import booknestLogo from "../assets/booknest-logo.svg";
+import RouterLink from "./NextLink";
+const booknestLogo = "/assets/booknest-logo.svg";
 import { FOOTER_LINKS } from "./footerLinks";
 
 function Footer() {
@@ -130,7 +130,7 @@ function Footer() {
               <Link
                 key={item.path}
                 component={RouterLink}
-                to={item.path}
+                href={item.path}
                 underline="hover"
                 color="inherit"
                 sx={{ opacity: 0.9 }}

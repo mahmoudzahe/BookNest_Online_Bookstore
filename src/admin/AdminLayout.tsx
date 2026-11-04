@@ -1,3 +1,5 @@
+"use client";
+
 import { useState } from "react";
 import {
   AppBar,
@@ -14,23 +16,24 @@ import {
 import MenuIcon from "@mui/icons-material/Menu";
 import DarkModeOutlinedIcon from "@mui/icons-material/DarkModeOutlined";
 import LightModeOutlinedIcon from "@mui/icons-material/LightModeOutlined";
-import { Outlet, useLocation, useNavigate } from "react-router-dom";
+import { usePathname, useRouter } from "next/navigation";
+import type { ReactNode } from "react";
 import { useAuth } from "../auth/AuthContext";
 import { useThemeMode } from "../theme/ThemeModeContext";
 
 import { ADMIN_SIDEBAR_WIDTH } from "./constants";
 import AdminSidebar from "./components/AdminSidebar";
 
-export default function AdminLayout() {
+export default function AdminLayout({ children }: { children: ReactNode }) {
   const [mobileOpen, setMobileOpen] = useState(false);
-  const { pathname } = useLocation();
+  const pathname = usePathname() ?? "";
   const { user, logout } = useAuth();
   const { darkMode, toggleDarkMode } = useThemeMode();
-  const navigate = useNavigate();
+  const router = useRouter();
 
   function signOut() {
     logout();
-    navigate("/login", { replace: true });
+    router.replace("/login");
   }
 
   return (
@@ -127,7 +130,7 @@ export default function AdminLayout() {
             mx: "auto",
           }}
         >
-          <Outlet />
+          {children}
         </Box>
       </Stack>
     </Stack>

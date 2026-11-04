@@ -1,7 +1,7 @@
 import { Box, Grid, Stack, Typography } from "@mui/material";
-import readingLibrary from "../assets/library.webp";
-import readingReader from "../assets/reader.webp";
-import readingCoffee from "../assets/coffee.webp";
+const readingLibrary = "/assets/library.webp";
+const readingReader = "/assets/reader.webp";
+const readingCoffee = "/assets/coffee.webp";
 
 const imageStyles = {
   display: "block",

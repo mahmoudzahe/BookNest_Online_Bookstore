@@ -13,7 +13,7 @@ import {
   TextField,
   Typography,
 } from "@mui/material";
-import { Link as RouterLink } from "react-router-dom";
+import RouterLink from "./NextLink";
 import { useBookReviews } from "../hooks/useBookReviews";
 import type { Book, BookReview } from "../types/book";
 
@@ -63,7 +63,7 @@ function BookReviews({ book, reviews, onReviewsChange }: Props) {
           Ratings & Reviews
         </Typography>
         {!user ? (
-          <Button component={RouterLink} to="/login" variant="outlined">
+          <Button component={RouterLink} href="/login" variant="outlined">
             Log in to write a review
           </Button>
         ) : checking ? (
