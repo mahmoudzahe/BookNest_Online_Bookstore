@@ -1,3 +1,6 @@
+import { ar } from "./ar";
+import { en, type TranslationKey } from "./en";
+
 export type Locale = "en" | "ar";
 
 export const LOCALE_COOKIE = "booknest-locale";
@@ -6,22 +9,26 @@ export function isLocale(value: string | undefined): value is Locale {
   return value === "en" || value === "ar";
 }
 
-import { arabic } from "./arabic";
-
 export type TranslationValues = Record<string, string | number>;
 export type Translator = (
   message: string,
   values?: TranslationValues,
 ) => string;
 
+const keyByEnglish = new Map<string, TranslationKey>(
+  Object.entries(en).map(([key, message]) => [message, key as TranslationKey]),
+);
+
 export function translate(
   locale: Locale,
   message: string,
   values: TranslationValues = {},
 ): string {
-  const template = locale === "ar" ? (arabic[message] ?? message) : message;
-  return template.replace(/\{([a-zA-Z0-9_]+)\}/g, (full, key: string) =>
-    Object.hasOwn(values, key) ? String(values[key]) : full,
+  const key = keyByEnglish.get(message);
+  const template = key ? (locale === "ar" ? ar[key] : en[key]) : message;
+
+  return template.replace(/\{([a-zA-Z0-9_]+)\}/g, (full, name: string) =>
+    Object.hasOwn(values, name) ? String(values[name]) : full,
   );
 }
 
