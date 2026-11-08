@@ -654,6 +654,40 @@ export const en = {
     "You have already reviewed this book.",
   "feedback.weCouldnTLoadTheBooksRight":
     "We couldn't load the books right now.",
+
+  "dashboard.myDashboard": "My Dashboard",
+  "dashboard.welcomeBack": "Welcome back, {name}!",
+  "dashboard.reader": "reader",
+  "dashboard.welcomeDescription":
+    "Your orders, favorite reads and spending at a glance.",
+  "dashboard.ordersPlaced": "Orders placed",
+  "dashboard.completedSpending": "Completed spending",
+  "dashboard.booksPurchased": "Books purchased",
+  "dashboard.ordersOnTheWay": "Orders on the way",
+  "dashboard.yourSpending": "Your spending",
+  "dashboard.completedPurchasesInfo":
+    "Completed purchases over the past six months.",
+  "dashboard.noCompletedPurchases": "No completed purchases in this period.",
+  "dashboard.yourOrderStatuses": "Your order statuses",
+  "dashboard.yourOrdersProgress": "How your orders are progressing.",
+  "dashboard.noOrdersToAnalyze": "No orders to analyze yet.",
+  "dashboard.latestOrders": "Latest orders",
+  "dashboard.recentPurchasesInfo":
+    "Your most recent purchases and their progress.",
+  "dashboard.viewAllOrders": "View all orders",
+  "dashboard.noOrdersPlaced": "You haven't placed an order yet.",
+  "dashboard.discoverBook": "Discover a new favorite book to get started.",
+  "dashboard.booksCount": "Books: {count}",
+  "dashboard.viewDetails": "View details",
+  "dashboard.loading": "Loading dashboard",
+  "dashboard.loadError": "Could not load your dashboard. Please try again.",
+  "dashboard.revenueTrend": "Revenue trend",
+  "dashboard.revenueInfo":
+    "Revenue from delivered orders over the past six months.",
+  "dashboard.noRevenue": "No delivered sales in this period.",
+  "dashboard.orderBreakdown": "Order breakdown",
+  "dashboard.currentOrdersInfo": "Current orders grouped by status.",
+  "dashboard.noActivity": "No order activity to display.",
 } as const;
 
 export type TranslationKey = keyof typeof en;

@@ -503,6 +503,1262 @@
       "status": "shipped",
       "createdAt": "2026-10-27T17:37:29.844Z",
       "id": "_aaunmbKevI"
+    },
+    {
+      "userId": "cXvhLY8tgKg",
+      "items": [
+        {
+          "bookId": "9",
+          "title": "Harry Potter and the Sorcerer's Stone",
+          "price": 17.5,
+          "quantity": 2
+        },
+        {
+          "bookId": "14",
+          "title": "Deep Work",
+          "price": 18.5,
+          "quantity": 1
+        },
+        {
+          "bookId": "19",
+          "title": "The Silent Patient",
+          "price": 16,
+          "quantity": 1
+        }
+      ],
+      "shipping": {
+        "fullName": "jebreel batsh",
+        "phone": "+1 (555) 247-6319",
+        "address": "Tulkarm"
+      },
+      "subtotal": 69.5,
+      "discount": 6.95,
+      "total": 62.55,
+      "couponCode": "SAVE10",
+      "paymentMethod": "card_demo",
+      "status": "delivered",
+      "createdAt": "2026-06-08T09:00:00.000Z",
+      "id": "demo-order-2026-06-01",
+      "archived": false
+    },
+    {
+      "userId": "demo-user-10",
+      "items": [
+        {
+          "bookId": "16",
+          "title": "Educated",
+          "price": 17,
+          "quantity": 1
+        }
+      ],
+      "shipping": {
+        "fullName": "Rami Sabbah",
+        "phone": "0599-000-110",
+        "address": "Tubas"
+      },
+      "subtotal": 17,
+      "discount": 0,
+      "total": 17,
+      "couponCode": null,
+      "paymentMethod": "cash_on_delivery",
+      "status": "delivered",
+      "createdAt": "2026-06-12T10:07:00.000Z",
+      "id": "demo-order-2026-06-02",
+      "archived": false
+    },
+    {
+      "userId": "demo-user-03",
+      "items": [
+        {
+          "bookId": "24",
+          "title": "The Name of the Wind",
+          "price": 21,
+          "quantity": 1
+        }
+      ],
+      "shipping": {
+        "fullName": "Lina Nasser",
+        "phone": "0599-000-103",
+        "address": "Tulkarm"
+      },
+      "subtotal": 21,
+      "discount": 0,
+      "total": 21,
+      "couponCode": null,
+      "paymentMethod": "card_demo",
+      "status": "cancelled",
+      "createdAt": "2026-06-16T11:14:00.000Z",
+      "id": "demo-order-2026-06-03",
+      "archived": false
+    },
+    {
+      "userId": "demo-user-06",
+      "items": [
+        {
+          "bookId": "9",
+          "title": "Harry Potter and the Sorcerer's Stone",
+          "price": 17.5,
+          "quantity": 1
+        },
+        {
+          "bookId": "14",
+          "title": "Deep Work",
+          "price": 18.5,
+          "quantity": 1
+        }
+      ],
+      "shipping": {
+        "fullName": "Adam Awad",
+        "phone": "0599-000-106",
+        "address": "Hebron"
+      },
+      "subtotal": 36,
+      "discount": 0,
+      "total": 36,
+      "couponCode": null,
+      "paymentMethod": "cash_on_delivery",
+      "status": "delivered",
+      "createdAt": "2026-06-20T12:21:00.000Z",
+      "id": "demo-order-2026-06-04",
+      "archived": false
+    },
+    {
+      "userId": "demo-user-09",
+      "items": [
+        {
+          "bookId": "16",
+          "title": "Educated",
+          "price": 17,
+          "quantity": 2
+        }
+      ],
+      "shipping": {
+        "fullName": "Hala Zaid",
+        "phone": "0599-000-109",
+        "address": "Salfit"
+      },
+      "subtotal": 34,
+      "discount": 3.4,
+      "total": 30.6,
+      "couponCode": "SAVE10",
+      "paymentMethod": "card_demo",
+      "status": "delivered",
+      "createdAt": "2026-06-24T13:28:00.000Z",
+      "id": "demo-order-2026-06-05",
+      "archived": false
+    },
+    {
+      "userId": "demo-user-02",
+      "items": [
+        {
+          "bookId": "24",
+          "title": "The Name of the Wind",
+          "price": 21,
+          "quantity": 1
+        }
+      ],
+      "shipping": {
+        "fullName": "Omar Khalil",
+        "phone": "0599-000-102",
+        "address": "Ramallah"
+      },
+      "subtotal": 21,
+      "discount": 0,
+      "total": 21,
+      "couponCode": null,
+      "paymentMethod": "cash_on_delivery",
+      "status": "delivered",
+      "createdAt": "2026-06-28T14:35:00.000Z",
+      "id": "demo-order-2026-06-06",
+      "archived": false
+    },
+    {
+      "userId": "cXvhLY8tgKg",
+      "items": [
+        {
+          "bookId": "10",
+          "title": "The Hunger Games",
+          "price": 15.5,
+          "quantity": 1
+        },
+        {
+          "bookId": "15",
+          "title": "The Psychology of Money",
+          "price": 19,
+          "quantity": 1
+        }
+      ],
+      "shipping": {
+        "fullName": "jebreel batsh",
+        "phone": "+1 (555) 247-6319",
+        "address": "Tulkarm"
+      },
+      "subtotal": 34.5,
+      "discount": 0,
+      "total": 34.5,
+      "couponCode": null,
+      "paymentMethod": "card_demo",
+      "status": "delivered",
+      "createdAt": "2026-07-09T15:42:00.000Z",
+      "id": "demo-order-2026-07-01",
+      "archived": false
+    },
+    {
+      "userId": "demo-user-09",
+      "items": [
+        {
+          "bookId": "17",
+          "title": "The Martian",
+          "price": 18,
+          "quantity": 1
+        },
+        {
+          "bookId": "22",
+          "title": "The Book Thief",
+          "price": 16.5,
+          "quantity": 1
+        },
+        {
+          "bookId": "6",
+          "title": "Atomic Habits",
+          "price": 20,
+          "quantity": 1
+        }
+      ],
+      "shipping": {
+        "fullName": "Hala Zaid",
+        "phone": "0599-000-109",
+        "address": "Salfit"
+      },
+      "subtotal": 54.5,
+      "discount": 0,
+      "total": 54.5,
+      "couponCode": null,
+      "paymentMethod": "cash_on_delivery",
+      "status": "delivered",
+      "createdAt": "2026-07-13T16:49:00.000Z",
+      "id": "demo-order-2026-07-02",
+      "archived": false
+    },
+    {
+      "userId": "demo-user-02",
+      "items": [
+        {
+          "bookId": "1",
+          "title": "Pride and Prejudice",
+          "price": 12.5,
+          "quantity": 2
+        }
+      ],
+      "shipping": {
+        "fullName": "Omar Khalil",
+        "phone": "0599-000-102",
+        "address": "Ramallah"
+      },
+      "subtotal": 25,
+      "discount": 2.5,
+      "total": 22.5,
+      "couponCode": "SAVE10",
+      "paymentMethod": "card_demo",
+      "status": "shipped",
+      "createdAt": "2026-07-17T17:56:00.000Z",
+      "id": "demo-order-2026-07-03",
+      "archived": false
+    },
+    {
+      "userId": "demo-user-05",
+      "items": [
+        {
+          "bookId": "10",
+          "title": "The Hunger Games",
+          "price": 15.5,
+          "quantity": 1
+        },
+        {
+          "bookId": "15",
+          "title": "The Psychology of Money",
+          "price": 19,
+          "quantity": 1
+        }
+      ],
+      "shipping": {
+        "fullName": "Maya Hamdan",
+        "phone": "0599-000-105",
+        "address": "Bethlehem"
+      },
+      "subtotal": 34.5,
+      "discount": 0,
+      "total": 34.5,
+      "couponCode": null,
+      "paymentMethod": "cash_on_delivery",
+      "status": "delivered",
+      "createdAt": "2026-07-21T18:03:00.000Z",
+      "id": "demo-order-2026-07-04",
+      "archived": false
+    },
+    {
+      "userId": "demo-user-08",
+      "items": [
+        {
+          "bookId": "17",
+          "title": "The Martian",
+          "price": 18,
+          "quantity": 1
+        }
+      ],
+      "shipping": {
+        "fullName": "Kareem Yasin",
+        "phone": "0599-000-108",
+        "address": "Jericho"
+      },
+      "subtotal": 18,
+      "discount": 0,
+      "total": 18,
+      "couponCode": null,
+      "paymentMethod": "card_demo",
+      "status": "delivered",
+      "createdAt": "2026-07-25T09:10:00.000Z",
+      "id": "demo-order-2026-07-05",
+      "archived": false
+    },
+    {
+      "userId": "demo-user-01",
+      "items": [
+        {
+          "bookId": "1",
+          "title": "Pride and Prejudice",
+          "price": 12.5,
+          "quantity": 1
+        }
+      ],
+      "shipping": {
+        "fullName": "Sara Haddad",
+        "phone": "0599-000-101",
+        "address": "Nablus"
+      },
+      "subtotal": 12.5,
+      "discount": 0,
+      "total": 12.5,
+      "couponCode": null,
+      "paymentMethod": "cash_on_delivery",
+      "status": "delivered",
+      "createdAt": "2026-07-02T10:17:00.000Z",
+      "id": "demo-order-2026-07-06",
+      "archived": false
+    },
+    {
+      "userId": "cXvhLY8tgKg",
+      "items": [
+        {
+          "bookId": "10",
+          "title": "The Hunger Games",
+          "price": 15.5,
+          "quantity": 2
+        },
+        {
+          "bookId": "15",
+          "title": "The Psychology of Money",
+          "price": 19,
+          "quantity": 1
+        }
+      ],
+      "shipping": {
+        "fullName": "jebreel batsh",
+        "phone": "+1 (555) 247-6319",
+        "address": "Tulkarm"
+      },
+      "subtotal": 50,
+      "discount": 5,
+      "total": 45,
+      "couponCode": "SAVE10",
+      "paymentMethod": "card_demo",
+      "status": "delivered",
+      "createdAt": "2026-07-06T11:24:00.000Z",
+      "id": "demo-order-2026-07-07",
+      "archived": false
+    },
+    {
+      "userId": "demo-user-08",
+      "items": [
+        {
+          "bookId": "18",
+          "title": "Project Hail Mary",
+          "price": 23,
+          "quantity": 1
+        }
+      ],
+      "shipping": {
+        "fullName": "Kareem Yasin",
+        "phone": "0599-000-108",
+        "address": "Jericho"
+      },
+      "subtotal": 23,
+      "discount": 0,
+      "total": 23,
+      "couponCode": null,
+      "paymentMethod": "cash_on_delivery",
+      "status": "delivered",
+      "createdAt": "2026-08-10T12:31:00.000Z",
+      "id": "demo-order-2026-08-01",
+      "archived": false
+    },
+    {
+      "userId": "demo-user-01",
+      "items": [
+        {
+          "bookId": "4",
+          "title": "The Great Gatsby",
+          "price": 11,
+          "quantity": 1
+        },
+        {
+          "bookId": "9",
+          "title": "Harry Potter and the Sorcerer's Stone",
+          "price": 17.5,
+          "quantity": 1
+        },
+        {
+          "bookId": "14",
+          "title": "Deep Work",
+          "price": 18.5,
+          "quantity": 1
+        }
+      ],
+      "shipping": {
+        "fullName": "Sara Haddad",
+        "phone": "0599-000-101",
+        "address": "Nablus"
+      },
+      "subtotal": 47,
+      "discount": 0,
+      "total": 47,
+      "couponCode": null,
+      "paymentMethod": "card_demo",
+      "status": "delivered",
+      "createdAt": "2026-08-14T13:38:00.000Z",
+      "id": "demo-order-2026-08-02",
+      "archived": false
+    },
+    {
+      "userId": "demo-user-04",
+      "items": [
+        {
+          "bookId": "11",
+          "title": "To Kill a Mockingbird",
+          "price": 14,
+          "quantity": 1
+        },
+        {
+          "bookId": "16",
+          "title": "Educated",
+          "price": 17,
+          "quantity": 1
+        }
+      ],
+      "shipping": {
+        "fullName": "Yousef Salem",
+        "phone": "0599-000-104",
+        "address": "Jenin"
+      },
+      "subtotal": 31,
+      "discount": 0,
+      "total": 31,
+      "couponCode": null,
+      "paymentMethod": "cash_on_delivery",
+      "status": "cancelled",
+      "createdAt": "2026-08-18T14:45:00.000Z",
+      "id": "demo-order-2026-08-03",
+      "archived": false
+    },
+    {
+      "userId": "demo-user-07",
+      "items": [
+        {
+          "bookId": "18",
+          "title": "Project Hail Mary",
+          "price": 23,
+          "quantity": 2
+        }
+      ],
+      "shipping": {
+        "fullName": "Noor Mansour",
+        "phone": "0599-000-107",
+        "address": "Qalqilya"
+      },
+      "subtotal": 46,
+      "discount": 4.6,
+      "total": 41.4,
+      "couponCode": "SAVE10",
+      "paymentMethod": "card_demo",
+      "status": "delivered",
+      "createdAt": "2026-08-22T15:52:00.000Z",
+      "id": "demo-order-2026-08-04",
+      "archived": false
+    },
+    {
+      "userId": "demo-user-10",
+      "items": [
+        {
+          "bookId": "4",
+          "title": "The Great Gatsby",
+          "price": 11,
+          "quantity": 1
+        }
+      ],
+      "shipping": {
+        "fullName": "Rami Sabbah",
+        "phone": "0599-000-110",
+        "address": "Tubas"
+      },
+      "subtotal": 11,
+      "discount": 0,
+      "total": 11,
+      "couponCode": null,
+      "paymentMethod": "cash_on_delivery",
+      "status": "delivered",
+      "createdAt": "2026-08-26T16:59:00.000Z",
+      "id": "demo-order-2026-08-05",
+      "archived": false
+    },
+    {
+      "userId": "cXvhLY8tgKg",
+      "items": [
+        {
+          "bookId": "11",
+          "title": "To Kill a Mockingbird",
+          "price": 14,
+          "quantity": 1
+        },
+        {
+          "bookId": "16",
+          "title": "Educated",
+          "price": 17,
+          "quantity": 1
+        }
+      ],
+      "shipping": {
+        "fullName": "jebreel batsh",
+        "phone": "+1 (555) 247-6319",
+        "address": "Tulkarm"
+      },
+      "subtotal": 31,
+      "discount": 0,
+      "total": 31,
+      "couponCode": null,
+      "paymentMethod": "card_demo",
+      "status": "delivered",
+      "createdAt": "2026-08-03T17:06:00.000Z",
+      "id": "demo-order-2026-08-06",
+      "archived": false
+    },
+    {
+      "userId": "demo-user-06",
+      "items": [
+        {
+          "bookId": "18",
+          "title": "Project Hail Mary",
+          "price": 23,
+          "quantity": 1
+        }
+      ],
+      "shipping": {
+        "fullName": "Adam Awad",
+        "phone": "0599-000-106",
+        "address": "Hebron"
+      },
+      "subtotal": 23,
+      "discount": 0,
+      "total": 23,
+      "couponCode": null,
+      "paymentMethod": "cash_on_delivery",
+      "status": "delivered",
+      "createdAt": "2026-08-07T18:13:00.000Z",
+      "id": "demo-order-2026-08-07",
+      "archived": false
+    },
+    {
+      "userId": "demo-user-10",
+      "items": [
+        {
+          "bookId": "5",
+          "title": "Dune",
+          "price": 22,
+          "quantity": 2
+        }
+      ],
+      "shipping": {
+        "fullName": "Rami Sabbah",
+        "phone": "0599-000-110",
+        "address": "Tubas"
+      },
+      "subtotal": 44,
+      "discount": 4.4,
+      "total": 39.6,
+      "couponCode": "SAVE10",
+      "paymentMethod": "card_demo",
+      "status": "delivered",
+      "createdAt": "2026-09-11T09:20:00.000Z",
+      "id": "demo-order-2026-09-01",
+      "archived": false
+    },
+    {
+      "userId": "demo-user-03",
+      "items": [
+        {
+          "bookId": "12",
+          "title": "The Catcher in the Rye",
+          "price": 13,
+          "quantity": 1
+        },
+        {
+          "bookId": "17",
+          "title": "The Martian",
+          "price": 18,
+          "quantity": 1
+        },
+        {
+          "bookId": "22",
+          "title": "The Book Thief",
+          "price": 16.5,
+          "quantity": 1
+        }
+      ],
+      "shipping": {
+        "fullName": "Lina Nasser",
+        "phone": "0599-000-103",
+        "address": "Tulkarm"
+      },
+      "subtotal": 47.5,
+      "discount": 0,
+      "total": 47.5,
+      "couponCode": null,
+      "paymentMethod": "cash_on_delivery",
+      "status": "delivered",
+      "createdAt": "2026-09-15T10:27:00.000Z",
+      "id": "demo-order-2026-09-02",
+      "archived": false
+    },
+    {
+      "userId": "demo-user-06",
+      "items": [
+        {
+          "bookId": "19",
+          "title": "The Silent Patient",
+          "price": 16,
+          "quantity": 1
+        }
+      ],
+      "shipping": {
+        "fullName": "Adam Awad",
+        "phone": "0599-000-106",
+        "address": "Hebron"
+      },
+      "subtotal": 16,
+      "discount": 0,
+      "total": 16,
+      "couponCode": null,
+      "paymentMethod": "card_demo",
+      "status": "delivered",
+      "createdAt": "2026-09-19T11:34:00.000Z",
+      "id": "demo-order-2026-09-03",
+      "archived": false
+    },
+    {
+      "userId": "demo-user-09",
+      "items": [
+        {
+          "bookId": "5",
+          "title": "Dune",
+          "price": 22,
+          "quantity": 1
+        }
+      ],
+      "shipping": {
+        "fullName": "Hala Zaid",
+        "phone": "0599-000-109",
+        "address": "Salfit"
+      },
+      "subtotal": 22,
+      "discount": 0,
+      "total": 22,
+      "couponCode": null,
+      "paymentMethod": "cash_on_delivery",
+      "status": "pending",
+      "createdAt": "2026-09-23T12:41:00.000Z",
+      "id": "demo-order-2026-09-04",
+      "archived": false
+    },
+    {
+      "userId": "cXvhLY8tgKg",
+      "items": [
+        {
+          "bookId": "12",
+          "title": "The Catcher in the Rye",
+          "price": 13,
+          "quantity": 2
+        },
+        {
+          "bookId": "17",
+          "title": "The Martian",
+          "price": 18,
+          "quantity": 1
+        }
+      ],
+      "shipping": {
+        "fullName": "jebreel batsh",
+        "phone": "+1 (555) 247-6319",
+        "address": "Tulkarm"
+      },
+      "subtotal": 44,
+      "discount": 4.4,
+      "total": 39.6,
+      "couponCode": "SAVE10",
+      "paymentMethod": "card_demo",
+      "status": "delivered",
+      "createdAt": "2026-09-27T13:48:00.000Z",
+      "id": "demo-order-2026-09-05",
+      "archived": false
+    },
+    {
+      "userId": "demo-user-05",
+      "items": [
+        {
+          "bookId": "19",
+          "title": "The Silent Patient",
+          "price": 16,
+          "quantity": 1
+        }
+      ],
+      "shipping": {
+        "fullName": "Maya Hamdan",
+        "phone": "0599-000-105",
+        "address": "Bethlehem"
+      },
+      "subtotal": 16,
+      "discount": 0,
+      "total": 16,
+      "couponCode": null,
+      "paymentMethod": "cash_on_delivery",
+      "status": "delivered",
+      "createdAt": "2026-09-04T14:55:00.000Z",
+      "id": "demo-order-2026-09-06",
+      "archived": false
+    },
+    {
+      "userId": "demo-user-08",
+      "items": [
+        {
+          "bookId": "5",
+          "title": "Dune",
+          "price": 22,
+          "quantity": 1
+        }
+      ],
+      "shipping": {
+        "fullName": "Kareem Yasin",
+        "phone": "0599-000-108",
+        "address": "Jericho"
+      },
+      "subtotal": 22,
+      "discount": 0,
+      "total": 22,
+      "couponCode": null,
+      "paymentMethod": "card_demo",
+      "status": "delivered",
+      "createdAt": "2026-09-08T15:02:00.000Z",
+      "id": "demo-order-2026-09-07",
+      "archived": false
+    },
+    {
+      "userId": "demo-user-02",
+      "items": [
+        {
+          "bookId": "13",
+          "title": "Sapiens",
+          "price": 24,
+          "quantity": 1
+        },
+        {
+          "bookId": "18",
+          "title": "Project Hail Mary",
+          "price": 23,
+          "quantity": 1
+        }
+      ],
+      "shipping": {
+        "fullName": "Omar Khalil",
+        "phone": "0599-000-102",
+        "address": "Ramallah"
+      },
+      "subtotal": 47,
+      "discount": 0,
+      "total": 47,
+      "couponCode": null,
+      "paymentMethod": "cash_on_delivery",
+      "status": "delivered",
+      "createdAt": "2026-10-12T16:09:00.000Z",
+      "id": "demo-order-2026-10-01",
+      "archived": false
+    },
+    {
+      "userId": "demo-user-05",
+      "items": [
+        {
+          "bookId": "20",
+          "title": "Gone Girl",
+          "price": 15,
+          "quantity": 2
+        },
+        {
+          "bookId": "4",
+          "title": "The Great Gatsby",
+          "price": 11,
+          "quantity": 1
+        },
+        {
+          "bookId": "9",
+          "title": "Harry Potter and the Sorcerer's Stone",
+          "price": 17.5,
+          "quantity": 1
+        }
+      ],
+      "shipping": {
+        "fullName": "Maya Hamdan",
+        "phone": "0599-000-105",
+        "address": "Bethlehem"
+      },
+      "subtotal": 58.5,
+      "discount": 5.85,
+      "total": 52.65,
+      "couponCode": "SAVE10",
+      "paymentMethod": "card_demo",
+      "status": "shipped",
+      "createdAt": "2026-10-16T17:16:00.000Z",
+      "id": "demo-order-2026-10-02",
+      "archived": false
+    },
+    {
+      "userId": "demo-user-08",
+      "items": [
+        {
+          "bookId": "6",
+          "title": "Atomic Habits",
+          "price": 20,
+          "quantity": 1
+        }
+      ],
+      "shipping": {
+        "fullName": "Kareem Yasin",
+        "phone": "0599-000-108",
+        "address": "Jericho"
+      },
+      "subtotal": 20,
+      "discount": 0,
+      "total": 20,
+      "couponCode": null,
+      "paymentMethod": "cash_on_delivery",
+      "status": "delivered",
+      "createdAt": "2026-10-20T18:23:00.000Z",
+      "id": "demo-order-2026-10-03",
+      "archived": false
+    },
+    {
+      "userId": "cXvhLY8tgKg",
+      "items": [
+        {
+          "bookId": "13",
+          "title": "Sapiens",
+          "price": 24,
+          "quantity": 1
+        },
+        {
+          "bookId": "18",
+          "title": "Project Hail Mary",
+          "price": 23,
+          "quantity": 1
+        }
+      ],
+      "shipping": {
+        "fullName": "jebreel batsh",
+        "phone": "+1 (555) 247-6319",
+        "address": "Tulkarm"
+      },
+      "subtotal": 47,
+      "discount": 0,
+      "total": 47,
+      "couponCode": null,
+      "paymentMethod": "card_demo",
+      "status": "pending",
+      "createdAt": "2026-10-24T09:30:00.000Z",
+      "id": "demo-order-2026-10-04",
+      "archived": false
+    },
+    {
+      "userId": "demo-user-04",
+      "items": [
+        {
+          "bookId": "20",
+          "title": "Gone Girl",
+          "price": 15,
+          "quantity": 1
+        }
+      ],
+      "shipping": {
+        "fullName": "Yousef Salem",
+        "phone": "0599-000-104",
+        "address": "Jenin"
+      },
+      "subtotal": 15,
+      "discount": 0,
+      "total": 15,
+      "couponCode": null,
+      "paymentMethod": "cash_on_delivery",
+      "status": "delivered",
+      "createdAt": "2026-10-28T10:37:00.000Z",
+      "id": "demo-order-2026-10-05",
+      "archived": false
+    },
+    {
+      "userId": "demo-user-07",
+      "items": [
+        {
+          "bookId": "6",
+          "title": "Atomic Habits",
+          "price": 20,
+          "quantity": 2
+        }
+      ],
+      "shipping": {
+        "fullName": "Noor Mansour",
+        "phone": "0599-000-107",
+        "address": "Qalqilya"
+      },
+      "subtotal": 40,
+      "discount": 4,
+      "total": 36,
+      "couponCode": "SAVE10",
+      "paymentMethod": "card_demo",
+      "status": "cancelled",
+      "createdAt": "2026-10-05T11:44:00.000Z",
+      "id": "demo-order-2026-10-06",
+      "archived": false
+    },
+    {
+      "userId": "demo-user-10",
+      "items": [
+        {
+          "bookId": "13",
+          "title": "Sapiens",
+          "price": 24,
+          "quantity": 1
+        },
+        {
+          "bookId": "18",
+          "title": "Project Hail Mary",
+          "price": 23,
+          "quantity": 1
+        }
+      ],
+      "shipping": {
+        "fullName": "Rami Sabbah",
+        "phone": "0599-000-110",
+        "address": "Tubas"
+      },
+      "subtotal": 47,
+      "discount": 0,
+      "total": 47,
+      "couponCode": null,
+      "paymentMethod": "cash_on_delivery",
+      "status": "delivered",
+      "createdAt": "2026-10-09T12:51:00.000Z",
+      "id": "demo-order-2026-10-07",
+      "archived": false
+    },
+    {
+      "userId": "demo-user-03",
+      "items": [
+        {
+          "bookId": "20",
+          "title": "Gone Girl",
+          "price": 15,
+          "quantity": 1
+        }
+      ],
+      "shipping": {
+        "fullName": "Lina Nasser",
+        "phone": "0599-000-103",
+        "address": "Tulkarm"
+      },
+      "subtotal": 15,
+      "discount": 0,
+      "total": 15,
+      "couponCode": null,
+      "paymentMethod": "card_demo",
+      "status": "shipped",
+      "createdAt": "2026-10-13T13:58:00.000Z",
+      "id": "demo-order-2026-10-08",
+      "archived": false
+    },
+    {
+      "userId": "demo-user-06",
+      "items": [
+        {
+          "bookId": "6",
+          "title": "Atomic Habits",
+          "price": 20,
+          "quantity": 1
+        },
+        {
+          "bookId": "11",
+          "title": "To Kill a Mockingbird",
+          "price": 14,
+          "quantity": 1
+        },
+        {
+          "bookId": "16",
+          "title": "Educated",
+          "price": 17,
+          "quantity": 1
+        }
+      ],
+      "shipping": {
+        "fullName": "Adam Awad",
+        "phone": "0599-000-106",
+        "address": "Hebron"
+      },
+      "subtotal": 51,
+      "discount": 0,
+      "total": 51,
+      "couponCode": null,
+      "paymentMethod": "cash_on_delivery",
+      "status": "delivered",
+      "createdAt": "2026-10-17T14:05:00.000Z",
+      "id": "demo-order-2026-10-09",
+      "archived": false
+    },
+    {
+      "userId": "cXvhLY8tgKg",
+      "items": [
+        {
+          "bookId": "14",
+          "title": "Deep Work",
+          "price": 18.5,
+          "quantity": 2
+        },
+        {
+          "bookId": "19",
+          "title": "The Silent Patient",
+          "price": 16,
+          "quantity": 1
+        }
+      ],
+      "shipping": {
+        "fullName": "jebreel batsh",
+        "phone": "+1 (555) 247-6319",
+        "address": "Tulkarm"
+      },
+      "subtotal": 53,
+      "discount": 5.3,
+      "total": 47.7,
+      "couponCode": "SAVE10",
+      "paymentMethod": "card_demo",
+      "status": "delivered",
+      "createdAt": "2026-11-01T15:12:00.000Z",
+      "id": "demo-order-2026-11-01",
+      "archived": false
+    },
+    {
+      "userId": "demo-user-03",
+      "items": [
+        {
+          "bookId": "21",
+          "title": "The Midnight Library",
+          "price": 17.5,
+          "quantity": 1
+        }
+      ],
+      "shipping": {
+        "fullName": "Lina Nasser",
+        "phone": "0599-000-103",
+        "address": "Tulkarm"
+      },
+      "subtotal": 17.5,
+      "discount": 0,
+      "total": 17.5,
+      "couponCode": null,
+      "paymentMethod": "cash_on_delivery",
+      "status": "pending",
+      "createdAt": "2026-11-02T16:19:00.000Z",
+      "id": "demo-order-2026-11-02",
+      "archived": false
+    },
+    {
+      "userId": "demo-user-06",
+      "items": [
+        {
+          "bookId": "7",
+          "title": "Jane Eyre",
+          "price": 13,
+          "quantity": 1
+        }
+      ],
+      "shipping": {
+        "fullName": "Adam Awad",
+        "phone": "0599-000-106",
+        "address": "Hebron"
+      },
+      "subtotal": 13,
+      "discount": 0,
+      "total": 13,
+      "couponCode": null,
+      "paymentMethod": "card_demo",
+      "status": "shipped",
+      "createdAt": "2026-11-03T17:26:00.000Z",
+      "id": "demo-order-2026-11-03",
+      "archived": false
+    },
+    {
+      "userId": "demo-user-09",
+      "items": [
+        {
+          "bookId": "14",
+          "title": "Deep Work",
+          "price": 18.5,
+          "quantity": 1
+        },
+        {
+          "bookId": "19",
+          "title": "The Silent Patient",
+          "price": 16,
+          "quantity": 1
+        }
+      ],
+      "shipping": {
+        "fullName": "Hala Zaid",
+        "phone": "0599-000-109",
+        "address": "Salfit"
+      },
+      "subtotal": 34.5,
+      "discount": 0,
+      "total": 34.5,
+      "couponCode": null,
+      "paymentMethod": "cash_on_delivery",
+      "status": "pending",
+      "createdAt": "2026-11-04T18:33:00.000Z",
+      "id": "demo-order-2026-11-04",
+      "archived": false
+    },
+    {
+      "userId": "demo-user-02",
+      "items": [
+        {
+          "bookId": "21",
+          "title": "The Midnight Library",
+          "price": 17.5,
+          "quantity": 2
+        }
+      ],
+      "shipping": {
+        "fullName": "Omar Khalil",
+        "phone": "0599-000-102",
+        "address": "Ramallah"
+      },
+      "subtotal": 35,
+      "discount": 3.5,
+      "total": 31.5,
+      "couponCode": "SAVE10",
+      "paymentMethod": "card_demo",
+      "status": "delivered",
+      "createdAt": "2026-11-05T09:40:00.000Z",
+      "id": "demo-order-2026-11-05",
+      "archived": false
+    },
+    {
+      "userId": "demo-user-05",
+      "items": [
+        {
+          "bookId": "7",
+          "title": "Jane Eyre",
+          "price": 13,
+          "quantity": 1
+        }
+      ],
+      "shipping": {
+        "fullName": "Maya Hamdan",
+        "phone": "0599-000-105",
+        "address": "Bethlehem"
+      },
+      "subtotal": 13,
+      "discount": 0,
+      "total": 13,
+      "couponCode": null,
+      "paymentMethod": "cash_on_delivery",
+      "status": "shipped",
+      "createdAt": "2026-11-06T10:47:00.000Z",
+      "id": "demo-order-2026-11-06",
+      "archived": false
+    },
+    {
+      "userId": "cXvhLY8tgKg",
+      "items": [
+        {
+          "bookId": "14",
+          "title": "Deep Work",
+          "price": 18.5,
+          "quantity": 1
+        },
+        {
+          "bookId": "19",
+          "title": "The Silent Patient",
+          "price": 16,
+          "quantity": 1
+        },
+        {
+          "bookId": "1",
+          "title": "Pride and Prejudice",
+          "price": 12.5,
+          "quantity": 1
+        }
+      ],
+      "shipping": {
+        "fullName": "jebreel batsh",
+        "phone": "+1 (555) 247-6319",
+        "address": "Tulkarm"
+      },
+      "subtotal": 47,
+      "discount": 0,
+      "total": 47,
+      "couponCode": null,
+      "paymentMethod": "card_demo",
+      "status": "pending",
+      "createdAt": "2026-11-01T11:54:00.000Z",
+      "id": "demo-order-2026-11-07",
+      "archived": false
+    },
+    {
+      "userId": "demo-user-01",
+      "items": [
+        {
+          "bookId": "21",
+          "title": "The Midnight Library",
+          "price": 17.5,
+          "quantity": 1
+        }
+      ],
+      "shipping": {
+        "fullName": "Sara Haddad",
+        "phone": "0599-000-101",
+        "address": "Nablus"
+      },
+      "subtotal": 17.5,
+      "discount": 0,
+      "total": 17.5,
+      "couponCode": null,
+      "paymentMethod": "cash_on_delivery",
+      "status": "shipped",
+      "createdAt": "2026-11-02T12:01:00.000Z",
+      "id": "demo-order-2026-11-08",
+      "archived": false
     }
   ],
   "users": [
@@ -529,6 +1785,136 @@
       "passwordHash": "80ce278ea62576b1f2e167e71cc7c08dec319b8525a189fe1434b958d74a7357",
       "salt": "38534102-5640-4439-aa85-466cf6986f4f",
       "id": "3JD2gixkK2M"
+    },
+    {
+      "firstName": "Sara",
+      "lastName": "Haddad",
+      "email": "sara.haddad.demo@example.com",
+      "phone": "0599-000-101",
+      "address": "Nablus",
+      "role": "user",
+      "passwordHash": "7563d03cfc36e1af4a89c84cc19ab5d4aef31998a33e15b67d798802d1c4e2a4",
+      "salt": "708b287f-9b6d-456f-9e8e-1aedbd759562",
+      "id": "demo-user-01",
+      "active": true,
+      "archived": false
+    },
+    {
+      "firstName": "Omar",
+      "lastName": "Khalil",
+      "email": "omar.khalil.demo@example.com",
+      "phone": "0599-000-102",
+      "address": "Ramallah",
+      "role": "user",
+      "passwordHash": "024c247e892494d1540c00c39141bfe72f499dbe3930f738825921a4aa6ae3a4",
+      "salt": "9974fbdb-65c3-4e5b-bd25-8d3878c686c7",
+      "id": "demo-user-02",
+      "active": true,
+      "archived": false
+    },
+    {
+      "firstName": "Lina",
+      "lastName": "Nasser",
+      "email": "lina.nasser.demo@example.com",
+      "phone": "0599-000-103",
+      "address": "Tulkarm",
+      "role": "user",
+      "passwordHash": "e011d7998a0cf8fead90d2a84258d1756df27cfd8da8ee6f1f182763cff54670",
+      "salt": "f2adc0fc-96c6-4dde-a408-952175d96caa",
+      "id": "demo-user-03",
+      "active": true,
+      "archived": false
+    },
+    {
+      "firstName": "Yousef",
+      "lastName": "Salem",
+      "email": "yousef.salem.demo@example.com",
+      "phone": "0599-000-104",
+      "address": "Jenin",
+      "role": "user",
+      "passwordHash": "7b973947586cbf7ad4a80ea39350094525bda756d76138de7e14115424905036",
+      "salt": "c645f0c5-5110-41be-9576-c9b6a1dc3f11",
+      "id": "demo-user-04",
+      "active": true,
+      "archived": false
+    },
+    {
+      "firstName": "Maya",
+      "lastName": "Hamdan",
+      "email": "maya.hamdan.demo@example.com",
+      "phone": "0599-000-105",
+      "address": "Bethlehem",
+      "role": "user",
+      "passwordHash": "ab927e1c3c157d7cc1264951120e3e8df559afeb7353c8d23b789279acd8ebdd",
+      "salt": "7adb59ed-1264-4f9e-80b6-556a53bd27c7",
+      "id": "demo-user-05",
+      "active": true,
+      "archived": false
+    },
+    {
+      "firstName": "Adam",
+      "lastName": "Awad",
+      "email": "adam.awad.demo@example.com",
+      "phone": "0599-000-106",
+      "address": "Hebron",
+      "role": "user",
+      "passwordHash": "ab292cc73ba4d3551a418b21d669f05671d644a8cbf28ba780bd896a9b0c05d5",
+      "salt": "8fb75e27-7865-4459-8231-febbf7c30afd",
+      "id": "demo-user-06",
+      "active": true,
+      "archived": false
+    },
+    {
+      "firstName": "Noor",
+      "lastName": "Mansour",
+      "email": "noor.mansour.demo@example.com",
+      "phone": "0599-000-107",
+      "address": "Qalqilya",
+      "role": "user",
+      "passwordHash": "fbd75b0ec0a32de9e3d9544751a35ae86b2a0b1a06a225e25ce1eac21ca9888b",
+      "salt": "6faca310-545c-4246-a96c-7078655c3d1a",
+      "id": "demo-user-07",
+      "active": true,
+      "archived": false
+    },
+    {
+      "firstName": "Kareem",
+      "lastName": "Yasin",
+      "email": "kareem.yasin.demo@example.com",
+      "phone": "0599-000-108",
+      "address": "Jericho",
+      "role": "user",
+      "passwordHash": "6dd29ee5fbabf5230ff8557e9d3d052a4c23aa03fb9eb3cd8b67688d899e6f34",
+      "salt": "c2f377ac-fcf1-412c-854e-6685706f9e81",
+      "id": "demo-user-08",
+      "active": true,
+      "archived": false
+    },
+    {
+      "firstName": "Hala",
+      "lastName": "Zaid",
+      "email": "hala.zaid.demo@example.com",
+      "phone": "0599-000-109",
+      "address": "Salfit",
+      "role": "user",
+      "passwordHash": "af584c894c94670ca4428e96ee4bdda2af4ee53768e201b80d83dd45e9da56d5",
+      "salt": "5e30945a-d988-4a3c-b3f9-4ac07d1f5be2",
+      "id": "demo-user-09",
+      "active": true,
+      "archived": false
+    },
+    {
+      "firstName": "Rami",
+      "lastName": "Sabbah",
+      "email": "rami.sabbah.demo@example.com",
+      "phone": "0599-000-110",
+      "address": "Tubas",
+      "role": "user",
+      "passwordHash": "fa51d0fbfa066678afe14c404c04a89c4a74c1b63d508e17ae4640366ea54570",
+      "salt": "eeb71edc-2a24-4fa1-ba26-11cec0768f8e",
+      "id": "demo-user-10",
+      "active": true,
+      "archived": false
     }
   ],
   "$schema": "./node_modules/json-server/schema.json"
