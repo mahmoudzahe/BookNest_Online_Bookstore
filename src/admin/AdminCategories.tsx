@@ -1,3 +1,5 @@
+"use client";
+
 import { categoryColumns } from "./columns/categoryColumns";
 import { Box, Button, Paper } from "@mui/material";
 import { DataGrid } from "@mui/x-data-grid";

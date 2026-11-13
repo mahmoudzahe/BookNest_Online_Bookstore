@@ -1,6 +1,8 @@
+"use client";
+
 import { Card } from "@mui/material";
 import { alpha, styled } from "@mui/material/styles";
-import { Link as RouterLink } from "react-router-dom";
+import RouterLink from "./NextLink";
 
 export const StoreBookCard = styled(Card)(({ theme }) => ({
   height: "100%",

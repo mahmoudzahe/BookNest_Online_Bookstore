@@ -1,7 +1,10 @@
+"use client";
+
 import { Box, Button, Stack, Typography } from "@mui/material";
 import type { ReactNode } from "react";
-import { Link as RouterLink, useLocation } from "react-router-dom";
-import booknestLogo from "../assets/booknest-logo.svg";
+import { usePathname, useSearchParams } from "next/navigation";
+import RouterLink from "./NextLink";
+import { APP_ROUTES, BOOKNEST_LOGO_PATH } from "../constants";
 import {
   AuthFormPaper,
   AuthPage,
@@ -16,11 +19,12 @@ interface AuthLayoutProps {
 }
 
 function AuthLayout({ title, subtitle, children }: AuthLayoutProps) {
-  const { pathname, search } = useLocation();
-  const isRegisterPage = pathname === "/register";
-  const otherPage = isRegisterPage ? "/login" : "/register";
+  const pathname = usePathname();
+  const searchParams = useSearchParams();
+  const isRegisterPage = pathname === APP_ROUTES.register;
+  const otherPage = isRegisterPage ? APP_ROUTES.login : APP_ROUTES.register;
   const hasCheckoutRedirect =
-    new URLSearchParams(search).get("redirect") === "/checkout";
+    searchParams?.get("redirect") === APP_ROUTES.checkout;
   const otherPageLink = hasCheckoutRedirect
     ? `${otherPage}?redirect=%2Fcheckout`
     : otherPage;
@@ -30,7 +34,7 @@ function AuthLayout({ title, subtitle, children }: AuthLayoutProps) {
       <AuthPageHeader>
         <Stack
           component={RouterLink}
-          to="/"
+          href="/"
           direction="row"
           spacing={1}
           sx={{
@@ -41,7 +45,7 @@ function AuthLayout({ title, subtitle, children }: AuthLayoutProps) {
         >
           <Box
             component="img"
-            src={booknestLogo}
+            src={BOOKNEST_LOGO_PATH}
             alt=""
             sx={{ width: 38, height: 38 }}
           />
@@ -61,7 +65,7 @@ function AuthLayout({ title, subtitle, children }: AuthLayoutProps) {
           </Typography>
           <Button
             component={RouterLink}
-            to={otherPageLink}
+            href={otherPageLink}
             variant="outlined"
             className="BookNest-authSwitchButton"
           >

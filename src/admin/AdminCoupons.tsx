@@ -1,3 +1,5 @@
+"use client";
+
 import { couponColumns } from "./columns/couponColumns";
 import { Box, Button, Paper } from "@mui/material";
 import { DataGrid } from "@mui/x-data-grid";

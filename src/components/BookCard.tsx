@@ -1,3 +1,5 @@
+"use client";
+
 import {
   Box,
   Button,
@@ -8,7 +10,7 @@ import {
   Typography,
 } from "@mui/material";
 import ShoppingCartOutlinedIcon from "@mui/icons-material/ShoppingCartOutlined";
-import { Link as RouterLink } from "react-router-dom";
+import RouterLink from "./NextLink";
 import { StoreBookCard, StoreBookCoverLink } from "./StyledComponents";
 import { useCart } from "../cart/CartContext";
 import type { Book } from "../types/book";
@@ -34,7 +36,7 @@ function BookCard({ book }: BookCardProps) {
         sx={{ p: 1.5, height: "100%", minWidth: 0 }}
       >
         <StoreBookCoverLink
-          to={`/books/${book.id}`}
+          href={`/books/${book.id}`}
           aria-label={`View details for ${book.title}`}
         >
           <Box
@@ -58,7 +60,7 @@ function BookCard({ book }: BookCardProps) {
           <Stack spacing={0.75}>
             <Link
               component={RouterLink}
-              to={`/books/${book.id}`}
+              href={`/books/${book.id}`}
               variant="subtitle2"
               color="text.primary"
               underline="hover"

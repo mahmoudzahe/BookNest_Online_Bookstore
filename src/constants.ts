@@ -1,4 +1,24 @@
-export const API_BASE_URL = "http://localhost:3001";
+export const BOOKNEST_LOGO_PATH = "/assets/booknest-logo.svg";
+
+export const APP_ROUTES = {
+  home: "/",
+  admin: "/admin",
+  cart: "/cart",
+  checkout: "/checkout",
+  login: "/login",
+  register: "/register",
+  orderSuccessPrefix: "/order-success/",
+} as const;
+
+export const USER_ROLES = {
+  admin: "admin",
+  user: "user",
+} as const;
+
+export const NAVBAR_MIN_HEIGHT = 76;
+
+export const API_BASE_URL =
+  process.env.NEXT_PUBLIC_API_URL ?? "http://localhost:3001";
 
 export const BOOKS_PAGE_SIZE = 8;
 

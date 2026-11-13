@@ -1,8 +1,9 @@
 import { Grid, Stack, Typography } from "@mui/material";
-import readingLibrary from "../assets/library.webp";
-import readingReader from "../assets/reader.webp";
-import readingCoffee from "../assets/coffee.webp";
 import { ReadingMomentImage } from "./ReadingMoments.styles";
+
+const readingLibrary = "/assets/library.webp";
+const readingReader = "/assets/reader.webp";
+const readingCoffee = "/assets/coffee.webp";
 
 function ReadingMoments() {
   return (
