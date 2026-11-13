@@ -1,3 +1,20 @@
+export const BOOKNEST_LOGO_PATH = "/assets/booknest-logo.svg";
+
+export const APP_ROUTES = {
+  home: "/",
+  admin: "/admin",
+  cart: "/cart",
+  checkout: "/checkout",
+  login: "/login",
+  register: "/register",
+  orderSuccessPrefix: "/order-success/",
+} as const;
+
+export const USER_ROLES = {
+  admin: "admin",
+  user: "user",
+} as const;
+
 export const NAVBAR_MIN_HEIGHT = 76;
 
 export const API_BASE_URL =

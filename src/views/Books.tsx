@@ -127,11 +127,7 @@ function Books() {
     >
       <Stack spacing={3}>
         <Stack spacing={0.5}>
-          <Typography
-            variant="h3"
-            component="h1"
-            sx={{ fontFamily: "Georgia, serif", fontWeight: 700 }}
-          >
+          <Typography variant="h3" component="h1" sx={{ fontWeight: 700 }}>
             Explore our books
           </Typography>
           <Typography color="text.secondary">
