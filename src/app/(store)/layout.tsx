@@ -2,7 +2,7 @@
 
 import { Suspense, useEffect, useState, type ReactNode } from "react";
 import { Box, Stack } from "@mui/material";
-import { NAVBAR_MIN_HEIGHT } from "@/constants";
+import { APP_ROUTES, NAVBAR_MIN_HEIGHT } from "@/constants";
 import { usePathname } from "next/navigation";
 import NavBar from "@/components/NavBar";
 import Footer from "@/components/Footer";
@@ -15,7 +15,7 @@ export default function StoreLayout({ children }: { children: ReactNode }) {
     setMounted(true);
   }, []);
   const isWhiteCommercePage =
-    pathname === "/cart" || pathname.startsWith("/order-success/");
+    pathname === APP_ROUTES.cart || pathname.startsWith(APP_ROUTES.orderSuccessPrefix);
 
   return (
     <Stack sx={{ minHeight: "100vh" }}>

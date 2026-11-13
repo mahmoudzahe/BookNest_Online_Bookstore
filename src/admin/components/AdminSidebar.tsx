@@ -11,8 +11,9 @@ import {
 import StorefrontOutlinedIcon from "@mui/icons-material/StorefrontOutlined";
 import LogoutOutlinedIcon from "@mui/icons-material/LogoutOutlined";
 import RouterLink from "../../components/NextLink";
-const booknestLogo = "/assets/booknest-logo.svg";
+
 import { adminNavigation } from "../navigation";
+import { APP_ROUTES, BOOKNEST_LOGO_PATH } from "../../constants";
 
 interface AdminSidebarProps {
   pathname: string;
@@ -29,7 +30,7 @@ export default function AdminSidebar({
     <Stack sx={{ height: "100%" }}>
       <Stack
         component={RouterLink}
-        href="/admin"
+        href={APP_ROUTES.admin}
         onClick={onNavigate}
         direction="row"
         spacing={1.5}
@@ -43,7 +44,7 @@ export default function AdminSidebar({
       >
         <Box
           component="img"
-          src={booknestLogo}
+          src={BOOKNEST_LOGO_PATH}
           alt="BookNest"
           sx={{ width: 36, height: 36 }}
         />
@@ -97,7 +98,7 @@ export default function AdminSidebar({
       <List sx={{ px: 1.5, pb: 2 }}>
         <ListItemButton
           component={RouterLink}
-          href="/"
+          href={APP_ROUTES.home}
           onClick={onNavigate}
           sx={{ borderRadius: 2 }}
         >

@@ -19,6 +19,7 @@ import { useAuth } from "../auth/AuthContext";
 import { getUserOrders } from "../services/ordersApi";
 import { getBooks } from "../services/booksApi";
 import type { Order } from "../types/order";
+import { AccountPageSurface, SmallOrderBookCover } from "./AccountStyles";
 
 function MyOrders() {
   const { user } = useAuth();
@@ -53,23 +54,11 @@ function MyOrders() {
   }, [user?.id]);
 
   return (
-    <Box
-      sx={{
-        bgcolor: (theme) =>
-          theme.palette.mode === "dark"
-            ? theme.palette.background.default
-            : theme.palette.background.paper,
-        minHeight: "74vh",
-      }}
-    >
+    <AccountPageSurface>
       <Container maxWidth="md" sx={{ py: { xs: 4, md: 7 } }}>
         <Stack spacing={3.5}>
           <Stack spacing={1}>
-            <Typography
-              component="h1"
-              variant="h4"
-              sx={{ fontFamily: "Georgia, serif", fontWeight: 700 }}
-            >
+            <Typography component="h1" variant="h4" sx={{ fontWeight: 700 }}>
               My orders
             </Typography>
             <Typography color="text.secondary">
@@ -166,18 +155,7 @@ function MyOrders() {
                           spacing={2}
                           sx={{ alignItems: "center" }}
                         >
-                          <Box
-                            sx={{
-                              width: 62,
-                              height: 82,
-                              flexShrink: 0,
-                              display: "flex",
-                              alignItems: "center",
-                              justifyContent: "center",
-                              bgcolor: "action.hover",
-                              borderRadius: 1.5,
-                            }}
-                          >
+                          <SmallOrderBookCover>
                             {bookImages[item.bookId] ? (
                               <Box
                                 component="img"
@@ -193,7 +171,7 @@ function MyOrders() {
                             ) : (
                               <MenuBookOutlinedIcon color="disabled" />
                             )}
-                          </Box>
+                          </SmallOrderBookCover>
                           <Stack spacing={0.5} sx={{ minWidth: 0, flex: 1 }}>
                             <Typography
                               variant="body1"
@@ -252,7 +230,7 @@ function MyOrders() {
           )}
         </Stack>
       </Container>
-    </Box>
+    </AccountPageSurface>
   );
 }
 
