@@ -1,6 +1,7 @@
 import type { ReactNode } from "react";
 import { Divider, Paper, Stack, Typography } from "@mui/material";
 import type { OrderItem } from "../types/order";
+import { T } from "@/i18n/LocaleContext";
 
 type CheckoutOrderSummaryProps = {
   items: Pick<OrderItem, "bookId" | "title" | "quantity" | "price">[];
@@ -20,7 +21,9 @@ export default function CheckoutOrderSummary({
   return (
     <Paper variant="outlined" sx={{ p: { xs: 2.5, sm: 3 }, borderRadius: 3 }}>
       <Stack spacing={2.5}>
-        <Typography variant="h6">Order Summary</Typography>
+        <Typography variant="h6">
+          <T text="Order Summary" />
+        </Typography>
 
         <Stack spacing={1.5}>
           {items.map((item) => (
@@ -45,12 +48,16 @@ export default function CheckoutOrderSummary({
         <Divider />
         <Stack spacing={1.5}>
           <Stack direction="row" sx={{ justifyContent: "space-between" }}>
-            <Typography color="text.secondary">Subtotal</Typography>
+            <Typography color="text.secondary">
+              <T text="Subtotal" />
+            </Typography>
             <Typography>${subtotal.toFixed(2)}</Typography>
           </Stack>
           {discount > 0 && (
             <Stack direction="row" sx={{ justifyContent: "space-between" }}>
-              <Typography color="text.secondary">Discount</Typography>
+              <Typography color="text.secondary">
+                <T text="Discount" />
+              </Typography>
               <Typography color="success.main">
                 -${discount.toFixed(2)}
               </Typography>
@@ -61,7 +68,9 @@ export default function CheckoutOrderSummary({
             direction="row"
             sx={{ justifyContent: "space-between", alignItems: "center" }}
           >
-            <Typography variant="h6">Total</Typography>
+            <Typography variant="h6">
+              <T text="Total" />
+            </Typography>
             <Typography variant="h6">${total.toFixed(2)}</Typography>
           </Stack>
         </Stack>

@@ -19,8 +19,10 @@ import { registerSchema } from "../schemas/authSchemas";
 import type { RegisterForm } from "../types/user";
 import { useAuth } from "../auth/AuthContext";
 import AuthLayout from "../components/AuthLayout";
+import { T, useI18n } from "@/i18n/LocaleContext";
 
 function Register() {
+  const { t } = useI18n();
   const { user, register: createAccount } = useAuth();
   const router = useRouter();
   const searchParams = useSearchParams();
@@ -51,7 +53,7 @@ function Register() {
       setError(
         error instanceof Error
           ? error.message
-          : "Could not create your account. Try again.",
+          : t("Could not create your account. Try again."),
       );
     }
   }
@@ -59,13 +61,16 @@ function Register() {
   if (user) return <ClientRedirect href={redirect} />;
 
   return (
-    <AuthLayout title="Get Started" subtitle="Create your BookNest account">
+    <AuthLayout
+      title={t("Get Started")}
+      subtitle={t("Create your BookNest account")}
+    >
       <Box component="form" onSubmit={handleSubmit(onSubmit)}>
         <Stack spacing={2}>
           {error && <Alert severity="error">{error}</Alert>}
           <Stack direction={{ xs: "column", sm: "row" }} spacing={2}>
             <TextField
-              label="First Name"
+              label={t("First Name")}
               fullWidth
               autoComplete="given-name"
               {...register("firstName")}
@@ -73,7 +78,7 @@ function Register() {
               helperText={errors.firstName?.message}
             />
             <TextField
-              label="Last Name"
+              label={t("Last Name")}
               fullWidth
               autoComplete="family-name"
               {...register("lastName")}
@@ -82,8 +87,8 @@ function Register() {
             />
           </Stack>
           <TextField
-            label="Email"
-            placeholder="name@email.com"
+            label={t("Email")}
+            placeholder={t("name@email.com")}
             fullWidth
             autoComplete="email"
             {...register("email")}
@@ -91,7 +96,7 @@ function Register() {
             helperText={errors.email?.message}
           />
           <TextField
-            label="Password"
+            label={t("Password")}
             type={showPassword ? "text" : "password"}
             fullWidth
             autoComplete="new-password"
@@ -107,7 +112,7 @@ function Register() {
                       size="small"
                       onClick={() => setShowPassword((value) => !value)}
                     >
-                      {showPassword ? "Hide" : "Show"}
+                      {showPassword ? t("Hide") : t("Show")}
                     </Button>
                   </InputAdornment>
                 ),
@@ -115,7 +120,7 @@ function Register() {
             }}
           />
           <TextField
-            label="Confirm Password"
+            label={t("Confirm Password")}
             type={showPassword ? "text" : "password"}
             fullWidth
             autoComplete="new-password"
@@ -130,17 +135,17 @@ function Register() {
             fullWidth
             disabled={isSubmitting}
           >
-            {isSubmitting ? "Creating account..." : "Create Account"}
+            {isSubmitting ? t("Creating account...") : t("Create Account")}
           </Button>
           <Typography variant="body2" sx={{ textAlign: "center" }}>
-            Already have an account?{" "}
+            <T text="Already have an account?" />{" "}
             <Typography
               component={RouterLink}
               href={loginLink}
               color="primary"
               sx={{ fontWeight: 700, textDecoration: "none" }}
             >
-              Log In
+              <T text="Log In" />
             </Typography>
           </Typography>
         </Stack>

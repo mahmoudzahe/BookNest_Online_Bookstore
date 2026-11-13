@@ -15,8 +15,10 @@ import {
 import RouterLink from "./NextLink";
 const booknestLogo = "/assets/booknest-logo.svg";
 import { FOOTER_LINKS } from "./footerLinks";
+import { T, useI18n } from "@/i18n/LocaleContext";
 
 function Footer() {
+  const { t } = useI18n();
   const [email, setEmail] = useState("");
   const [showMessage, setShowMessage] = useState(false);
 
@@ -58,28 +60,27 @@ function Footer() {
                 <Box
                   component="img"
                   src={booknestLogo}
-                  alt="BookNest logo"
+                  alt={t("BookNest logo")}
                   sx={{ width: 42, height: 42 }}
                 />
                 <Typography variant="h5" className="BookNest-textWeight700">
-                  BookNest
+                  <T text="BookNest" />
                 </Typography>
               </Stack>
               <Typography
                 sx={{ maxWidth: 340, opacity: 0.82, lineHeight: 1.8 }}
               >
-                Discover amazing books, explore new stories, and find your next
-                favorite read.
+                <T text="Discover amazing books, explore new stories, and find your next favorite read." />
               </Typography>
             </Stack>
           </Grid>
           <Grid size={{ xs: 12, md: 7 }}>
             <Stack spacing={2}>
               <Typography variant="h6" className="BookNest-textWeight700">
-                A little bookish inspiration
+                <T text="A little bookish inspiration" />
               </Typography>
               <Typography sx={{ opacity: 0.8 }}>
-                Hear about new arrivals, favorite reads, and upcoming offers.
+                <T text="Hear about new arrivals, favorite reads, and upcoming offers." />
               </Typography>
               <Stack
                 component="form"
@@ -89,7 +90,7 @@ function Footer() {
               >
                 <TextField
                   type="email"
-                  placeholder="Enter your email address"
+                  placeholder={t("Enter your email address")}
                   value={email}
                   onChange={(event) => setEmail(event.target.value)}
                   required
@@ -97,7 +98,7 @@ function Footer() {
                   fullWidth
                   slotProps={{
                     htmlInput: {
-                      "aria-label": "Email address",
+                      "aria-label": t("Email address"),
                       maxLength: 254,
                     },
                   }}
@@ -108,7 +109,7 @@ function Footer() {
                   variant="contained"
                   className="BookNest-footerSubscribeButton"
                 >
-                  Subscribe
+                  <T text="Subscribe" />
                 </Button>
               </Stack>
             </Stack>
@@ -135,7 +136,7 @@ function Footer() {
                 color="inherit"
                 sx={{ opacity: 0.9 }}
               >
-                {item.label}
+                {t(item.label)}
               </Link>
             ))}
           </Stack>
@@ -143,7 +144,8 @@ function Footer() {
             variant="body2"
             sx={{ textAlign: "center", opacity: 0.85 }}
           >
-            © {new Date().getFullYear()} BookNest. All rights reserved.
+            © {new Date().getFullYear()}{" "}
+            <T text="BookNest. All rights reserved." />
           </Typography>
         </Stack>
       </Container>
@@ -151,7 +153,9 @@ function Footer() {
         open={showMessage}
         autoHideDuration={1000}
         onClose={() => setShowMessage(false)}
-        message="Thanks for your interest! We will keep you updated with our latest deals and offers."
+        message={t(
+          "Thanks for your interest! We will keep you updated with our latest deals and offers.",
+        )}
         anchorOrigin={{ vertical: "bottom", horizontal: "center" }}
       />
     </Box>

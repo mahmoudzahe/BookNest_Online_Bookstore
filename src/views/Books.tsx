@@ -18,8 +18,10 @@ import BookGrid from "../components/BookGrid";
 import { getBooks, getCategories } from "../services/booksApi";
 import type { Book, Category } from "../types/book";
 import { BOOKS_PAGE_SIZE, BOOK_SORT_OPTIONS } from "../constants";
+import { T, useI18n } from "@/i18n/LocaleContext";
 
 function Books() {
+  const { t } = useI18n();
   const searchParams = useSearchParams();
   const router = useRouter();
 
@@ -61,7 +63,9 @@ function Books() {
         }
       } catch {
         if (active)
-          setError("Could not load books. Check that the mock API is running.");
+          setError(
+            t("Could not load books. Check that the mock API is running."),
+          );
       } finally {
         if (active) setLoading(false);
       }
@@ -127,11 +131,15 @@ function Books() {
     >
       <Stack spacing={3}>
         <Stack spacing={0.5}>
-          <Typography variant="h3" component="h1" sx={{ fontWeight: 700 }}>
-            Explore our books
+          <Typography
+            variant="h3"
+            component="h1"
+            sx={{ fontWeight: 700 }}
+          >
+            <T text="Explore our books" />
           </Typography>
           <Typography color="text.secondary">
-            Find your next great read from our collection.
+            <T text="Find your next great read from our collection." />
           </Typography>
         </Stack>
         <Paper
@@ -142,7 +150,7 @@ function Books() {
             <Grid size={1}>
               <TextField
                 fullWidth
-                label="Search title or author"
+                label={t("Search title or author")}
                 value={search}
                 onChange={(e) => updateFilter("q", e.target.value)}
                 size="small"
@@ -152,7 +160,7 @@ function Books() {
               <TextField
                 fullWidth
                 select
-                label="Category"
+                label={t("Category")}
                 value={
                   categories.some((item) => item.id === category)
                     ? category
@@ -161,10 +169,12 @@ function Books() {
                 onChange={(e) => updateFilter("category", e.target.value)}
                 size="small"
               >
-                <MenuItem value="">All categories</MenuItem>
+                <MenuItem value="">
+                  <T text="All categories" />
+                </MenuItem>
                 {categories.map((item) => (
                   <MenuItem key={item.id} value={item.id}>
-                    {item.name}
+                    {t(item.name)}
                   </MenuItem>
                 ))}
               </TextField>
@@ -172,7 +182,7 @@ function Books() {
             <Grid size={1}>
               <TextField
                 fullWidth
-                label="Min price"
+                label={t("Min price")}
                 type="number"
                 value={minPrice}
                 onChange={(e) => updateFilter("min", e.target.value)}
@@ -183,7 +193,7 @@ function Books() {
             <Grid size={1}>
               <TextField
                 fullWidth
-                label="Max price"
+                label={t("Max price")}
                 type="number"
                 value={maxPrice}
                 onChange={(e) => updateFilter("max", e.target.value)}
@@ -195,14 +205,14 @@ function Books() {
               <TextField
                 fullWidth
                 select
-                label="Sort by"
+                label={t("Sort by")}
                 value={sort}
                 onChange={(e) => updateFilter("sort", e.target.value)}
                 size="small"
               >
                 {BOOK_SORT_OPTIONS.map((option) => (
                   <MenuItem key={option.value} value={option.value}>
-                    {option.label}
+                    {t(option.label)}
                   </MenuItem>
                 ))}
               </TextField>
@@ -216,7 +226,7 @@ function Books() {
           <Stack spacing={4}>
             <Stack spacing={2}>
               <Typography color="text.secondary">
-                {filteredBooks.length} books found
+                {filteredBooks.length} <T text="books found" />
               </Typography>
               {visibleBooks.length > 0 ? (
                 <BookGrid
@@ -226,7 +236,9 @@ function Books() {
                   onBookDeleted={handleBookDeleted}
                 />
               ) : (
-                <Alert severity="info">No books match your filters.</Alert>
+                <Alert severity="info">
+                  <T text="No books match your filters." />
+                </Alert>
               )}
             </Stack>
             {filteredBooks.length > BOOKS_PAGE_SIZE && (

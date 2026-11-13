@@ -3,6 +3,7 @@ import { addReview, getReviews, updateReview } from "../services/booksApi";
 import { hasPurchasedBook } from "./useReviewEligibility";
 import type { Book, BookReview } from "../types/book";
 import type { AuthUser } from "../types/user";
+import { translateInBrowser } from "@/i18n/translation";
 
 type Params = {
   book: Book;
@@ -81,7 +82,7 @@ export function useReviewEditor({
     const reviewRating = rating;
     const reviewComment = comment.trim();
     if (!reviewRating || !reviewComment) {
-      setError("Choose a rating and write a review.");
+      setError(translateInBrowser("Choose a rating and write a review."));
       return;
     }
 
@@ -96,7 +97,7 @@ export function useReviewEditor({
 
       if (!eligible) {
         onEligibilityLost();
-        setError("You can only review books you have ordered.");
+        setError(translateInBrowser("You can only review books you have ordered."));
         return;
       }
 
@@ -106,7 +107,7 @@ export function useReviewEditor({
 
       const validationError = validateExistingReview(existing);
       if (validationError) {
-        setError(validationError);
+        setError(translateInBrowser(validationError));
         return;
       }
 
@@ -114,7 +115,7 @@ export function useReviewEditor({
       onReviewsChange(await getReviews(book.id));
       resetEditor();
     } catch {
-      setError("Could not save your review. Try again.");
+      setError(translateInBrowser("Could not save your review. Try again."));
     } finally {
       setSubmitting(false);
     }

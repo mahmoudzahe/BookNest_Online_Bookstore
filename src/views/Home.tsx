@@ -30,6 +30,7 @@ import ReadingMoments from "../components/ReadingMoments";
 import { FeaturedDot, FeaturedScroller } from "./StyledComponents";
 import { getBooks } from "../services/booksApi";
 import type { Book } from "../types/book";
+import { T, useI18n } from "@/i18n/LocaleContext";
 
 const Hero = styled(Paper)(({ theme }) => ({
   position: "relative",
@@ -95,14 +96,21 @@ function SectionHeading({ title, description }: SectionHeadingProps) {
           fontWeight: 600,
         }}
       >
-        View all
-        <ArrowForwardRoundedIcon fontSize="small" />
+        <T text="View all" />
+        <ArrowForwardRoundedIcon
+          fontSize="small"
+          sx={{
+            transform: (theme) =>
+              theme.direction === "rtl" ? "scaleX(-1)" : undefined,
+          }}
+        />
       </Link>
     </Stack>
   );
 }
 
 function Home() {
+  const { t, direction } = useI18n();
   const [books, setBooks] = useState<Book[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
@@ -127,7 +135,7 @@ function Home() {
         }
       } catch {
         if (active) {
-          setError("We couldn't load the books right now.");
+          setError(t("We couldn't load the books right now."));
         }
       } finally {
         if (active) {
@@ -186,7 +194,9 @@ function Home() {
     const maxScroll = list.scrollWidth - list.clientWidth;
 
     list.scrollTo({
-      left: lastFeaturedIndex ? (next / lastFeaturedIndex) * maxScroll : 0,
+      left:
+        (direction === "rtl" ? -1 : 1) *
+        (lastFeaturedIndex ? (next / lastFeaturedIndex) * maxScroll : 0),
       behavior: "smooth",
     });
 
@@ -199,7 +209,9 @@ function Home() {
 
     setFeaturedIndex(
       maxScroll > 0
-        ? Math.round((list.scrollLeft / maxScroll) * lastFeaturedIndex)
+        ? Math.round(
+            (Math.abs(list.scrollLeft) / maxScroll) * lastFeaturedIndex,
+          )
         : 0,
     );
   }
@@ -216,7 +228,9 @@ function Home() {
           }}
         >
           <CircularProgress />
-          <Typography color="text.secondary">Loading books...</Typography>
+          <Typography color="text.secondary">
+            <T text="Loading books..." />
+          </Typography>
         </Stack>
       </Container>
     );
@@ -232,14 +246,16 @@ function Home() {
             textAlign: "center",
           }}
         >
-          <Typography variant="h5">Unable to load books</Typography>
+          <Typography variant="h5">
+            <T text="Unable to load books" />
+          </Typography>
 
           <Typography color="text.secondary">
-            {error} Please try again.
+            {error} <T text="Please try again." />
           </Typography>
 
           <Button variant="contained" onClick={() => window.location.reload()}>
-            Try Again
+            <T text="Try Again" />
           </Button>
         </Stack>
       </Container>
@@ -282,7 +298,7 @@ function Home() {
                     letterSpacing: "0.2em",
                   }}
                 >
-                  Good books. Brighter days.
+                  <T text="Good books. Brighter days." />
                 </Typography>
 
                 <Typography
@@ -299,7 +315,7 @@ function Home() {
                     letterSpacing: "-0.035em",
                   }}
                 >
-                  A new chapter starts here.
+                  <T text="A new chapter starts here." />
                 </Typography>
 
                 <Typography
@@ -310,19 +326,25 @@ function Home() {
                     lineHeight: 1.8,
                   }}
                 >
-                  Find your next favorite story, discover unforgettable authors,
-                  and make room for more books.
+                  <T text="Find your next favorite story, discover unforgettable authors, and make room for more books." />
                 </Typography>
 
                 <Button
                   variant="contained"
                   size="large"
-                  endIcon={<ArrowForwardRoundedIcon />}
+                  endIcon={
+                    <ArrowForwardRoundedIcon
+                      sx={{
+                        transform:
+                          direction === "rtl" ? "scaleX(-1)" : undefined,
+                      }}
+                    />
+                  }
                   component={RouterLink}
                   href="/books"
                   sx={{ px: 3.5, py: 1.2 }}
                 >
-                  Explore our books
+                  <T text="Explore our books" />
                 </Button>
               </Stack>
             </Grid>
@@ -361,7 +383,7 @@ function Home() {
                     key={book.id}
                     component={RouterLink}
                     href={`/books/${book.id}`}
-                    aria-label={`Discover ${book.title}`}
+                    aria-label={t("Discover {title}", { title: book.title })}
                     sx={{
                       width: "23%",
                       maxWidth: 136,
@@ -414,8 +436,8 @@ function Home() {
         <Stack spacing={{ xs: 6, md: 7 }}>
           <Stack component="section" spacing={2.5}>
             <SectionHeading
-              title="Featured books"
-              description="Handpicked stories for your next adventure."
+              title={t("Featured books")}
+              description={t("Handpicked stories for your next adventure.")}
             />
 
             {featured.length > 0 ? (
@@ -447,7 +469,7 @@ function Home() {
               </FeaturedScroller>
             ) : (
               <Typography color="text.secondary">
-                No featured books yet.
+                <T text="No featured books yet." />
               </Typography>
             )}
 
@@ -461,12 +483,16 @@ function Home() {
                 }}
               >
                 <IconButton
-                  aria-label="Previous featured book"
+                  aria-label={t("Previous featured book")}
                   disabled={currentFeaturedIndex === 0}
                   onClick={() => scrollFeatured(currentFeaturedIndex - 1)}
                   className="BookNest-featuredNavButton"
                 >
-                  <ChevronLeftIcon />
+                  <ChevronLeftIcon
+                    sx={{
+                      transform: direction === "rtl" ? "scaleX(-1)" : undefined,
+                    }}
+                  />
                 </IconButton>
 
                 <Stack
@@ -478,7 +504,9 @@ function Home() {
                     <FeaturedDot
                       key={index}
                       type="button"
-                      aria-label={`Show featured book ${index + 1}`}
+                      aria-label={t("Show featured book {index}", {
+                        index: index + 1,
+                      })}
                       aria-current={
                         index === currentFeaturedIndex ? "step" : undefined
                       }
@@ -491,12 +519,16 @@ function Home() {
                 </Stack>
 
                 <IconButton
-                  aria-label="Next featured book"
+                  aria-label={t("Next featured book")}
                   disabled={currentFeaturedIndex === lastFeaturedIndex}
                   onClick={() => scrollFeatured(currentFeaturedIndex + 1)}
                   className="BookNest-featuredNavButton"
                 >
-                  <ChevronRightIcon />
+                  <ChevronRightIcon
+                    sx={{
+                      transform: direction === "rtl" ? "scaleX(-1)" : undefined,
+                    }}
+                  />
                 </IconButton>
               </Stack>
             )}
@@ -527,7 +559,7 @@ function Home() {
                     color="primary.main"
                     sx={{ fontWeight: 700, letterSpacing: "0.14em" }}
                   >
-                    About BookNest
+                    <T text="About BookNest" />
                   </Typography>
                   <Typography
                     id="about-booknest-title"
@@ -535,16 +567,13 @@ function Home() {
                     variant="h4"
                     sx={{ fontWeight: 700 }}
                   >
-                    Made for the love of reading.
+                    <T text="Made for the love of reading." />
                   </Typography>
                   <Typography
                     color="text.secondary"
                     sx={{ maxWidth: 540, lineHeight: 1.8 }}
                   >
-                    BookNest brings stories, authors, and readers together in
-                    one welcoming place. From familiar classics to new
-                    discoveries, we're here to make finding your next read feel
-                    simple and enjoyable.
+                    <T text="BookNest brings stories, authors, and readers together in one welcoming place. From familiar classics to new discoveries, we're here to make finding your next read feel simple and enjoyable." />
                   </Typography>
                   <Link
                     component={RouterLink}
@@ -557,8 +586,14 @@ function Home() {
                       fontWeight: 700,
                     }}
                   >
-                    Browse our collection
-                    <ArrowForwardRoundedIcon fontSize="small" />
+                    <T text="Browse our collection" />
+                    <ArrowForwardRoundedIcon
+                      fontSize="small"
+                      sx={{
+                        transform:
+                          direction === "rtl" ? "scaleX(-1)" : undefined,
+                      }}
+                    />
                   </Link>
                 </Stack>
               </Grid>
@@ -581,10 +616,10 @@ function Home() {
                       fontWeight: 700,
                     }}
                   >
-                    Every great read starts with a little curiosity.
+                    <T text="Every great read starts with a little curiosity." />
                   </Typography>
                   <Typography variant="body2" color="text.secondary">
-                    Discover a story worth staying up for.
+                    <T text="Discover a story worth staying up for." />
                   </Typography>
                 </Stack>
               </Grid>
@@ -593,8 +628,8 @@ function Home() {
 
           <Stack component="section" spacing={2.5}>
             <SectionHeading
-              title="New on the shelf"
-              description="Recently added books, ready to discover."
+              title={t("New on the shelf")}
+              description={t("Recently added books, ready to discover.")}
             />
             <BookGrid
               books={newest}
@@ -608,8 +643,8 @@ function Home() {
 
           <Stack component="section" spacing={2.5}>
             <SectionHeading
-              title="Reader favorites"
-              description="Top rated stories, chosen by our readers."
+              title={t("Reader favorites")}
+              description={t("Top rated stories, chosen by our readers.")}
             />
 
             {bestRated.length > 0 ? (
@@ -620,7 +655,9 @@ function Home() {
                 onBookDeleted={handleBookDeleted}
               />
             ) : (
-              <Typography color="text.secondary">No ratings yet.</Typography>
+              <Typography color="text.secondary">
+                <T text="No ratings yet." />
+              </Typography>
             )}
           </Stack>
 
@@ -640,10 +677,10 @@ function Home() {
                 variant="h4"
                 sx={{ fontWeight: 700 }}
               >
-                Your next read, made easy.
+                <T text="Your next read, made easy." />
               </Typography>
               <Typography variant="body2" color="text.secondary">
-                Everything you need to find a book you'll enjoy.
+                <T text="Everything you need to find a book you'll enjoy." />
               </Typography>
             </Stack>
             <Grid container spacing={{ xs: 4, md: 5 }}>
@@ -670,15 +707,14 @@ function Home() {
                     variant="h6"
                     sx={{ fontWeight: 700 }}
                   >
-                    Discover with ease
+                    <T text="Discover with ease" />
                   </Typography>
                   <Typography
                     variant="body2"
                     color="text.secondary"
                     sx={{ maxWidth: 290, lineHeight: 1.7 }}
                   >
-                    Search by title or author, and narrow down your choices with
-                    filters and sorting.
+                    <T text="Search by title or author, and narrow down your choices with filters and sorting." />
                   </Typography>
                 </Stack>
               </Grid>
@@ -705,14 +741,14 @@ function Home() {
                     variant="h6"
                     sx={{ fontWeight: 700 }}
                   >
-                    Explore reader reviews
+                    <T text="Explore reader reviews" />
                   </Typography>
                   <Typography
                     variant="body2"
                     color="text.secondary"
                     sx={{ maxWidth: 290, lineHeight: 1.7 }}
                   >
-                    Check ratings and reviews to help decide what to read next.
+                    <T text="Check ratings and reviews to help decide what to read next." />
                   </Typography>
                 </Stack>
               </Grid>
@@ -739,15 +775,14 @@ function Home() {
                     variant="h6"
                     sx={{ fontWeight: 700 }}
                   >
-                    Shop simply
+                    <T text="Shop simply" />
                   </Typography>
                   <Typography
                     variant="body2"
                     color="text.secondary"
                     sx={{ maxWidth: 290, lineHeight: 1.7 }}
                   >
-                    See what's available, add books to your cart, and check out
-                    when you're ready.
+                    <T text="See what's available, add books to your cart, and check out when you're ready." />
                   </Typography>
                 </Stack>
               </Grid>

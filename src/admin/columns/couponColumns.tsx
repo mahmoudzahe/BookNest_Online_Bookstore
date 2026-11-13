@@ -3,30 +3,32 @@ import type { GridColDef } from "@mui/x-data-grid";
 import EditOutlinedIcon from "@mui/icons-material/EditOutlined";
 import DeleteOutlinedIcon from "@mui/icons-material/DeleteOutlined";
 import type { Coupon } from "../../types/order";
+import type { Translator } from "@/i18n/translation";
 
 export function couponColumns(
   onEdit: (coupon: Coupon) => void,
   onDelete: (coupon: Coupon) => void,
   onToggle: (coupon: Coupon) => void,
+  t: Translator,
 ): GridColDef<Coupon>[] {
   return [
-    { field: "code", headerName: "Code", minWidth: 135, flex: 1.3 },
+    { field: "code", headerName: t("Code"), minWidth: 135, flex: 1.3 },
     {
       field: "discountPercent",
-      headerName: "Discount",
+      headerName: t("Discount"),
       minWidth: 100,
       flex: 1,
       renderCell: ({ row }) => `${row.discountPercent}%`,
     },
     {
       field: "active",
-      headerName: "Status",
+      headerName: t("Status"),
       minWidth: 120,
       flex: 1,
       renderCell: ({ row }) => (
         <Chip
           size="small"
-          label={row.active ? "Active" : "Inactive"}
+          label={row.active ? t("Active") : t("Inactive")}
           color={row.active ? "success" : "default"}
           sx={{
             border: "2px solid",
@@ -38,7 +40,7 @@ export function couponColumns(
     },
     {
       field: "enabled",
-      headerName: "Enabled",
+      headerName: t("Enabled"),
       minWidth: 100,
       flex: 1,
       sortable: false,
@@ -47,33 +49,35 @@ export function couponColumns(
           size="small"
           checked={row.active}
           onChange={() => void onToggle(row)}
-          slotProps={{ input: { "aria-label": `Enable ${row.code}` } }}
+          slotProps={{
+            input: { "aria-label": t("Enable {code}", { code: row.code }) },
+          }}
         />
       ),
     },
     {
       field: "actions",
-      headerName: "Actions",
+      headerName: t("Actions"),
       width: 115,
       sortable: false,
       filterable: false,
       renderCell: ({ row }) => (
         <Stack direction="row" sx={{ alignItems: "center", height: "100%" }}>
-          <Tooltip title="Edit">
+          <Tooltip title={t("Edit")}>
             <IconButton
               size="small"
               onClick={() => onEdit(row)}
-              aria-label={`Edit ${row.code}`}
+              aria-label={t("Edit {code}", { code: row.code })}
             >
               <EditOutlinedIcon fontSize="small" />
             </IconButton>
           </Tooltip>
-          <Tooltip title="Delete">
+          <Tooltip title={t("Delete")}>
             <IconButton
               size="small"
               color="error"
               onClick={() => onDelete(row)}
-              aria-label={`Delete ${row.code}`}
+              aria-label={t("Delete {code}", { code: row.code })}
             >
               <DeleteOutlinedIcon fontSize="small" />
             </IconButton>

@@ -15,8 +15,10 @@ import {
   ADMIN_TABLE_ROW_HEIGHT,
   adminTableHeight,
 } from "./constants";
+import { T, useI18n } from "@/i18n/LocaleContext";
 
 export default function AdminCategories() {
+  const { t, locale } = useI18n();
   const {
     rows,
     editing,
@@ -33,20 +35,20 @@ export default function AdminCategories() {
     handleSave,
     handleDelete,
   } = useAdminCategories();
-  const columns = categoryColumns(showForm, setDeleting);
+  const columns = categoryColumns(showForm, setDeleting, t);
 
   return (
     <>
       <PageHeading
-        title="Categories"
-        description="Organize books into collections."
+        title={t("Categories")}
+        description={t("Organize books into collections.")}
         action={
           <Button
             variant="contained"
             startIcon={<AddIcon />}
             onClick={() => showForm()}
           >
-            Add Category
+            <T text="Add Category" />
           </Button>
         }
       />
@@ -67,6 +69,23 @@ export default function AdminCategories() {
               disableRowSelectionOnClick
               disableColumnMenu
               className="BookNest-adminDataGrid"
+              sx={
+                locale === "ar"
+                  ? {
+                      '& .MuiDataGrid-cell[data-field="name"]': {
+                        fontFamily: '"Segoe UI", Arial, sans-serif',
+                        fontSize: "0.95rem",
+                        fontWeight: 400,
+                      },
+                      '& .MuiDataGrid-columnHeader[data-field="name"] .MuiDataGrid-columnHeaderTitle':
+                        {
+                          fontFamily: '"Segoe UI", Arial, sans-serif',
+                          fontSize: "0.95rem",
+                          fontWeight: 600,
+                        },
+                    }
+                  : undefined
+              }
             />
           </Box>
         </Paper>
@@ -83,12 +102,12 @@ export default function AdminCategories() {
       />
       <ConfirmDialog
         open={Boolean(deleting)}
-        title="Delete Category?"
+        title={t("Delete Category?")}
         busy={saving}
         onClose={() => setDeleting(null)}
         onConfirm={() => void handleDelete()}
       >
-        Delete <strong>{deleting?.name}</strong>?
+        <T text="Delete" /> <strong>{t(deleting?.name ?? "")}</strong>?
       </ConfirmDialog>
     </>
   );

@@ -8,6 +8,7 @@ import {
   TextField,
   Stack,
 } from "@mui/material";
+import { T, useI18n } from "@/i18n/LocaleContext";
 
 interface CategoryFormDialogProps {
   open: boolean;
@@ -30,6 +31,7 @@ export default function CategoryFormDialog({
   onClose,
   onSave,
 }: CategoryFormDialogProps) {
+  const { t } = useI18n();
   return (
     <Dialog
       open={open}
@@ -37,14 +39,16 @@ export default function CategoryFormDialog({
       fullWidth
       maxWidth="xs"
     >
-      <DialogTitle>{editing ? "Rename Category" : "Add Category"}</DialogTitle>
+      <DialogTitle>
+        {editing ? t("Rename Category") : t("Add Category")}
+      </DialogTitle>
       <DialogContent>
         <Stack spacing={2}>
           {error && <Alert severity="error">{error}</Alert>}
           <TextField
             autoFocus
             fullWidth
-            label="Category name"
+            label={t("Category name")}
             value={name}
             onChange={(event) => onChange(event.target.value)}
           />
@@ -52,10 +56,10 @@ export default function CategoryFormDialog({
       </DialogContent>
       <DialogActions sx={{ p: 2 }}>
         <Button disabled={saving} onClick={onClose}>
-          Cancel
+          <T text="Cancel" />
         </Button>
         <Button disabled={saving} variant="contained" onClick={onSave}>
-          {saving ? "Saving..." : "Save"}
+          {saving ? t("Saving...") : t("Save")}
         </Button>
       </DialogActions>
     </Dialog>

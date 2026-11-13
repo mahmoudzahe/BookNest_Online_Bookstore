@@ -11,9 +11,9 @@ import {
 import StorefrontOutlinedIcon from "@mui/icons-material/StorefrontOutlined";
 import LogoutOutlinedIcon from "@mui/icons-material/LogoutOutlined";
 import RouterLink from "../../components/NextLink";
-
-import { adminNavigation } from "../navigation";
 import { APP_ROUTES, BOOKNEST_LOGO_PATH } from "../../constants";
+import { adminNavigation } from "../navigation";
+import { T, useI18n } from "@/i18n/LocaleContext";
 
 interface AdminSidebarProps {
   pathname: string;
@@ -26,6 +26,7 @@ export default function AdminSidebar({
   onNavigate,
   onSignOut,
 }: AdminSidebarProps) {
+  const { t } = useI18n();
   return (
     <Stack sx={{ height: "100%" }}>
       <Stack
@@ -45,17 +46,17 @@ export default function AdminSidebar({
         <Box
           component="img"
           src={BOOKNEST_LOGO_PATH}
-          alt="BookNest"
+          alt={t("BookNest")}
           sx={{ width: 36, height: 36 }}
         />
         <Box>
           <Typography
             sx={{ fontWeight: 800, fontSize: "1.1rem", lineHeight: 1.2 }}
           >
-            BookNest
+            <T text="BookNest" />
           </Typography>
           <Typography color="text.secondary" variant="caption">
-            Admin workspace
+            <T text="Admin workspace" />
           </Typography>
         </Box>
       </Stack>
@@ -66,7 +67,7 @@ export default function AdminSidebar({
         color="text.secondary"
         sx={{ px: 3, mb: 1, letterSpacing: 1.5 }}
       >
-        MANAGEMENT
+        <T text="MANAGEMENT" />
       </Typography>
       <List sx={{ px: 1.5, py: 0 }}>
         {adminNavigation.map((link) => (
@@ -82,7 +83,7 @@ export default function AdminSidebar({
               {link.icon}
             </ListItemIcon>
             <ListItemText
-              primary={link.label}
+              primary={t(link.label)}
               slotProps={{
                 primary: {
                   sx: { fontWeight: pathname === link.path ? 700 : 500 },
@@ -105,13 +106,13 @@ export default function AdminSidebar({
           <ListItemIcon sx={{ minWidth: 39 }}>
             <StorefrontOutlinedIcon />
           </ListItemIcon>
-          <ListItemText primary="View store" />
+          <ListItemText primary={t("View store")} />
         </ListItemButton>
         <ListItemButton onClick={onSignOut} sx={{ borderRadius: 2 }}>
           <ListItemIcon sx={{ minWidth: 39 }}>
             <LogoutOutlinedIcon />
           </ListItemIcon>
-          <ListItemText primary="Log out" />
+          <ListItemText primary={t("Log out")} />
         </ListItemButton>
       </List>
     </Stack>

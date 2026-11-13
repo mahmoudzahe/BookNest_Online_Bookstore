@@ -5,6 +5,7 @@ import type { ReactNode } from "react";
 import { usePathname, useSearchParams } from "next/navigation";
 import RouterLink from "./NextLink";
 import { APP_ROUTES, BOOKNEST_LOGO_PATH } from "../constants";
+import { T, useI18n } from "@/i18n/LocaleContext";
 import {
   AuthFormPaper,
   AuthPage,
@@ -19,6 +20,7 @@ interface AuthLayoutProps {
 }
 
 function AuthLayout({ title, subtitle, children }: AuthLayoutProps) {
+  const { t } = useI18n();
   const pathname = usePathname();
   const searchParams = useSearchParams();
   const isRegisterPage = pathname === APP_ROUTES.register;
@@ -50,7 +52,7 @@ function AuthLayout({ title, subtitle, children }: AuthLayoutProps) {
             sx={{ width: 38, height: 38 }}
           />
           <Typography variant="h6" className="BookNest-textWeight700">
-            BookNest
+            <T text="BookNest" />
           </Typography>
         </Stack>
 
@@ -60,8 +62,8 @@ function AuthLayout({ title, subtitle, children }: AuthLayoutProps) {
             sx={{ color: "common.white", display: { xs: "none", sm: "block" } }}
           >
             {isRegisterPage
-              ? "Already have an account?"
-              : "Don't have an account?"}
+              ? t("Already have an account?")
+              : t("Don't have an account?")}
           </Typography>
           <Button
             component={RouterLink}
@@ -69,7 +71,7 @@ function AuthLayout({ title, subtitle, children }: AuthLayoutProps) {
             variant="outlined"
             className="BookNest-authSwitchButton"
           >
-            {isRegisterPage ? "Log In" : "Sign Up"}
+            {isRegisterPage ? t("Log In") : t("Sign Up")}
           </Button>
         </Stack>
       </AuthPageHeader>

@@ -20,17 +20,23 @@ import type { LoginForm } from "../types/user";
 import { useAuth } from "../auth/AuthContext";
 import AuthLayout from "../components/AuthLayout";
 import { APP_ROUTES, USER_ROLES } from "../constants";
+import { T, useI18n } from "@/i18n/LocaleContext";
 
 function Login() {
+  const { t } = useI18n();
   const { user, login } = useAuth();
   const router = useRouter();
   const searchParams = useSearchParams();
   const [showPassword, setShowPassword] = useState(false);
   const [error, setError] = useState("");
   const redirect =
-    searchParams?.get("redirect") === APP_ROUTES.checkout ? APP_ROUTES.checkout : APP_ROUTES.home;
+    searchParams?.get("redirect") === APP_ROUTES.checkout
+      ? APP_ROUTES.checkout
+      : APP_ROUTES.home;
   const registerLink =
-    redirect === APP_ROUTES.checkout ? `${APP_ROUTES.register}?redirect=%2Fcheckout` : APP_ROUTES.register;
+    redirect === APP_ROUTES.checkout
+      ? `${APP_ROUTES.register}?redirect=%2Fcheckout`
+      : APP_ROUTES.register;
 
   const {
     register,
@@ -47,7 +53,7 @@ function Login() {
       setError(
         error instanceof Error
           ? error.message
-          : "Could not log in. Please try again.",
+          : t("Could not log in. Please try again."),
       );
     }
   }
@@ -59,15 +65,15 @@ function Login() {
 
   return (
     <AuthLayout
-      title="Welcome Back!"
-      subtitle="Log in to your BookNest account"
+      title={t("Welcome Back!")}
+      subtitle={t("Log in to your BookNest account")}
     >
       <Box component="form" onSubmit={handleSubmit(onSubmit)}>
         <Stack spacing={2.2}>
           {error && <Alert severity="error">{error}</Alert>}
           <TextField
-            label="Email"
-            placeholder="name@email.com"
+            label={t("Email")}
+            placeholder={t("name@email.com")}
             fullWidth
             autoComplete="email"
             {...register("email")}
@@ -75,7 +81,7 @@ function Login() {
             helperText={errors.email?.message}
           />
           <TextField
-            label="Password"
+            label={t("Password")}
             type={showPassword ? "text" : "password"}
             fullWidth
             autoComplete="current-password"
@@ -91,7 +97,7 @@ function Login() {
                       size="small"
                       onClick={() => setShowPassword((value) => !value)}
                     >
-                      {showPassword ? "Hide" : "Show"}
+                      {showPassword ? t("Hide") : t("Show")}
                     </Button>
                   </InputAdornment>
                 ),
@@ -105,17 +111,17 @@ function Login() {
             size="large"
             disabled={isSubmitting}
           >
-            {isSubmitting ? "Logging in..." : "Log In"}
+            {isSubmitting ? t("Logging in...") : t("Log In")}
           </Button>
           <Typography variant="body2" sx={{ textAlign: "center" }}>
-            Don't have an account?{" "}
+            <T text="Don't have an account?" />{" "}
             <Typography
               component={RouterLink}
               href={registerLink}
               color="primary"
               sx={{ fontWeight: 700, textDecoration: "none" }}
             >
-              Create one
+              <T text="Create one" />
             </Typography>
           </Typography>
         </Stack>

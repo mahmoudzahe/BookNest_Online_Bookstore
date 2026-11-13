@@ -22,6 +22,7 @@ import {
   ADMIN_TABLE_HEADER_HEIGHT,
   ADMIN_TABLE_ROW_HEIGHT,
 } from "./constants";
+import { T, useI18n } from "@/i18n/LocaleContext";
 
 const orderColumns: GridColDef<Order>[] = [
   {
@@ -46,7 +47,7 @@ const orderColumns: GridColDef<Order>[] = [
     renderCell: ({ row }) => (
       <Chip
         size="small"
-        label={row.status}
+        label={<T text={row.status} />}
         color={
           row.status === "delivered"
             ? "success"
@@ -86,6 +87,7 @@ const stockColumns: GridColDef<Book>[] = [
 ];
 
 export default function AdminDashboard() {
+  const { t } = useI18n();
   const [data, setData] = useState<Awaited<
     ReturnType<typeof getAdminOverview>
   > | null>(null);
@@ -100,7 +102,7 @@ export default function AdminDashboard() {
       })
       .catch(() => {
         if (active)
-          setError("Could not load store statistics. Check JSON Server.");
+          setError(t("Could not load store statistics. Check JSON Server."));
       })
       .finally(() => {
         if (active) setLoading(false);
@@ -123,13 +125,13 @@ export default function AdminDashboard() {
 
   const stats = [
     {
-      label: "Total Books",
+      label: t("Total Books"),
       count: String(data?.books.length ?? 0),
       icon: <MenuBookOutlinedIcon />,
       link: "/admin/books",
     },
     {
-      label: "Total Orders",
+      label: t("Total Orders"),
       count: String(
         data?.orders.filter((order) => !order.archived).length ?? 0,
       ),
@@ -137,7 +139,7 @@ export default function AdminDashboard() {
       link: "/admin/orders",
     },
     {
-      label: "Customers",
+      label: t("Customers"),
       count: String(
         data?.users.filter((user) => user.role === "user" && !user.archived)
           .length ?? 0,
@@ -146,7 +148,7 @@ export default function AdminDashboard() {
       link: "/admin/users",
     },
     {
-      label: "Delivered Revenue",
+      label: t("Delivered Revenue"),
       count: money(deliveredRevenue),
       icon: <PaymentsOutlinedIcon />,
       link: "/admin/orders",
@@ -156,8 +158,8 @@ export default function AdminDashboard() {
   return (
     <>
       <PageHeading
-        title="Overview"
-        description="A quick look at your bookstore performance."
+        title={t("Overview")}
+        description={t("A quick look at your bookstore performance.")}
       />
       <LoadError error={error} loading={loading} />
       {data && (
@@ -193,7 +195,7 @@ export default function AdminDashboard() {
               <Paper variant="outlined" className="BookNest-dashboardPanel">
                 <Stack spacing={2}>
                   <Typography variant="h6" className="BookNest-textWeight700">
-                    Recent Orders
+                    <T text="Recent Orders" />
                   </Typography>
                   <Box
                     sx={{
@@ -206,14 +208,17 @@ export default function AdminDashboard() {
                   >
                     <DataGrid
                       rows={recentOrders}
-                      columns={orderColumns}
+                      columns={orderColumns.map((col) => ({
+                        ...col,
+                        headerName: t(col.headerName ?? ""),
+                      }))}
                       rowHeight={ADMIN_TABLE_ROW_HEIGHT}
                       columnHeaderHeight={ADMIN_TABLE_HEADER_HEIGHT}
                       hideFooter
                       disableRowSelectionOnClick
                       disableColumnMenu
                       className="BookNest-adminDataGrid"
-                      localeText={{ noRowsLabel: "No orders yet." }}
+                      localeText={{ noRowsLabel: t("No orders yet.") }}
                     />
                   </Box>
                 </Stack>
@@ -223,7 +228,7 @@ export default function AdminDashboard() {
               <Paper variant="outlined" className="BookNest-dashboardPanel">
                 <Stack spacing={2}>
                   <Typography variant="h6" className="BookNest-textWeight700">
-                    Low Stock Books
+                    <T text="Low Stock Books" />
                   </Typography>
                   <Box
                     sx={{
@@ -235,14 +240,17 @@ export default function AdminDashboard() {
                   >
                     <DataGrid
                       rows={lowStock}
-                      columns={stockColumns}
+                      columns={stockColumns.map((col) => ({
+                        ...col,
+                        headerName: t(col.headerName ?? ""),
+                      }))}
                       rowHeight={ADMIN_TABLE_ROW_HEIGHT}
                       columnHeaderHeight={ADMIN_TABLE_HEADER_HEIGHT}
                       hideFooter
                       disableRowSelectionOnClick
                       disableColumnMenu
                       className="BookNest-adminDataGrid"
-                      localeText={{ noRowsLabel: "Stock levels look good." }}
+                      localeText={{ noRowsLabel: t("Stock levels look good.") }}
                     />
                   </Box>
                 </Stack>

@@ -5,23 +5,26 @@ import RestoreIcon from "@mui/icons-material/Restore";
 import type { Order } from "../../types/order";
 import type { AuthUser } from "../../types/user";
 import { money } from "../formatters";
+import { T } from "@/i18n/LocaleContext";
+import type { Translator } from "@/i18n/translation";
 
 export function orderColumns(
   users: AuthUser[],
   onView: (order: Order) => void,
   onArchive: (order: Order) => void,
+  t: Translator,
 ): GridColDef<Order>[] {
   return [
     {
       field: "id",
-      headerName: "Order ID",
+      headerName: t("Order ID"),
       flex: 1.2,
       minWidth: 155,
       renderCell: ({ row }) => `#${row.id}`,
     },
     {
       field: "customer",
-      headerName: "Customer",
+      headerName: t("Customer"),
       flex: 1.2,
       minWidth: 155,
       valueGetter: (_value, row) => {
@@ -33,20 +36,20 @@ export function orderColumns(
     },
     {
       field: "createdAt",
-      headerName: "Date",
+      headerName: t("Date"),
       minWidth: 125,
       flex: 1,
       renderCell: ({ row }) => new Date(row.createdAt).toLocaleDateString(),
     },
     {
       field: "status",
-      headerName: "Status",
+      headerName: t("Status"),
       minWidth: 120,
       flex: 1,
       renderCell: ({ row }) => (
         <Chip
           size="small"
-          label={row.status}
+          label={t(row.status)}
           color={
             row.status === "delivered"
               ? "success"
@@ -59,7 +62,7 @@ export function orderColumns(
     },
     {
       field: "total",
-      headerName: "Total",
+      headerName: t("Total"),
       minWidth: 110,
       type: "number",
       flex: 0.8,
@@ -67,20 +70,24 @@ export function orderColumns(
     },
     {
       field: "actions",
-      headerName: "Actions",
+      headerName: t("Actions"),
       minWidth: 140,
       sortable: false,
       filterable: false,
       renderCell: ({ row }) => (
         <Stack direction="row" sx={{ alignItems: "center", height: "100%" }}>
           <Button size="small" onClick={() => onView(row)}>
-            View
+            <T text="View" />
           </Button>
-          <Tooltip title={row.archived ? "Restore order" : "Archive order"}>
+          <Tooltip
+            title={row.archived ? t("Restore order") : t("Archive order")}
+          >
             <IconButton
               size="small"
               color={row.archived ? "primary" : "error"}
-              aria-label={row.archived ? "Restore order" : "Archive order"}
+              aria-label={
+                row.archived ? t("Restore order") : t("Archive order")
+              }
               onClick={() => onArchive(row)}
             >
               {row.archived ? (

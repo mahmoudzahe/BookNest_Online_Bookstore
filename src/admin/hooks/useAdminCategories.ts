@@ -2,6 +2,7 @@ import { useEffect, useMemo, useState } from "react";
 import { getBooks, getCategories } from "../../services/booksApi";
 import { removeCategory, saveCategory } from "../../services/adminApi";
 import type { Book, Category } from "../../types/book";
+import { translateInBrowser } from "@/i18n/translation";
 
 export type CategoryRow = Category & { bookCount: number };
 
@@ -36,7 +37,7 @@ export function useAdminCategories() {
         setBooks(result.books);
       })
       .catch(() => {
-        if (active) setError("Could not load categories.");
+        if (active) setError(translateInBrowser("Could not load categories."));
       })
       .finally(() => {
         if (active) setLoading(false);
@@ -55,7 +56,7 @@ export function useAdminCategories() {
 
   async function handleSave() {
     const trimmed = name.trim();
-    if (!trimmed) return setError("Enter a category name.");
+    if (!trimmed) return setError(translateInBrowser("Enter a category name."));
     if (
       categories.some(
         (item) =>
@@ -63,7 +64,7 @@ export function useAdminCategories() {
           item.name.toLowerCase() === trimmed.toLowerCase(),
       )
     ) {
-      return setError("This category already exists.");
+      return setError(translateInBrowser("This category already exists."));
     }
     setSaving(true);
     setError("");
@@ -72,7 +73,7 @@ export function useAdminCategories() {
       await load();
       setOpen(false);
     } catch {
-      setError("Could not save category.");
+      setError(translateInBrowser("Could not save category."));
     } finally {
       setSaving(false);
     }
@@ -85,14 +86,18 @@ export function useAdminCategories() {
     try {
       const latest = await getBooks();
       if (latest.some((book) => book.categoryId === deleting.id)) {
-        setError("Move or delete the books in this category first.");
+        setError(
+          translateInBrowser(
+            "Move or delete the books in this category first.",
+          ),
+        );
       } else {
         await removeCategory(deleting.id);
         await load();
       }
       setDeleting(null);
     } catch {
-      setError("Could not delete category.");
+      setError(translateInBrowser("Could not delete category."));
       setDeleting(null);
     } finally {
       setSaving(false);

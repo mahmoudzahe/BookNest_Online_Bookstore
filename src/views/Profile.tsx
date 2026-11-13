@@ -20,8 +20,10 @@ import { yupResolver } from "@hookform/resolvers/yup";
 import { profileSchema } from "../schemas/authSchemas";
 import type { ProfileData } from "../types/user";
 import { useAuth } from "../auth/AuthContext";
+import { T, useI18n } from "@/i18n/LocaleContext";
 
 function Profile() {
+  const { t } = useI18n();
   const { user, updateProfile } = useAuth();
   const [message, setMessage] = useState("");
   const [error, setError] = useState("");
@@ -44,9 +46,9 @@ function Profile() {
     setMessage("");
     try {
       await updateProfile(data);
-      setMessage("Profile updated successfully.");
+      setMessage(t("Profile updated successfully."));
     } catch {
-      setError("Could not update your profile. Please try again.");
+      setError(t("Could not update your profile. Please try again."));
     }
   }
 
@@ -68,10 +70,10 @@ function Profile() {
               variant="h4"
               sx={{ fontWeight: 700 }}
             >
-              My profile
+              <T text="My profile" />
             </Typography>
             <Typography color="text.secondary">
-              Manage your personal information and keep your account up to date.
+              <T text="Manage your personal information and keep your account up to date." />
             </Typography>
           </Stack>
 
@@ -98,7 +100,7 @@ function Profile() {
                     <Typography variant="h6" sx={{ fontWeight: 700 }}>
                       {user
                         ? `${user.firstName} ${user.lastName}`
-                        : "My account"}
+                        : t("My account")}
                     </Typography>
                     <Typography
                       variant="body2"
@@ -114,8 +116,7 @@ function Profile() {
                   color="text.secondary"
                   sx={{ lineHeight: 1.8 }}
                 >
-                  Your account details are used to make checkout and order
-                  management easier.
+                  <T text="Your account details are used to make checkout and order management easier." />
                 </Typography>
                 <Button
                   component={RouterLink}
@@ -124,7 +125,7 @@ function Profile() {
                   startIcon={<LockOutlinedIcon />}
                   sx={{ alignSelf: "flex-start", px: 0 }}
                 >
-                  Change password
+                  <T text="Change password" />
                 </Button>
               </Stack>
             </Grid>
@@ -145,10 +146,10 @@ function Profile() {
                 >
                   <Stack spacing={0.5}>
                     <Typography variant="h6" sx={{ fontWeight: 700 }}>
-                      Personal information
+                      <T text="Personal information" />
                     </Typography>
                     <Typography variant="body2" color="text.secondary">
-                      Update your contact details below.
+                      <T text="Update your contact details below." />
                     </Typography>
                   </Stack>
 
@@ -156,7 +157,7 @@ function Profile() {
                   {error && <Alert severity="error">{error}</Alert>}
 
                   <TextField
-                    label="Email address"
+                    label={t("Email address")}
                     value={user?.email ?? ""}
                     disabled
                     fullWidth
@@ -164,14 +165,14 @@ function Profile() {
 
                   <Stack direction={{ xs: "column", sm: "row" }} spacing={2}>
                     <TextField
-                      label="First name"
+                      label={t("First name")}
                       fullWidth
                       {...register("firstName")}
                       error={!!errors.firstName}
                       helperText={errors.firstName?.message}
                     />
                     <TextField
-                      label="Last name"
+                      label={t("Last name")}
                       fullWidth
                       {...register("lastName")}
                       error={!!errors.lastName}
@@ -180,14 +181,14 @@ function Profile() {
                   </Stack>
 
                   <TextField
-                    label="Phone number"
+                    label={t("Phone number")}
                     fullWidth
                     {...register("phone")}
                     error={!!errors.phone}
                     helperText={errors.phone?.message}
                   />
                   <TextField
-                    label="Address"
+                    label={t("Address")}
                     fullWidth
                     multiline
                     rows={3}
@@ -206,7 +207,7 @@ function Profile() {
                       minWidth: 180,
                     }}
                   >
-                    {isSubmitting ? "Saving..." : "Save changes"}
+                    {isSubmitting ? t("Saving...") : t("Save changes")}
                   </Button>
                 </Stack>
               </Paper>

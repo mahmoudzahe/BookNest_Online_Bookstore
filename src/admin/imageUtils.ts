@@ -5,13 +5,14 @@ import {
   BOOK_IMAGE_MAX_HEIGHT,
   BOOK_IMAGE_QUALITY,
 } from "./constants";
+import { translateInBrowser } from "@/i18n/translation";
 
 export async function prepareBookCover(file: File): Promise<string> {
   if (!BOOK_IMAGE_TYPES.includes(file.type)) {
-    throw new Error("Choose a JPG, PNG, or WebP image.");
+    throw new Error(translateInBrowser("Choose a JPG, PNG, or WebP image."));
   }
   if (file.size > BOOK_IMAGE_MAX_BYTES) {
-    throw new Error("Choose an image smaller than 5 MB.");
+    throw new Error(translateInBrowser("Choose an image smaller than 5 MB."));
   }
 
   let bitmap: ImageBitmap | undefined;
@@ -30,7 +31,9 @@ export async function prepareBookCover(file: File): Promise<string> {
     context.drawImage(bitmap, 0, 0, canvas.width, canvas.height);
     return canvas.toDataURL("image/webp", BOOK_IMAGE_QUALITY);
   } catch {
-    throw new Error("Could not read the image. Try another file.");
+    throw new Error(
+      translateInBrowser("Could not read the image. Try another file."),
+    );
   } finally {
     bitmap?.close();
   }

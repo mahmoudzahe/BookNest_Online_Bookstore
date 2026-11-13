@@ -39,10 +39,12 @@ import { PageHeading } from "./AdminCommon";
 import LoadError from "./components/LoadError";
 import ConfirmDialog from "./components/ConfirmDialog";
 import { AccountStatusButton } from "./AdminUsers.styles";
+import { T, useI18n } from "@/i18n/LocaleContext";
 
 type UserRow = AuthUser & { orderCount: number };
 
 export default function AdminUsers() {
+  const { t } = useI18n();
   const { user: currentUser } = useAuth();
   const [users, setUsers] = useState<AuthUser[]>([]);
   const [orders, setOrders] = useState<Order[]>([]);
@@ -74,7 +76,7 @@ export default function AdminUsers() {
         }
       })
       .catch(() => {
-        if (active) setError("Could not load users.");
+        if (active) setError(t("Could not load users."));
       })
       .finally(() => {
         if (active) setLoading(false);
@@ -99,7 +101,7 @@ export default function AdminUsers() {
       await changeUserRole(selected.id, role);
       await load();
     } catch {
-      setError("Could not update the user's role.");
+      setError(t("Could not update the user's role."));
     } finally {
       setSaving(false);
     }
@@ -119,7 +121,7 @@ export default function AdminUsers() {
       await load();
       setChangingStatus(null);
     } catch {
-      setError("Could not update the account status.");
+      setError(t("Could not update the account status."));
     } finally {
       setSaving(false);
     }
@@ -135,7 +137,7 @@ export default function AdminUsers() {
       if (roleUserId === deleting.id) setRoleUserId("");
       setDeleting(null);
     } catch {
-      setError("Could not update the user archive.");
+      setError(t("Could not update the user archive."));
       setDeleting(null);
     } finally {
       setSaving(false);
@@ -162,7 +164,7 @@ export default function AdminUsers() {
   const columns: GridColDef<UserRow>[] = [
     {
       field: "firstName",
-      headerName: "User",
+      headerName: t("User"),
       flex: 2,
       minWidth: 230,
       renderCell: ({ row }) => (
@@ -199,7 +201,7 @@ export default function AdminUsers() {
               sx={{ fontWeight: 700, lineHeight: 1.4 }}
             >
               {row.firstName} {row.lastName}
-              {row.id === currentUser?.id ? " (You)" : ""}
+              {row.id === currentUser?.id ? t(" (You)") : ""}
             </Typography>
             <Typography
               variant="caption"
@@ -215,21 +217,21 @@ export default function AdminUsers() {
     },
     {
       field: "phone",
-      headerName: "Phone",
+      headerName: t("Phone"),
       flex: 1,
       minWidth: 145,
       valueGetter: (value) => value || "—",
     },
-    { field: "orderCount", headerName: "Orders", width: 95, type: "number" },
+    { field: "orderCount", headerName: t("Orders"), width: 95, type: "number" },
     {
       field: "active",
-      headerName: "Status",
+      headerName: t("Status"),
       width: 120,
       renderCell: ({ row }) => (
         <Chip
           size="small"
           variant="outlined"
-          label={row.active ? "Active" : "Suspended"}
+          label={row.active ? t("Active") : t("Suspended")}
           color={row.active ? "success" : "warning"}
           sx={{
             borderWidth: 2,
@@ -241,7 +243,7 @@ export default function AdminUsers() {
     },
     {
       field: "actions",
-      headerName: "Actions",
+      headerName: t("Actions"),
       width: 190,
       sortable: false,
       filterable: false,
@@ -260,9 +262,9 @@ export default function AdminUsers() {
               <Tooltip
                 title={
                   isSelf
-                    ? "Cannot suspend your own account"
+                    ? t("Cannot suspend your own account")
                     : row.role === "admin"
-                      ? "Only customers can be suspended"
+                      ? t("Only customers can be suspended")
                       : ""
                 }
               >
@@ -274,7 +276,7 @@ export default function AdminUsers() {
                     disabled={saving || isSelf || row.role === "admin"}
                     onClick={() => setChangingStatus(row)}
                   >
-                    {row.active ? "Suspend" : "Activate"}
+                    {row.active ? t("Suspend") : t("Activate")}
                   </AccountStatusButton>
                 </span>
               </Tooltip>
@@ -282,10 +284,10 @@ export default function AdminUsers() {
             <Tooltip
               title={
                 isSelf
-                  ? "Cannot archive your own account"
+                  ? t("Cannot archive your own account")
                   : row.archived
-                    ? "Restore user"
-                    : "Archive user"
+                    ? t("Restore user")
+                    : t("Archive user")
               }
             >
               <span>
@@ -294,7 +296,9 @@ export default function AdminUsers() {
                   color={row.archived ? "primary" : "error"}
                   disabled={saving || isSelf}
                   onClick={() => setDeleting(row)}
-                  aria-label={row.archived ? "Restore user" : "Archive user"}
+                  aria-label={
+                    row.archived ? t("Restore user") : t("Archive user")
+                  }
                 >
                   {row.archived ? (
                     <RestoreIcon fontSize="small" />
@@ -313,8 +317,8 @@ export default function AdminUsers() {
   return (
     <>
       <PageHeading
-        title="Users"
-        description="Manage customer accounts and administrator access."
+        title={t("Users")}
+        description={t("Manage customer accounts and administrator access.")}
       />
       <LoadError loading={loading} error={error} />
       {!loading && (
@@ -324,16 +328,19 @@ export default function AdminUsers() {
             onChange={(_event, value: "active" | "archived") => setTab(value)}
             sx={{ mb: 2 }}
           >
-            <Tab label={`Active (${activeUsers.length})`} value="active" />
             <Tab
-              label={`Archived (${archivedUsers.length})`}
+              label={t("Active ({count})", { count: activeUsers.length })}
+              value="active"
+            />
+            <Tab
+              label={t("Archived ({count})", { count: archivedUsers.length })}
               value="archived"
             />
           </Tabs>
           <Box sx={{ display: "flex", flexWrap: "wrap", gap: 2, mb: 2 }}>
             <TextField
               size="small"
-              label="Search users"
+              label={t("Search users")}
               value={query}
               onChange={(event) => setQuery(event.target.value)}
               sx={{ minWidth: 210, flex: 1 }}
@@ -343,12 +350,14 @@ export default function AdminUsers() {
                 <TextField
                   select
                   size="small"
-                  label="Change role for"
+                  label={t("Change role for")}
                   value={roleUserId}
                   onChange={(event) => setRoleUserId(event.target.value)}
                   sx={{ minWidth: 190 }}
                 >
-                  <MenuItem value="">Select user</MenuItem>
+                  <MenuItem value="">
+                    <T text="Select user" />
+                  </MenuItem>
                   {roleUsers.map((user) => (
                     <MenuItem key={user.id} value={user.id}>
                       {user.firstName} {user.lastName}
@@ -358,7 +367,7 @@ export default function AdminUsers() {
                 <TextField
                   select
                   size="small"
-                  label="Role"
+                  label={t("Role")}
                   value={roleUser?.role ?? ""}
                   disabled={!roleUser || saving}
                   onChange={(event) =>
@@ -366,8 +375,12 @@ export default function AdminUsers() {
                   }
                   sx={{ minWidth: 115 }}
                 >
-                  <MenuItem value="user">User</MenuItem>
-                  <MenuItem value="admin">Admin</MenuItem>
+                  <MenuItem value="user">
+                    <T text="User" />
+                  </MenuItem>
+                  <MenuItem value="admin">
+                    <T text="Admin" />
+                  </MenuItem>
                 </TextField>
               </>
             )}
@@ -404,29 +417,31 @@ export default function AdminUsers() {
       <ConfirmDialog
         open={Boolean(changingStatus)}
         title={
-          changingStatus?.active ? "Suspend Account?" : "Activate Account?"
+          changingStatus?.active
+            ? t("Suspend Account?")
+            : t("Activate Account?")
         }
         busy={saving}
-        confirmLabel={changingStatus?.active ? "Suspend" : "Activate"}
+        confirmLabel={changingStatus?.active ? t("Suspend") : t("Activate")}
         confirmColor={changingStatus?.active ? "warning" : "success"}
         onClose={() => setChangingStatus(null)}
         onConfirm={() => void toggleAccountStatus()}
       >
-        {changingStatus?.active ? "Suspend" : "Activate"} account{" "}
-        <strong>{changingStatus?.email}</strong>? Existing orders will keep
-        their status.
+        {changingStatus?.active ? t("Suspend") : t("Activate")}{" "}
+        <T text="account" /> <strong>{changingStatus?.email}</strong>
+        <T text="? Existing orders will keep their status." />
       </ConfirmDialog>
       <ConfirmDialog
         open={Boolean(deleting)}
-        title={deleting?.archived ? "Restore User?" : "Archive User?"}
+        title={deleting?.archived ? t("Restore User?") : t("Archive User?")}
         busy={saving}
-        confirmLabel={deleting?.archived ? "Restore" : "Archive"}
+        confirmLabel={deleting?.archived ? t("Restore") : t("Archive")}
         onClose={() => setDeleting(null)}
         onConfirm={() => void updateArchive()}
       >
-        {deleting?.archived ? "Restore" : "Archive"} account{" "}
-        <strong>{deleting?.email}</strong>? Its orders will stay unchanged.
-        Archived users cannot log in.
+        {deleting?.archived ? t("Restore") : t("Archive")} <T text="account" />{" "}
+        <strong>{deleting?.email}</strong>
+        <T text="? Its orders will stay unchanged. Archived users cannot log in." />
       </ConfirmDialog>
     </>
   );
