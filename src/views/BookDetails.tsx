@@ -25,6 +25,7 @@ import { defineAbilityFor } from "../admin/ability";
 import { useAuth } from "../auth/AuthContext";
 import { getBook, getCategories, getReviews } from "../services/booksApi";
 import type { Book, BookReview, Category } from "../types/book";
+import { BookCoverFrame } from "./BookDetails.styles";
 import {
   LOW_STOCK_THRESHOLD,
   STOCK_LABELS,
@@ -111,18 +112,7 @@ function BookDetails() {
           <Stack spacing={{ xs: 4, md: 6 }}>
             <Grid container spacing={{ xs: 3, md: 5 }}>
               <Grid size={{ xs: 12, md: 5 }}>
-                <Paper
-                  variant="outlined"
-                  sx={{
-                    minHeight: { xs: 340, md: 450 },
-                    px: { xs: 3, md: 4 },
-                    py: 4,
-                    display: "flex",
-                    alignItems: "center",
-                    justifyContent: "center",
-                    bgcolor: "background.paper",
-                  }}
-                >
+                <BookCoverFrame variant="outlined">
                   <Box
                     component="img"
                     src={book.image}
@@ -134,7 +124,7 @@ function BookDetails() {
                       objectFit: "contain",
                     }}
                   />
-                </Paper>
+                </BookCoverFrame>
               </Grid>
 
               <Grid size={{ xs: 12, md: 7 }}>
@@ -147,9 +137,7 @@ function BookDetails() {
                       component="h1"
                       variant="h3"
                       sx={{
-                        fontFamily: "Georgia, serif",
                         fontWeight: 700,
-                        fontSize: { xs: "2rem", sm: "2.5rem", md: "2.75rem" },
                         lineHeight: 1.15,
                       }}
                     >

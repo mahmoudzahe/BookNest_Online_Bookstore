@@ -60,7 +60,7 @@ function BookReviews({ book, reviews, onReviewsChange }: Props) {
         <Typography
           component="h2"
           variant="h4"
-          sx={{ fontFamily: "Georgia, serif", fontWeight: 700 }}
+          sx={{ fontWeight: 700 }}
         >
           <T text="Ratings & Reviews" />
         </Typography>

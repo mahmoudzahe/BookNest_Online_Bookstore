@@ -134,7 +134,7 @@ function Books() {
           <Typography
             variant="h3"
             component="h1"
-            sx={{ fontFamily: "Georgia, serif", fontWeight: 700 }}
+            sx={{ fontWeight: 700 }}
           >
             <T text="Explore our books" />
           </Typography>

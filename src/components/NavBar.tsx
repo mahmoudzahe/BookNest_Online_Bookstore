@@ -37,12 +37,13 @@ import { getCategories } from "../services/booksApi";
 import LanguageToggle from "./LanguageToggle";
 import type { Category } from "../types/book";
 import { T, useI18n } from "@/i18n/LocaleContext";
+import { ARABIC_LOCALE, RTL_DIRECTION } from "@/i18n/localeConstants";
 const booknestLogo = "/assets/booknest-logo.svg";
 
 function NavBar() {
   const { t, locale } = useI18n();
   const readableArabicNav =
-    locale === "ar"
+    locale === ARABIC_LOCALE
       ? {
           fontFamily: '"Segoe UI", Arial, sans-serif',
           fontSize: "0.95rem",
@@ -240,7 +241,7 @@ function NavBar() {
                           fontSize="small"
                           sx={{
                             transform: (theme) =>
-                              theme.direction === "rtl"
+                              theme.direction === RTL_DIRECTION
                                 ? "scaleX(-1)"
                                 : undefined,
                           }}

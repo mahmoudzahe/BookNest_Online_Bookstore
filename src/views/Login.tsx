@@ -19,6 +19,7 @@ import { loginSchema } from "../schemas/authSchemas";
 import type { LoginForm } from "../types/user";
 import { useAuth } from "../auth/AuthContext";
 import AuthLayout from "../components/AuthLayout";
+import { APP_ROUTES, USER_ROLES } from "../constants";
 import { T, useI18n } from "@/i18n/LocaleContext";
 
 function Login() {
@@ -29,9 +30,13 @@ function Login() {
   const [showPassword, setShowPassword] = useState(false);
   const [error, setError] = useState("");
   const redirect =
-    searchParams?.get("redirect") === "/checkout" ? "/checkout" : "/";
+    searchParams?.get("redirect") === APP_ROUTES.checkout
+      ? APP_ROUTES.checkout
+      : APP_ROUTES.home;
   const registerLink =
-    redirect === "/checkout" ? "/register?redirect=%2Fcheckout" : "/register";
+    redirect === APP_ROUTES.checkout
+      ? `${APP_ROUTES.register}?redirect=%2Fcheckout`
+      : APP_ROUTES.register;
 
   const {
     register,
@@ -43,7 +48,7 @@ function Login() {
     setError("");
     try {
       const account = await login(data.email, data.password);
-      router.replace(account.role === "admin" ? "/admin" : redirect);
+      router.replace(account.role === USER_ROLES.admin ? APP_ROUTES.admin : redirect);
     } catch (error) {
       setError(
         error instanceof Error
@@ -55,7 +60,7 @@ function Login() {
 
   if (user)
     return (
-      <ClientRedirect href={user.role === "admin" ? "/admin" : redirect} />
+      <ClientRedirect href={user.role === USER_ROLES.admin ? APP_ROUTES.admin : redirect} />
     );
 
   return (

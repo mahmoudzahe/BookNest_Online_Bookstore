@@ -11,7 +11,6 @@ import { useEffect, useState } from "react";
 import {
   Avatar,
   Box,
-  Button,
   Chip,
   IconButton,
   MenuItem,
@@ -39,6 +38,7 @@ import type { Order } from "../types/order";
 import { PageHeading } from "./AdminCommon";
 import LoadError from "./components/LoadError";
 import ConfirmDialog from "./components/ConfirmDialog";
+import { AccountStatusButton } from "./AdminUsers.styles";
 import { T, useI18n } from "@/i18n/LocaleContext";
 
 type UserRow = AuthUser & { orderCount: number };
@@ -230,10 +230,14 @@ export default function AdminUsers() {
       renderCell: ({ row }) => (
         <Chip
           size="small"
-          variant="filled"
+          variant="outlined"
           label={row.active ? t("Active") : t("Suspended")}
           color={row.active ? "success" : "warning"}
-          sx={{ fontWeight: 700 }}
+          sx={{
+            borderWidth: 2,
+            borderColor: row.active ? "success.main" : "warning.main",
+            fontWeight: 700,
+          }}
         />
       ),
     },
@@ -265,28 +269,15 @@ export default function AdminUsers() {
                 }
               >
                 <span>
-                  <Button
+                  <AccountStatusButton
                     size="small"
                     variant="outlined"
                     color={row.active ? "warning" : "success"}
                     disabled={saving || isSelf || row.role === "admin"}
                     onClick={() => setChangingStatus(row)}
-                    sx={{
-                      borderWidth: 2,
-                      fontWeight: 700,
-                      "&:hover": {
-                        borderWidth: 2,
-                      },
-                      "&.Mui-disabled": {
-                        border: "2px solid",
-                        borderColor: "text.secondary",
-                        color: "text.secondary",
-                        backgroundColor: "action.hover",
-                      },
-                    }}
                   >
                     {row.active ? t("Suspend") : t("Activate")}
-                  </Button>
+                  </AccountStatusButton>
                 </span>
               </Tooltip>
             )}

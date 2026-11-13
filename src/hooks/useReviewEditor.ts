@@ -35,57 +35,85 @@ export function useReviewEditor({
     setOpen(true);
   }
 
+  function validateExistingReview(
+    existing: BookReview | undefined,
+  ): string | null {
+    if (editing) {
+      return !existing || String(existing.id) !== String(editing.id)
+        ? "Your review could not be found. Refresh the page."
+        : null;
+    }
+
+    return existing ? "You have already reviewed this book." : null;
+  }
+
+  async function saveReview(
+    currentUser: AuthUser,
+    reviewRating: number,
+    reviewComment: string,
+  ) {
+    if (editing) {
+      await updateReview(editing.id, {
+        rating: reviewRating,
+        comment: reviewComment,
+      });
+      return;
+    }
+
+    await addReview({
+      bookId: book.id,
+      userId: currentUser.id,
+      userName: `${currentUser.firstName} ${currentUser.lastName}`,
+      rating: reviewRating,
+      comment: reviewComment,
+    });
+  }
+
+  function resetEditor() {
+    setOpen(false);
+    setEditing(null);
+    setComment("");
+    setRating(0);
+  }
+
   async function submitReview() {
     if (!user || !hasOrdered || submitting) return;
-    if (!rating || !comment.trim()) {
+
+    const reviewRating = rating;
+    const reviewComment = comment.trim();
+    if (!reviewRating || !reviewComment) {
       setError(translateInBrowser("Choose a rating and write a review."));
       return;
     }
+
     setSubmitting(true);
     setError("");
+
     try {
       const [eligible, latestReviews] = await Promise.all([
         hasPurchasedBook(user.id, book.id),
         getReviews(book.id),
       ]);
+
       if (!eligible) {
         onEligibilityLost();
-        setError(
-          translateInBrowser("You can only review books you have ordered."),
-        );
+        setError(translateInBrowser("You can only review books you have ordered."));
         return;
       }
+
       const existing = latestReviews.find(
         (review) => review.userId === user.id,
       );
-      if (editing) {
-        if (!existing || String(existing.id) !== String(editing.id)) {
-          setError(
-            translateInBrowser(
-              "Your review could not be found. Refresh the page.",
-            ),
-          );
-          return;
-        }
-        await updateReview(editing.id, { rating, comment: comment.trim() });
-      } else {
-        if (existing) {
-          setError(translateInBrowser("You have already reviewed this book."));
-          return;
-        }
-        await addReview({
-          bookId: book.id,
-          userId: user.id,
-          userName: `${user.firstName} ${user.lastName}`,
-          rating,
-          comment: comment.trim(),
-        });
+
+      const validationError = validateExistingReview(existing);
+      if (validationError) {
+        setError(translateInBrowser(validationError));
+        return;
       }
+
+      await saveReview(user, reviewRating, reviewComment);
       onReviewsChange(await getReviews(book.id));
-      setOpen(false);
-      setEditing(null);
-      setComment("");
-      setRating(0);
+      resetEditor();
     } catch {
       setError(translateInBrowser("Could not save your review. Try again."));
     } finally {
