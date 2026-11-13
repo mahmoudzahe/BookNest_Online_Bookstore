@@ -1,6 +1,6 @@
 "use client";
 
-import { ACCOUNT_MENU_WIDTH, NAVBAR_MIN_HEIGHT } from "../constants";
+import { ACCOUNT_MENU_WIDTH } from "../constants";
 import { useEffect, useState } from "react";
 import {
   AppBar,
@@ -32,7 +32,7 @@ import type { FormEvent, MouseEvent } from "react";
 
 import { useAuth } from "../auth/AuthContext";
 import { useThemeMode } from "../theme/ThemeModeContext";
-import { useCart } from "../cart/CartContext";
+import { cartSubject } from "../cart/CartSubject";
 import { getCategories } from "../services/booksApi";
 import type { Category } from "../types/book";
 const booknestLogo = "/assets/booknest-logo.svg";
@@ -40,18 +40,25 @@ const booknestLogo = "/assets/booknest-logo.svg";
 function NavBar() {
   const { user, loading, logout } = useAuth();
   const { darkMode, toggleDarkMode } = useThemeMode();
-  const { totalItems } = useCart();
 
   const router = useRouter();
   const pathname = usePathname();
   const searchParams = useSearchParams();
 
   const [search, setSearch] = useState("");
+  const [totalItems, setTotalItems] = useState(0);
   const [categories, setCategories] = useState<Category[]>([]);
   const [categoryAnchor, setCategoryAnchor] = useState<HTMLElement | null>(
     null,
   );
   const [userAnchor, setUserAnchor] = useState<HTMLElement | null>(null);
+
+  useEffect(() => {
+    return cartSubject.subscribe((items) => {
+      const count = items.reduce((total, item) => total + item.quantity, 0);
+      setTotalItems(count);
+    });
+  }, []);
 
   useEffect(() => {
     let active = true;
@@ -68,11 +75,7 @@ function NavBar() {
   }, []);
 
   useEffect(() => {
-    setSearch(
-      pathname === "/books"
-        ? (searchParams?.get("q") ?? "")
-        : "",
-    );
+    setSearch(pathname === "/books" ? (searchParams.get("q") ?? "") : "");
   }, [pathname, searchParams]);
 
   function submitSearch(event: FormEvent<HTMLFormElement>) {
@@ -112,7 +115,7 @@ function NavBar() {
         <Toolbar
           disableGutters
           sx={{
-            minHeight: NAVBAR_MIN_HEIGHT,
+            minHeight: 76,
             py: { xs: 1.25, md: 0 },
             gap: { xs: 1, md: 2 },
             flexWrap: "wrap",

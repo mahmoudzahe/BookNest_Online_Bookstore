@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import {
   Alert,
   Box,
@@ -16,10 +16,13 @@ import {
 } from "@mui/material";
 import ArrowBackRoundedIcon from "@mui/icons-material/ArrowBackRounded";
 import ShoppingCartOutlinedIcon from "@mui/icons-material/ShoppingCartOutlined";
-import { useParams } from "next/navigation";
+import { useParams, useRouter } from "next/navigation";
 import RouterLink from "../components/NextLink";
 import { useCart } from "../cart/CartContext";
 import BookReviews from "../components/BookReviews";
+import BookCardAdminActions from "../admin/components/BookCardAdminActions";
+import { defineAbilityFor } from "../admin/ability";
+import { useAuth } from "../auth/AuthContext";
 import { getBook, getCategories, getReviews } from "../services/booksApi";
 import type { Book, BookReview, Category } from "../types/book";
 import { BookCoverFrame } from "./BookDetails.styles";
@@ -31,7 +34,12 @@ import {
 
 function BookDetails() {
   const id = useParams<{ id: string }>()?.id;
+  const router = useRouter();
   const { items, addBook } = useCart();
+  const { user, loading: authLoading } = useAuth();
+  const ability = useMemo(() => defineAbilityFor(user), [user]);
+  const canEditBook = ability.can("update", "Book");
+  const canDeleteBook = ability.can("delete", "Book");
   const [book, setBook] = useState<Book | null>(null);
   const [reviews, setReviews] = useState<BookReview[]>([]);
   const [categories, setCategories] = useState<Category[]>([]);
@@ -125,9 +133,28 @@ function BookDetails() {
                     >
                       {book.title}
                     </Typography>
-                    <Typography color="text.secondary">
-                      by {book.author}
-                    </Typography>
+                    <Stack
+                      direction="row"
+                      spacing={1}
+                      sx={{
+                        alignItems: "center",
+                        justifyContent: "space-between",
+                        width: "100%",
+                      }}
+                    >
+                      <Typography color="text.secondary">
+                        by {book.author}
+                      </Typography>
+                      {!authLoading && (canEditBook || canDeleteBook) && (
+                        <BookCardAdminActions
+                          book={book}
+                          canEdit={canEditBook}
+                          canDelete={canDeleteBook}
+                          onBookUpdated={setBook}
+                          onBookDeleted={() => router.replace("/books")}
+                        />
+                      )}
+                    </Stack>
                     <Typography variant="body2" color="text.secondary">
                       Category:{" "}
                       {categories.find(

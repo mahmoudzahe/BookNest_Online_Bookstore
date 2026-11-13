@@ -1,5 +1,6 @@
 "use client";
 
+import { useMemo } from "react";
 import {
   Box,
   Button,
@@ -10,10 +11,13 @@ import {
   Typography,
 } from "@mui/material";
 import ShoppingCartOutlinedIcon from "@mui/icons-material/ShoppingCartOutlined";
-import RouterLink from "./NextLink";
 import { StoreBookCard, StoreBookCoverLink } from "./StyledComponents";
+import RouterLink from "./NextLink";
 import { useCart } from "../cart/CartContext";
 import type { Book } from "../types/book";
+import { useAuth } from "../auth/AuthContext";
+import { defineAbilityFor } from "../admin/ability";
+import BookCardAdminActions from "../admin/components/BookCardAdminActions";
 import {
   CART_ACTION_LABELS,
   LOW_STOCK_THRESHOLD,
@@ -22,10 +26,24 @@ import {
 
 interface BookCardProps {
   book: Book;
+  enableAdminActions?: boolean;
+  onBookUpdated?: (book: Book) => void;
+  onBookDeleted?: (bookId: string) => void;
 }
 
-function BookCard({ book }: BookCardProps) {
+function BookCard({
+  book,
+  enableAdminActions = false,
+  onBookUpdated,
+  onBookDeleted,
+}: BookCardProps) {
   const { items, addBook } = useCart();
+  const { user, loading: authLoading } = useAuth();
+  const ability = useMemo(() => defineAbilityFor(user), [user]);
+  const canEditBook = ability.can("update", "Book");
+  const canDeleteBook = ability.can("delete", "Book");
+  const showAdminActions = enableAdminActions && (canEditBook || canDeleteBook);
+  const canAddToCart = ability.can("addToCart", "Book");
   const quantity = items.find((item) => item.bookId === book.id)?.quantity ?? 0;
 
   return (
@@ -58,23 +76,51 @@ function BookCard({ book }: BookCardProps) {
           sx={{ flex: 1, minWidth: 0, justifyContent: "space-between" }}
         >
           <Stack spacing={0.75}>
-            <Link
-              component={RouterLink}
-              href={`/books/${book.id}`}
-              variant="subtitle2"
-              color="text.primary"
-              underline="hover"
-              className="BookNest-textWeight700"
+            <Stack
+              direction="row"
+              spacing={0.5}
               sx={{
-                lineHeight: 1.35,
-                display: "-webkit-box",
-                WebkitLineClamp: 2,
-                WebkitBoxOrient: "vertical",
-                overflow: "hidden",
+                alignItems: "flex-start",
+                minWidth: 0,
+                "& .MuiIconButton-root": {
+                  width: 24,
+                  height: 24,
+                  p: 0,
+                },
               }}
             >
-              {book.title}
-            </Link>
+              <Link
+                component={RouterLink}
+                href={`/books/${book.id}`}
+                variant="subtitle2"
+                color="text.primary"
+                underline="hover"
+                className="BookNest-textWeight700"
+                sx={{
+                  flex: 1,
+                  minWidth: 0,
+                  lineHeight: 1.35,
+                  display: "-webkit-box",
+                  WebkitLineClamp: 2,
+                  WebkitBoxOrient: "vertical",
+                  overflow: "hidden",
+                }}
+              >
+                {book.title}
+              </Link>
+              {!authLoading &&
+                showAdminActions &&
+                onBookUpdated &&
+                onBookDeleted && (
+                  <BookCardAdminActions
+                    book={book}
+                    canEdit={canEditBook}
+                    canDelete={canDeleteBook}
+                    onBookUpdated={onBookUpdated}
+                    onBookDeleted={onBookDeleted}
+                  />
+                )}
+            </Stack>
             <Typography variant="caption" color="text.secondary" noWrap>
               {book.author}
             </Typography>
@@ -117,20 +163,22 @@ function BookCard({ book }: BookCardProps) {
               }
               variant={book.stock > LOW_STOCK_THRESHOLD ? "outlined" : "filled"}
             />
-            <Button
-              variant="contained"
-              size="small"
-              fullWidth
-              startIcon={<ShoppingCartOutlinedIcon fontSize="small" />}
-              disabled={book.stock <= 0 || quantity >= book.stock}
-              onClick={() => addBook(book)}
-            >
-              {book.stock <= 0
-                ? CART_ACTION_LABELS.soldOut
-                : quantity >= book.stock
-                  ? CART_ACTION_LABELS.maxAdded
-                  : CART_ACTION_LABELS.addToCart}
-            </Button>
+            {!authLoading && canAddToCart && (
+              <Button
+                variant="contained"
+                size="small"
+                fullWidth
+                startIcon={<ShoppingCartOutlinedIcon fontSize="small" />}
+                disabled={book.stock <= 0 || quantity >= book.stock}
+                onClick={() => addBook(book)}
+              >
+                {book.stock <= 0
+                  ? CART_ACTION_LABELS.soldOut
+                  : quantity >= book.stock
+                    ? CART_ACTION_LABELS.maxAdded
+                    : CART_ACTION_LABELS.addToCart}
+              </Button>
+            )}
           </Stack>
         </Stack>
       </Stack>

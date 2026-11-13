@@ -110,6 +110,16 @@ function Books() {
     page * BOOKS_PAGE_SIZE,
   );
 
+  function handleBookUpdated(updatedBook: Book) {
+    setBooks((current) =>
+      current.map((book) => (book.id === updatedBook.id ? updatedBook : book)),
+    );
+  }
+
+  function handleBookDeleted(bookId: string) {
+    setBooks((current) => current.filter((book) => book.id !== bookId));
+  }
+
   return (
     <Container
       maxWidth={false}
@@ -209,7 +219,12 @@ function Books() {
                 {filteredBooks.length} books found
               </Typography>
               {visibleBooks.length > 0 ? (
-                <BookGrid books={visibleBooks} />
+                <BookGrid
+                  books={visibleBooks}
+                  enableAdminActions
+                  onBookUpdated={handleBookUpdated}
+                  onBookDeleted={handleBookDeleted}
+                />
               ) : (
                 <Alert severity="info">No books match your filters.</Alert>
               )}

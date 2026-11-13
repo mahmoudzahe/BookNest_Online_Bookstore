@@ -40,19 +40,6 @@
       "categoryId": "1"
     },
     {
-      "id": "2",
-      "title": "The Hobbit",
-      "author": "J. R. R. Tolkien",
-      "description": "A quiet hobbit leaves home on an unexpected adventure.",
-      "price": 18,
-      "stock": 8,
-      "featured": true,
-      "rating": 3,
-      "image": "https://covers.openlibrary.org/b/isbn/9780547928227-M.jpg",
-      "createdAt": "2026-10-03",
-      "categoryId": "2"
-    },
-    {
       "id": "3",
       "title": "1984",
       "author": "George Orwell",
@@ -84,7 +71,7 @@
       "author": "Frank Herbert",
       "description": "Science fiction set on a desert planet where powerful families compete.",
       "price": 22,
-      "stock": 5,
+      "stock": 10,
       "featured": true,
       "rating": 5,
       "image": "https://covers.openlibrary.org/b/isbn/9780441172719-M.jpg",
@@ -349,7 +336,7 @@
     },
     {
       "id": "2",
-      "bookId": "2",
+      "bookId": null,
       "userName": "Omar",
       "rating": 4,
       "comment": "A fun and memorable adventure."
@@ -405,7 +392,7 @@
       "id": "1RCC2PjVw8I"
     },
     {
-      "bookId": "2",
+      "bookId": null,
       "userId": "cXvhLY8tgKg",
       "userName": "jebreel batsh",
       "rating": 3,
