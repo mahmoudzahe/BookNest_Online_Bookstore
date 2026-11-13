@@ -13,6 +13,7 @@ import {
   IconButton,
   InputAdornment,
   ListItemText,
+  ListItemIcon,
   Menu,
   MenuItem,
   Stack,
@@ -26,6 +27,7 @@ import ArrowForwardRoundedIcon from "@mui/icons-material/ArrowForwardRounded";
 import { alpha } from "@mui/material/styles";
 import DarkModeOutlinedIcon from "@mui/icons-material/DarkModeOutlined";
 import LightModeIcon from "@mui/icons-material/LightMode";
+import DashboardOutlinedIcon from "@mui/icons-material/DashboardOutlined";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import RouterLink from "./NextLink";
 import type { FormEvent, MouseEvent } from "react";
@@ -45,9 +47,9 @@ function NavBar() {
   const readableArabicNav =
     locale === ARABIC_LOCALE
       ? {
-          fontFamily: '"Segoe UI", Arial, sans-serif',
-          fontSize: "0.95rem",
-          fontWeight: 400,
+          fontFamily: "Tahoma, Arial, sans-serif",
+          fontSize: "1rem",
+          fontWeight: 600,
         }
       : {};
   const { user, loading, logout } = useAuth();
@@ -256,6 +258,15 @@ function NavBar() {
                   bgcolor: "action.hover",
                   borderRadius: 6,
                 },
+                ...(locale === "ar"
+                  ? {
+                      "& .MuiInputBase-input": {
+                        fontFamily: "Tahoma, Arial, sans-serif",
+                        fontSize: "0.95rem",
+                        fontWeight: 500,
+                      },
+                    }
+                  : {}),
               }}
             />
           </Stack>
@@ -347,6 +358,19 @@ function NavBar() {
                       <Divider />
                     </>
                   )}
+
+                  <MenuItem
+                    component={RouterLink}
+                    href="/dashboard"
+                    onClick={() => setUserAnchor(null)}
+                  >
+                    <ListItemIcon>
+                      <DashboardOutlinedIcon fontSize="small" />
+                    </ListItemIcon>
+                    <ListItemText>
+                      <T text="My Dashboard" />
+                    </ListItemText>
+                  </MenuItem>
 
                   <MenuItem
                     component={RouterLink}
